@@ -23,8 +23,8 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;font-size:15px}
 nav ul a{text-decoration:none;opacity:.85}nav ul a:hover{opacity:1}
 @media(max-width:700px){nav ul{display:none}}
-.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#1d4e89 100%);color:#fff;padding:70px 0 90px;position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;right:-120px;top:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(230,57,70,.35),transparent 70%)}
+.hero{background:linear-gradient(90deg,rgba(11,31,58,.95) 0%,rgba(11,31,58,.78) 50%,rgba(11,31,58,.35) 100%),url(img/hero-karetka.jpg) center/cover;color:#fff;padding:70px 0 90px;position:relative;overflow:hidden}
+.hero:after{display:none;content:"";position:absolute;right:-120px;top:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(230,57,70,.35),transparent 70%)}
 .ecg{position:absolute;left:0;right:0;bottom:18px;opacity:.35}
 .badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:999px;font-size:13px;margin-bottom:18px}
 h1{font-size:clamp(32px,5vw,54px);line-height:1.1;margin:0 0 16px;max-width:760px}
@@ -57,6 +57,7 @@ a.card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(11,31,58,.12
 .step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 20px 20px 66px;position:relative}
 .step:before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:20px;width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800}
 .note{background:#fff7e6;border:1px solid #f3d08a;border-left:6px solid #e9a400;border-radius:14px;padding:18px 20px;font-size:15px}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 22px}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px}@media(max-width:640px){.photos{grid-template-columns:repeat(2,1fr)}}
 footer{background:var(--navy);color:#cdd6e4;padding:36px 0;font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 </style>
@@ -93,15 +94,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <a class="card" href="przypadki.html" style="--k:#2a9d8f"><span class="tag live">dostępne</span><div class="ic">🚑</div><h3>Przypadki ZRM krok po kroku</h3><p>Bezpieczeństwo, ABCDE, GCS, leki pierwszego rzutu według sytuacji i rozbudowane przypadki, w których stan pacjenta się zmienia.</p><span class="go">Czytaj →</span></a>
     <a class="card" href="nauka.html" style="--k:var(--c1)"><span class="tag live">dostępne</span><div class="ic">🧠</div><h3>Nauka – wszystko w jednym</h3><p>Fiszki, quiz, karty leków, ćwiczenia z dawek i wzorów, triage i scenariusze przypadków. Wzory zawsze widoczne, żeby się uczyć, a nie zgadywać.</p><span class="go">Otwórz →</span></a>
     <a class="card" href="fiszki.html" style="--k:var(--c4)"><span class="tag live">dostępne</span><div class="ic">🃏</div><h3>Fiszki ratownika medycznego</h3><p>103 fiszki: leki z rozporządzenia MZ, czynności ratownika medycznego, algorytmy ERC i ustawa o Państwowym Ratownictwie Medycznym.</p><span class="go">Otwórz →</span></a>
-    <a class="card" href="nauka.html" style="--k:var(--c3)"><span class="tag live">dostępne</span><div class="ic">🏷️</div><h3>Segregacja (triage)</h3><div class="triage"><div style="background:#2b9348">zielony</div><div style="background:#e9b200">żółty</div><div style="background:#d62828">czerwony</div><div style="background:#222">czarny</div></div><p>Kolory od najmniej do najbardziej pilnego. Ćwiczenia na przypadkach.</p><span class="go">Ćwicz →</span></a>
-    <a class="card" href="nauka.html" style="--k:var(--c2)"><span class="tag live">dostępne</span><div class="ic">💊</div><h3>Farmakologia – karty leków</h3><p>Leki ZRM: wskazania, przeciwwskazania i dawkowanie, plus zadania z liczenia dawek ze wzorami (zakładki „Leki” i „Liczenie”).</p><span class="go">Otwórz →</span></a>
-    <a class="card" href="materialy.html" style="--k:var(--c5)"><span class="tag live">dostępne</span><div class="ic">📈</div><h3>EKG krok po kroku</h3><p>Kompendium EKG w PDF: ocena rytmu, zaburzenia rytmu, bloki AV i rytmy zatrzymania krążenia.</p><span class="go">Pobierz →</span></a>
-    <a class="card" href="materialy.html" style="--k:var(--c6)"><span class="tag live">dostępne</span><div class="ic">🩺</div><h3>Checklisty i badanie pacjenta</h3><p>Kieszonkowe checklisty: urazowa i internistyczna, atlas dróg oddechowych i objawy neurologiczne w PDF.</p><span class="go">Pobierz →</span></a>
+    <a class="card" href="nauka.html#tri" style="--k:var(--c3)"><span class="tag live">dostępne</span><div class="ic">🏷️</div><h3>Segregacja (triage)</h3><div class="triage"><div style="background:#2b9348">zielony</div><div style="background:#e9b200">żółty</div><div style="background:#d62828">czerwony</div><div style="background:#222">czarny</div></div><p>Kolory od najmniej do najbardziej pilnego. Ćwiczenia na przypadkach.</p><span class="go">Ćwicz →</span></a>
+    <a class="card" href="materialy.html#karty-lekow" style="--k:var(--c2)"><span class="tag live">dostępne</span><div class="ic">💊</div><h3>Farmakologia – karty leków</h3><p>42 karty leków ZRM w PDF z wyszukiwarką: wskazania, przeciwwskazania, dawkowanie dorosłych i dzieci, pułapki.</p><span class="go">Zobacz karty →</span></a>
+    <a class="card" href="materialy.html#leki" style="--k:var(--c5)"><span class="tag live">dostępne</span><div class="ic">📈</div><h3>EKG krok po kroku</h3><p>Kompendium EKG w PDF: ocena rytmu, zaburzenia rytmu, bloki AV i rytmy zatrzymania krążenia.</p><span class="go">Pobierz →</span></a>
+    <a class="card" href="materialy.html#badanie" style="--k:var(--c6)"><span class="tag live">dostępne</span><div class="ic">🩺</div><h3>Checklisty i badanie pacjenta</h3><p>Kieszonkowe checklisty: urazowa i internistyczna, atlas dróg oddechowych i objawy neurologiczne w PDF.</p><span class="go">Pobierz →</span></a>
   </div>
 </div></section>
 
 <section id="dla-kogo" class="who"><div class="wrap">
   <h2>Dla kogo</h2>
+  <div class="photos"><img src="img/ratownik-medyczny.jpg" alt="Ratownik medyczny przy sprzęcie w karetce" loading="lazy"><img src="img/aed-lifepak.jpg" alt="Defibrylator AED w karetce" loading="lazy"><img src="img/plecak-zabezpieczenie.jpg" alt="Ratowniczka medyczna z plecakiem na zabezpieczeniu imprezy" loading="lazy"><img src="img/szuflada-leki.jpg" alt="Szuflada z lekami w karetce" loading="lazy"></div>
   <p class="lead">Treść przygotowana przez studenta ratownictwa medycznego pracującego w transporcie medycznym.</p>
   <div class="grid">
     <div class="w">🎓<b>Studenci ratownictwa medycznego</b>Powtórki przed kolokwium, praktykami i egzaminem dyplomowym.</div>
@@ -125,7 +127,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 <footer><div class="wrap">
   <div><b style="color:#fff">ratownikmedyczny.online</b><br>Nauka dla ratownika medycznego · wersja testowa</div>
-  <div><a href="prywatnosc.html">Polityka prywatności</a><br>Uwagi i błędy w treści: <a href="mailto:biuro@medkrak.pl">biuro@medkrak.pl</a><br>© 2026</div>
+  <div><a href="prywatnosc.html">Polityka prywatności</a><br>Uwagi i błędy w treści: <a href="mailto:biuro@medkrak.pl">biuro@medkrak.pl</a><br>© 2026 · Zdjęcia: MedKrak</div>
 </div></footer>
 </body>
 </html>
