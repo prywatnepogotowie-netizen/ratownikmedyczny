@@ -46,6 +46,22 @@ body.playing #play{display:flex}body.playing #idx{display:none}
 .nav{display:flex;gap:10px;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
 .nav button{flex:1;font:800 17px system-ui;padding:14px;border-radius:14px;border:2px solid var(--k);cursor:pointer;background:#fff;color:var(--k)}
 .nav .nx{background:var(--k);color:#fff;flex:2}.nav button:disabled{opacity:.35}
+/* karta do odwracania */
+.fc{perspective:1200px}.fcard{transition:transform .28s ease-in;transform-style:preserve-3d}.fcard.turn{transform:rotateY(90deg)}
+.front{border-radius:24px;min-height:58vh;color:#fff;padding:22px 20px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--c),color-mix(in srgb,var(--c) 45%,#0b1f3a));box-shadow:0 10px 26px color-mix(in srgb,var(--c) 35%,transparent)}
+.front small{font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.9}.front h2{font-size:30px;line-height:1.15;margin:6px 0 0;max-width:92%}
+.front .big{flex:1;display:grid;place-items:center;font-size:120px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.25));animation:bob 3s ease-in-out infinite}
+.front p{margin:0;opacity:.92;font-size:15px}
+.rot{position:absolute;right:-6px;bottom:-6px;width:84px;height:84px;border-radius:50% 0 24px 50%;background:rgba(0,0,0,.28);display:grid;place-items:center;font-size:30px;border:0;color:#fff;cursor:pointer}
+.backc{position:relative}.backc .rot2{float:right;margin:-4px 0 6px 8px;border:0;background:#eef2f7;border-radius:999px;padding:7px 12px;font:700 13px system-ui;cursor:pointer}
+/* przypadek */
+.case{border-radius:22px;color:#fff;padding:20px;background:linear-gradient(160deg,#2b9348,#1b4332);position:relative;overflow:hidden}
+.case h2{margin:4px 0 8px;font-size:28px}.case small{font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}.case p{font-size:17px;margin:0}
+.case::after{content:"🚑";position:absolute;right:-8px;top:-10px;font-size:90px;opacity:.2}
+.vit{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.vit div{background:#07140f;color:#39ff88;border-radius:12px;padding:8px;font:700 12px ui-monospace,monospace;text-align:center}.vit b{display:block;font-size:20px;color:#fff;font-family:system-ui;margin:2px 0}
+.cq{background:#fff;border-radius:16px;padding:14px 16px;margin-top:12px;font-size:18px;font-weight:700;border-left:6px solid #2b9348}
+.ok2{background:#eef7ee;border-radius:12px;padding:12px;margin-top:8px;font-size:15.5px;animation:pop .3s}.no2{background:#fdecea;border-radius:12px;padding:12px;margin-top:8px;font-size:15.5px;animation:pop .3s}
 /* start */
 .st{border-radius:24px;overflow:hidden;color:#fff;background:linear-gradient(150deg,color-mix(in srgb,var(--k) 92%,transparent),rgba(11,31,58,.92)),url(img/szuflada-leki.jpg) center/cover;padding:26px 20px;text-align:center}
 .st .em{font-size:74px;line-height:1;animation:bob 2.4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-8px) rotate(-4deg)}}
@@ -89,6 +105,7 @@ body.playing #play{display:flex}body.playing #idx{display:none}
 </div>
 
 <script src="leki-data.js"></script>
+<script src="cases.js"></script>
 <script src="pro.js"></script>
 <script>
 const SC=['#457b9d','#8e5bd6','#2a9d8f','#e63946','#d62828','#f4a261','#1d4e89','#6a994e','#c1121f','#0096c7','#b5179e'];
@@ -101,7 +118,7 @@ function locked(id){return FREE.indexOf(id)<0 && !(window.RM&&RM.isPro&&RM.isPro
 
 /* ---------- lista */
 if(!ID||!LEKI[ID]){
-  document.getElementById('list').innerHTML=ORDER.filter(k=>LEKI[k]).map(k=>{const d=LEKI[k];return '<a class="kc'+(k==='adenozyna'?' new':'')+'" style="--c:'+d.k+'" href="kurs.html?lek='+k+'"><i>'+d.e+'</i><b>'+esc(d.n)+'</b><small>'+esc(d.t)+'</small>'+(locked(k)&&k!=='adenozyna'?'<span class="lk">🔒</span>':'')+'</a>'}).join('');
+  document.getElementById('list').innerHTML=ORDER.filter(k=>LEKI[k]).map(k=>{const d=LEKI[k];return '<a class="kc'+(k==='adenozyna'?' new':'')+'" style="--c:'+d.k+'" href="kurs.html?lek='+k+'"><i>'+d.e+'</i><b>'+esc(d.n)+'</b><small>'+esc(d.t)+'</small>'+((typeof CASES!=='undefined')&&CASES[k]?'<small style="color:#2b9348;font-weight:800">🚑 z przypadkiem klinicznym</small>':'')+(locked(k)&&k!=='adenozyna'?'<span class="lk">🔒</span>':'')+'</a>'}).join('');
 } else start(ID);
 
 function start(id){
@@ -110,6 +127,7 @@ function start(id){
   const S=[];S.push({t:'start'});
   if(locked(id)){S.push({t:'lock'})}else{
     d.s.forEach((s,i)=>{S.push({t:'sec',s,i});if(id==='adenozyna'&&i===2)S.push({t:'mon'})});
+    if((typeof CASES!=='undefined')&&CASES[id]){const C=CASES[id];S.push({t:'case',C});C.steps.forEach((x,k)=>S.push({t:'cs',C,x,k}))}
     (LQ[id]||[]).forEach(q=>S.push({t:'q',q}));
   }
   S.push({t:'end'});
@@ -130,11 +148,17 @@ function start(id){
         if(it.length===1){const m=it[0].match(/^§([^§]+)§(.*)$/);if(m){n++;return '<div class="it rv" '+delay+'><div class="t">'+esc(m[1])+'</div><div class="b">'+esc(m[2])+'</div></div>'}
           if(last&&it[0].length>40)return '<div class="it tip" '+delay+'>⚠️ '+esc(it[0])+'</div>';return '<div class="it txt" '+delay+'>'+esc(it[0])+'</div>'}
         n++;const t=it[0].replace(/^§([^§]+)§(.*)$/,'$1 · $2');return '<div class="it rv" '+delay+'><div class="t">'+esc(t)+'</div><div class="b">'+it.slice(1).map(fmt).join('<br>')+'</div></div>'}).join('');
-      h='<div class="hd" style="--c:'+c+'" data-e="'+ico(lab)+'"><small>'+ico(lab)+' '+esc(lab)+'</small><h2>'+esc(s.s.h[1]||'')+'</h2></div><div class="its" style="--c:'+c+'">'+items+'</div>'+
-        (n?'<div class="hint"><span>👆 Dotknij kafelek, aby go odsłonić</span><button type="button" id="all">Pokaż wszystko</button></div>':'');
+      if(!s.open){h='<div class="fc"><div class="fcard" id="fcard"><div class="front" id="front" style="--c:'+c+'"><small>'+esc(lab)+'</small><h2>'+esc(s.s.h[1]||'')+'</h2><div class="big">'+ico(lab)+'</div><p>👆 Dotknij karty, aby ją odwrócić</p><button class="rot" type="button" aria-label="Odwróć kartę">🔄</button></div></div></div>'}
+      else h='<div class="fc"><div class="fcard" id="fcard"><div class="backc"><div class="hd" style="--c:'+c+'" data-e="'+ico(lab)+'"><small>'+ico(lab)+' '+esc(lab)+'</small><h2>'+esc(s.s.h[1]||'')+'</h2></div><div class="its" style="--c:'+c+'">'+items+'</div>'+
+        '<div class="hint"><span>'+(n?'👆 Dotknij kafelek, aby go odsłonić':'')+'</span><span>'+(n?'<button type="button" id="all">Pokaż wszystko</button> · ':'')+'<button type="button" id="flipb">🔄 Odwróć</button></span></div></div></div></div>';
     } else if(s.t==='mon'){
       h='<div class="hd" style="--c:#0b1f3a" data-e="📈"><small>📈 Zobacz na monitorze</small><h2>Co się dzieje po bolusie adenozyny?</h2></div>'+
       '<div class="mon"><div class="hr"><span>II · 25 mm/s</span><span>HR <b id="hr">180</b></span></div>'+ADENO+'<div class="msg" id="msg">Częstoskurcz nadkomorowy 180/min, wąskie QRS. Pacjent stabilny, manewr Valsalvy nie pomógł.</div><button type="button" id="bolus">💉 Podaj 6 mg szybkim bolusem + 20 ml NaCl</button></div>';
+    } else if(s.t==='case'){
+      const C=s.C;h='<div class="case"><small>🚑 Przypadek kliniczny</small><h2>'+esc(C.title)+'</h2><p>'+esc(C.story)+'</p></div><div class="vit">'+C.vit.map(v=>'<div>'+esc(v[0])+'<b>'+esc(v[1])+'</b>'+esc(v[2])+'</div>').join('')+'</div><div class="hint"><span>Za chwilę podejmiesz '+C.steps.length+' decyzje jako ratownik medyczny.</span></div>';
+    } else if(s.t==='cs'){
+      const C=s.C,x=s.x,N=C.steps.length;
+      h='<div class="case" style="padding:14px 18px"><small>🚑 '+esc(C.title)+' · decyzja '+(s.k+1)+' z '+N+'</small></div><div class="cq">'+esc(x.q)+'</div>'+x.o.map((o,j)=>'<button class="op" type="button" data-j="'+j+'" style="animation-delay:'+(j*70)+'ms">'+esc(o[0])+'</button>').join('')+'<div id="cfb"></div>'+(s.k===N-1?'<div id="cend" style="display:none" class="ok2">🏁 <b>Podsumowanie przypadku:</b> '+esc(C.end)+'</div>':'');
     } else if(s.t==='q'){
       const q=s.q,k=S.slice(0,cur).filter(x=>x.t==='q').length+1,N=S.filter(x=>x.t==='q').length;
       h='<div class="hd" style="--c:#0b1f3a" data-e="❓"><small>❓ Quiz · pytanie '+k+' z '+N+'</small><h2>Sprawdź, co zapamiętałeś</h2></div><div class="qq">'+esc(q.q)+'</div>'+
@@ -148,7 +172,7 @@ function start(id){
       if(p>=80&&N)conf();
     }
     st.innerHTML='<div class="sl'+(dir<0?' back':'')+'">'+h+'</div>';st.scrollTop=0;
-    document.getElementById('prev').disabled=cur===0;
+    document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=false;
     const nb=document.getElementById('next');nb.textContent=cur===0?'Zaczynamy →':cur===S.length-1?'Zakończ':'Dalej →';
     st.querySelectorAll('.it.rv').forEach(e=>e.onclick=()=>e.classList.toggle('open'));
     const al=document.getElementById('all');if(al)al.onclick=()=>st.querySelectorAll('.it.rv').forEach(e=>e.classList.add('open'));
@@ -156,6 +180,13 @@ function start(id){
     const ag=document.getElementById('again');if(ag)ag.onclick=()=>{score=0;S.forEach(x=>x.done=0);go(0)};
     if(s.t==='q'){if(s.done)showAns(s,s.pick);st.querySelectorAll('.op').forEach(b=>b.onclick=()=>{if(s.done)return;s.done=1;s.pick=+b.dataset.j;if(s.pick===s.q.a)score++;showAns(s,s.pick)})}
     if(s.t==='mon')monitor();
+    if(s.t==='sec'){const fl=()=>{const f=document.getElementById('fcard');f.classList.add('turn');setTimeout(()=>{s.open=!s.open;s.flipping=1;render();s.flipping=0;const g=document.getElementById('fcard');g.classList.add('turn');requestAnimationFrame(()=>requestAnimationFrame(()=>g.classList.remove('turn')))},260)};
+      const fr=document.getElementById('front');if(fr)fr.onclick=fl;const fb=document.getElementById('flipb');if(fb)fb.onclick=fl;st.querySelector('.sl').style.animation=s.flipping?'none':''}
+    if(s.t==='cs'){const x=s.x;const nb2=document.getElementById('next');if(!s.done)nb2.disabled=true;
+      const show=j=>{const o=x.o[j];document.getElementById('cfb').innerHTML='<div class="'+(o[1]?'ok2':'no2')+'">'+(o[1]?'✅ ':'❌ ')+esc(o[2])+(o[1]?'':'<br><small>Spróbuj jeszcze raz.</small>')+'</div>'};
+      if(s.done){st.querySelectorAll('.op').forEach(b=>{if(x.o[+b.dataset.j][1])b.classList.add('ok')});const k=x.o.findIndex(o=>o[1]);show(k);const ce=document.getElementById('cend');if(ce)ce.style.display='block'}
+      st.querySelectorAll('.op').forEach(b=>b.onclick=()=>{if(s.done)return;const j=+b.dataset.j;st.querySelectorAll('.op').forEach(z=>z.classList.remove('bad'));show(j);
+        if(x.o[j][1]){b.classList.add('ok');s.done=1;st.querySelectorAll('.op').forEach(z=>z.disabled=true);nb2.disabled=false;const ce=document.getElementById('cend');if(ce)ce.style.display='block'}else{b.classList.add('bad');s.miss=(s.miss||0)+1}})}
   }
   function showAns(s,j){st.querySelectorAll('.op').forEach(b=>{const k=+b.dataset.j;b.disabled=true;if(k===s.q.a)b.classList.add('ok');else if(k===j)b.classList.add('bad')});
     document.getElementById('ex').innerHTML='<div class="ex'+(j===s.q.a?'':' no')+'">'+(j===s.q.a?'✅ Dobrze! ':'❌ Nie tym razem. ')+esc(s.q.e||'')+'</div>'}
@@ -167,7 +198,7 @@ function start(id){
   st.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1));x0=null},{passive:true});
   const sayBtn=document.getElementById('say');
   sayBtn.onclick=()=>{if(!window.speechSynthesis)return;if(speechSynthesis.speaking){speechSynthesis.cancel();sayBtn.classList.remove('on');return}
-    st.querySelectorAll('.it.rv').forEach(e=>e.classList.add('open'));
+    if(S[cur].t==='sec'&&!S[cur].open){S[cur].open=true;render()}st.querySelectorAll('.it.rv').forEach(e=>e.classList.add('open'));
     const u=new SpeechSynthesisUtterance(st.innerText.replace(/[＋−👆]/g,'').replace(/Pokaż wszystko/,''));u.lang='pl-PL';u.rate=1;const v=speechSynthesis.getVoices().find(v=>/^pl/i.test(v.lang));if(v)u.voice=v;
     u.onend=()=>sayBtn.classList.remove('on');sayBtn.classList.add('on');speechSynthesis.speak(u)};
   render();
