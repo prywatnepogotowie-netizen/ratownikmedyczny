@@ -44,6 +44,7 @@ h1{font-size:clamp(26px,4vw,38px);margin:28px 0 6px}
 .note{background:#fff7e6;border:1px solid #f3d08a;border-left:6px solid var(--warn);border-radius:12px;padding:14px 16px;font-size:14px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--mute)}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 </style>
+<script src="pro.js"></script>
 </head>
 <body>
 <nav><div class="w"><a href="/">← ratownikmedyczny.online</a><span>Egzamin próbny</span></div></nav>
@@ -104,13 +105,14 @@ function home(){
  let best='';try{const b=JSON.parse(localStorage.getItem('rm_exam_hist')||'[]');if(b.length)best=`<div class="card"><b>Twoje ostatnie wyniki</b><div class="grid" style="gap:10px">${b.slice(-8).reverse().map(r=>`<span class="pill" style="color:${r.pc>=PASS?'var(--ok)':'var(--bad)'}">${r.d} · ${esc(r.m)} · ${r.pc}%</span>`).join('')}</div></div>`}catch(e){}
  app.innerHTML=`<h1>Egzamin próbny dla ratownika medycznego</h1>
  <p class="lead">Test jednokrotnego wyboru na czas, z pytaniami z farmakologii, medycyny ratunkowej, pediatrii, urazów klatki piersiowej, chorób wewnętrznych, fizjologii, badania neurologicznego i przypadków klinicznych. Na końcu wynik z podziałem na działy i omówienie każdego błędu.</p>
- <div class="modes">${MODES.map(m=>`<button class="card mode" data-m="${m.id}" style="--k:${m.k}"><b>${m.name}</b><span>${m.desc}</span></button>`).join('')}</div>
+ <div class="modes">${MODES.map(m=>`<button class="card mode" data-m="${m.id}" style="--k:${m.k}"><b>${m.name}${m.id!=='short'&&window.RM?RM.badge:''}</b><span>${m.desc}</span></button>`).join('')}</div>
  ${best}
  <div class="card"><b>Zasady</b><ul><li>Jedna poprawna odpowiedź w każdym pytaniu.</li><li>Możesz wracać do pytań i zmieniać odpowiedzi do końca czasu.</li><li>Po upływie czasu test kończy się sam.</li><li>W tym teście próg zaliczenia to <b>${PASS}%</b>. Na egzaminie dyplomowym obowiązuje próg ustalony przez Twoją uczelnię.</li></ul></div>
  <p class="note"><b>Ważne:</b> pytania mają charakter edukacyjny i nie są pytaniami z prawdziwego egzaminu. Nie zastępują aktualnych wytycznych ERC/PRC, rozporządzeń Ministra Zdrowia ani procedur pracodawcy.</p>`;
  app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>start(MODES.find(m=>m.id===b.dataset.m)));
 }
 function start(m){
+ if(m.id!=='short'&&window.RM&&!RM.isPro()){RM.go();return}
  st={m,qs:build(m),i:0,ans:{},end:Date.now()+m.min*60000};
  tick=setInterval(()=>{const t=document.getElementById('tm');if(!t)return;const left=st.end-Date.now();if(left<=0){finish();return}t.textContent=fmt(left);t.classList.toggle('low',left<5*60000)},1000);
  q();window.scrollTo(0,0);
