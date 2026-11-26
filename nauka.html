@@ -546,7 +546,10 @@ function renderPost(){
  app.querySelectorAll('.goq').forEach(b=>b.onclick=()=>{filt.ch=b.dataset.c;go('quiz')});
  app.querySelector('#rst').onclick=()=>{app.querySelector('#cf').innerHTML='<div class="row"><span class="mut">Na pewno?</span><button class="bad" id="y">Tak, zeruj</button></div>';app.querySelector('#y').onclick=()=>{S={};save();renderPost()}};
 }
-function go(v){if(v==='quiz'){location.href='egzamin.html#szybki';return}view=v;try{history.replaceState(null,'','#'+v)}catch(e){}document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));({fis:newDeck,quiz:newQuiz,tri:triStart,case:newCases,atlas:renderAtlas,leki:renderLeki,licz:newCalc,szukaj:renderSz,post:renderPost})[v]();window.scrollTo(0,0)}
+function go(v){if(v==='quiz'){location.href='egzamin.html#szybki';return}view=v;try{if(!new URLSearchParams(location.search).get('tab'))history.replaceState(null,'','#'+v)}catch(e){}document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));({fis:newDeck,quiz:newQuiz,tri:triStart,case:newCases,atlas:renderAtlas,leki:renderLeki,licz:newCalc,szukaj:renderSz,post:renderPost})[v]();window.scrollTo(0,0)}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
-const V=['fis','quiz','tri','case','atlas','leki','licz','szukaj','post'];go(V.includes(location.hash.slice(1))?location.hash.slice(1):'fis');window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(V.includes(h)&&h!==view)go(h)});
+const V=['fis','quiz','tri','case','atlas','leki','licz','szukaj','post'];
+const QT=new URLSearchParams(location.search).get('tab');
+if(QT&&V.includes(QT)){const tb=document.querySelector('.tabs');if(tb)tb.style.display='none';const NM={fis:'Fiszki',tri:'Segregacja (triage)',case:'Przypadki ZRM',atlas:'Atlas',leki:'Leki',licz:'Liczenie dawek',szukaj:'Szukaj',post:'Postęp'};const h=document.querySelector('h1');if(h&&NM[QT])h.textContent=NM[QT]+' – ratownik medyczny';}
+go(QT&&V.includes(QT)?QT:(V.includes(location.hash.slice(1))?location.hash.slice(1):'fis'));window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(V.includes(h)&&h!==view)go(h)});
 </script></body></html>
