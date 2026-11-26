@@ -2,8 +2,8 @@
    Ustawienia uzupełnia się po założeniu kont Supabase i Stripe (instrukcja: cennik.html#jak-dziala).
    enforce:false = blokady są widoczne, ale wszystko działa (okres próbny przed uruchomieniem płatności). */
 window.RM_CFG = {
-  supabaseUrl: '',          // np. https://xxxx.supabase.co
-  supabaseKey: '',          // klucz "anon public"
+  supabaseUrl: 'https://djysqborsvrfdjgjbehm.supabase.co',
+  supabaseKey: 'sb_publishable_UpzGJUWwaK7l8_hrQVTT0Q_WAn2DDtt',
   payments: false,          // true = przycisk Kup łączy z Przelewy24 (funkcja Supabase "p24")
   enforce: false,
   price: '99 zł / rok',
@@ -50,7 +50,7 @@ window.RM_CFG = {
     set('rm_pro_until', String(Date.now() + 365 * 864e5)); set('rm_code', '1');
     return true;
   };
-  RM.logout = () => { ['rm_token','rm_pro_until','rm_email','rm_code'].forEach(k => set(k, null)); location.reload(); };
+  RM.logout = () => { ['rm_token','rm_refresh','rm_pro_until','rm_email','rm_code'].forEach(k => set(k, null)); location.reload(); };
 
   // sprawdzenie dostępu Pro w bazie
   RM.refresh = async () => {
@@ -58,7 +58,15 @@ window.RM_CFG = {
     try {
       const r = await fetch(C.supabaseUrl + '/rest/v1/pro_access?select=pro_until', {
         headers: { apikey: C.supabaseKey, Authorization: 'Bearer ' + t } });
-      if (r.status === 401) { set('rm_token', null); return RM.isPro(); }
+      if (r.status === 401) {
+        const rt = get('rm_refresh');
+        if (rt) {
+          const x = await fetch(C.supabaseUrl + '/auth/v1/token?grant_type=refresh_token', { method: 'POST',
+            headers: { apikey: C.supabaseKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: rt }) });
+          if (x.ok) { const j = await x.json(); set('rm_token', j.access_token); set('rm_refresh', j.refresh_token); return RM.refresh(); }
+        }
+        set('rm_token', null); set('rm_refresh', null); return RM.isPro();
+      }
       const d = await r.json();
       if (!get('rm_code')) set('rm_pro_until', d[0] ? String(Date.parse(d[0].pro_until)) : '0');
     } catch(e) {}
@@ -68,7 +76,7 @@ window.RM_CFG = {
   // powrót z linku logowania: #access_token=...
   if (location.hash.includes('access_token=')) {
     const p = new URLSearchParams(location.hash.slice(1));
-    set('rm_token', p.get('access_token'));
+    set('rm_token', p.get('access_token')); if (p.get('refresh_token')) set('rm_refresh', p.get('refresh_token'));
     try { const j = JSON.parse(atob(p.get('access_token').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); set('rm_email', j.email); } catch(e) {}
     history.replaceState(null, '', location.pathname);
   }
