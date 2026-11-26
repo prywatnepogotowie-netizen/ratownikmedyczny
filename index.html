@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ratownik medyczny – nauka online | ratownikmedyczny.online</title>
+<meta name="description" content="Bezpłatna nauka dla studentów ratownictwa medycznego i ratowników medycznych: fiszki, quiz, karty leków, przeliczanie dawek, triage i scenariusze przypadków.">
+<meta property="og:title" content="Ratownik medyczny – nauka online">
+<meta property="og:description" content="Fiszki, quiz, karty leków, dawki, triage i scenariusze. Za darmo, w przeglądarce.">
+<meta name="theme-color" content="#0b1f3a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b1f3a'/><path d='M40 18h20v22h22v20H60v22H40V60H18V40h22z' fill='%23e63946'/></svg>">
+<style>
+:root{--navy:#0b1f3a;--navy2:#13305a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#f4f7fb;--card:#fff;--line:#dfe6ef;
+--c1:#e63946;--c2:#f4a261;--c3:#2a9d8f;--c4:#457b9d;--c5:#8e5bd6;--c6:#e9c46a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+a{color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+nav{background:var(--navy);color:#fff;position:sticky;top:0;z-index:10}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;text-decoration:none;letter-spacing:.2px}
+.logo i{width:30px;height:30px;border-radius:8px;background:var(--red);display:grid;place-items:center;font-style:normal;font-size:20px;font-weight:900}
+nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;font-size:15px}
+nav ul a{text-decoration:none;opacity:.85}nav ul a:hover{opacity:1}
+@media(max-width:700px){nav ul{display:none}}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#1d4e89 100%);color:#fff;padding:70px 0 90px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;top:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(230,57,70,.35),transparent 70%)}
+.ecg{position:absolute;left:0;right:0;bottom:18px;opacity:.35}
+.badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:999px;font-size:13px;margin-bottom:18px}
+h1{font-size:clamp(32px,5vw,54px);line-height:1.1;margin:0 0 16px;max-width:760px}
+h1 em{font-style:normal;color:#ff8a93}
+.hero p{font-size:19px;max-width:640px;opacity:.9;margin:0 0 28px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px}
+.btn.red{background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(230,57,70,.35)}
+.btn.ghost{border:2px solid rgba(255,255,255,.5);color:#fff}
+.stats{display:flex;gap:30px;margin-top:38px;flex-wrap:wrap}
+.stats b{display:block;font-size:28px}.stats span{font-size:14px;opacity:.8}
+section{padding:64px 0}
+h2{font-size:32px;margin:0 0 8px}.lead{color:var(--mute);margin:0 0 32px;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;text-decoration:none;display:flex;flex-direction:column;gap:10px;position:relative;transition:.2s;border-top:6px solid var(--k)}
+a.card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(11,31,58,.12)}
+.card .ic{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--k) 15%,#fff)}
+.card h3{margin:4px 0 0;font-size:20px}.card p{margin:0;color:var(--mute);font-size:15px}
+.card .go{margin-top:auto;font-weight:700;color:var(--k)}
+.tag{position:absolute;top:16px;right:16px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#eef2f7;color:var(--mute)}
+.tag.live{background:#e3f6ee;color:#1b7a52}
+.soon{opacity:.75}
+.triage{display:flex;border-radius:14px;overflow:hidden;margin:6px 0 2px}
+.triage div{flex:1;padding:10px 6px;text-align:center;font-weight:700;font-size:13px;color:#fff}
+.who{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.who .grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.w{padding:20px;border-radius:16px;background:var(--bg)}
+.w b{display:block;font-size:18px;margin:6px 0}
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 20px 20px 66px;position:relative}
+.step:before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:20px;width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800}
+.note{background:#fff7e6;border:1px solid #f3d08a;border-left:6px solid #e9a400;border-radius:14px;padding:18px 20px;font-size:15px}
+footer{background:var(--navy);color:#cdd6e4;padding:36px 0;font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="/"><i>+</i>ratownikmedyczny.online</a>
+  <ul><li><a href="#narzedzia">Narzędzia</a></li><li><a href="#dla-kogo">Dla kogo</a></li><li><a href="#jak">Jak się uczyć</a></li></ul>
+</div></nav>
+
+<header class="hero">
+  <div class="wrap" style="position:relative;z-index:1">
+    <span class="badge">🚑 Za darmo · bez logowania · działa na telefonie</span>
+    <h1>Nauka dla <em>ratownika medycznego</em>, która wchodzi do głowy</h1>
+    <p>Fiszki, quiz, karty leków, przeliczanie dawek, segregacja (triage) i scenariusze przypadków. Wszystko w kolorach i w jednym miejscu, na zajęcia, kolokwium i egzamin dyplomowy.</p>
+    <div class="btns">
+      <a class="btn red" href="nauka.html">▶ Zacznij naukę</a>
+      <a class="btn ghost" href="fiszki.html">Fiszki – 103 pytania</a>
+    </div>
+    <div class="stats">
+      <div><b>103+</b><span>fiszki z leków i algorytmów</span></div>
+      <div><b>6</b><span>trybów nauki</span></div>
+      <div><b>0 zł</b><span>w wersji testowej</span></div>
+    </div>
+  </div>
+  <svg class="ecg" viewBox="0 0 1200 80" preserveAspectRatio="none" height="70" width="100%"><polyline fill="none" stroke="#ff8a93" stroke-width="3" points="0,50 180,50 200,50 215,40 230,50 260,50 275,8 290,72 305,50 340,50 360,38 385,50 560,50 575,40 590,50 620,50 635,8 650,72 665,50 700,50 720,38 745,50 920,50 935,40 950,50 980,50 995,8 1010,72 1025,50 1060,50 1080,38 1105,50 1200,50"/></svg>
+</header>
+
+<section id="narzedzia"><div class="wrap">
+  <h2>Narzędzia do nauki</h2>
+  <p class="lead">Wybierz, od czego zaczynasz. Postęp zapisuje się w Twojej przeglądarce.</p>
+  <div class="grid">
+    <a class="card" href="nauka.html" style="--k:var(--c1)"><span class="tag live">dostępne</span><div class="ic">🧠</div><h3>Nauka – wszystko w jednym</h3><p>Fiszki, quiz, karty leków, ćwiczenia z dawek i wzorów, triage i scenariusze przypadków. Wzory zawsze widoczne, żeby się uczyć, a nie zgadywać.</p><span class="go">Otwórz →</span></a>
+    <a class="card" href="fiszki.html" style="--k:var(--c4)"><span class="tag live">dostępne</span><div class="ic">🃏</div><h3>Fiszki ratownika medycznego</h3><p>103 fiszki: leki z rozporządzenia MZ, czynności ratownika medycznego, algorytmy ERC i ustawa o Państwowym Ratownictwie Medycznym.</p><span class="go">Otwórz →</span></a>
+    <a class="card" href="nauka.html" style="--k:var(--c3)"><span class="tag live">dostępne</span><div class="ic">🏷️</div><h3>Segregacja (triage)</h3><div class="triage"><div style="background:#2b9348">zielony</div><div style="background:#e9b200">żółty</div><div style="background:#d62828">czerwony</div><div style="background:#222">czarny</div></div><p>Kolory od najmniej do najbardziej pilnego. Ćwiczenia na przypadkach.</p><span class="go">Ćwicz →</span></a>
+    <div class="card soon" style="--k:var(--c2)"><span class="tag">wkrótce</span><div class="ic">💊</div><h3>Farmakologia – karty leków</h3><p>Ponad 40 leków ZRM: wskazania, przeciwwskazania, dawkowanie dorosłych i dzieci, z kolorami grup.</p></div>
+    <div class="card soon" style="--k:var(--c5)"><span class="tag">wkrótce</span><div class="ic">📈</div><h3>EKG krok po kroku</h3><p>11 kroków interpretacji, rytmy NZK, bloki AV i zawał według ścian, z zapisem rytmu zatokowego obok.</p></div>
+    <div class="card soon" style="--k:var(--c6)"><span class="tag">wkrótce</span><div class="ic">🩺</div><h3>Badanie ABCDE i algorytmy</h3><p>Schemat ABCDE ze skalą ACVPU, stany nagłe i objawy kliniczne w formie kart do powtórek.</p></div>
+  </div>
+</div></section>
+
+<section id="dla-kogo" class="who"><div class="wrap">
+  <h2>Dla kogo</h2>
+  <p class="lead">Treść przygotowana przez studenta ratownictwa medycznego pracującego w transporcie medycznym.</p>
+  <div class="grid">
+    <div class="w">🎓<b>Studenci ratownictwa medycznego</b>Powtórki przed kolokwium, praktykami i egzaminem dyplomowym.</div>
+    <div class="w">🚑<b>Ratownicy medyczni</b>Szybkie odświeżenie leków, dawek i algorytmów przed dyżurem.</div>
+    <div class="w">🏥<b>Zespoły transportu medycznego</b>Wspólna baza wiedzy dla całej załogi.</div>
+    <div class="w">👩‍🏫<b>Instruktorzy KPP</b>Gotowe pytania i scenariusze na zajęcia.</div>
+  </div>
+</div></section>
+
+<section id="jak"><div class="wrap">
+  <h2>Jak się uczyć, żeby zapamiętać</h2>
+  <p class="lead">Krótko, codziennie i z kolorami.</p>
+  <div class="steps">
+    <div class="step"><b>Fiszki 10 minut dziennie</b><br>Przerzucaj karty, oznaczaj te, których nie umiesz.</div>
+    <div class="step"><b>Quiz na koniec dnia</b><br>Sprawdź, co zostało w głowie.</div>
+    <div class="step"><b>Dawki ze wzorem</b><br>Licz sam, wzór masz przed oczami.</div>
+    <div class="step"><b>Scenariusz przypadku</b><br>Połącz wszystko w działanie przy pacjencie.</div>
+  </div>
+  <p style="margin-top:34px" class="note"><b>Ważne:</b> materiały mają charakter edukacyjny i nie zastępują aktualnych wytycznych ERC/PRC, rozporządzeń Ministra Zdrowia ani procedur Twojego pracodawcy. Przed podaniem leku zawsze sprawdź aktualną ChPL i obowiązujące przepisy.</p>
+</div></section>
+
+<footer><div class="wrap">
+  <div><b style="color:#fff">ratownikmedyczny.online</b><br>Nauka dla ratownika medycznego · wersja testowa</div>
+  <div>Uwagi i błędy w treści: <a href="mailto:biuro@medkrak.pl">biuro@medkrak.pl</a><br>© 2026</div>
+</div></footer>
+</body>
+</html>
