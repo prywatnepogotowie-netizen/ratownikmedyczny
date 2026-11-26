@@ -71,6 +71,9 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
 <div class="box" id="konto">
  <h2>Twoje konto</h2>
  <div id="st"></div>
+ <div style="border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px"><b>🔑 Masz kod dostępu?</b>
+  <form id="cf" style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="code" placeholder="RM-XXXX-XXXX" autocomplete="off" style="flex:1;min-width:160px;padding:12px 14px;font-size:16px;border:1px solid var(--line);border-radius:10px;text-transform:uppercase"><button class="btn red" type="submit" style="width:auto">Aktywuj</button></form>
+  <p id="cmsg" class="note"></p></div>
  <div id="loginbox">
   <p>Zaloguj się adresem e-mail. Wyślemy Ci link, bez hasła. Do zakupu podaj <b>ten sam adres e-mail</b>, wtedy Pro włączy się automatycznie.</p>
   <form id="lf"><input type="email" id="em" required placeholder="twoj@email.pl" autocomplete="email"><button class="btn red" type="submit">Wyślij link logowania</button></form>
@@ -108,7 +111,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
  async function show(){
   await RM.refresh();
   const e=RM.email(),u=RM.proUntil();
-  if(C.enforce&&u>Date.now()) st.innerHTML=`<p class="status ok">✓ Pro aktywne do ${new Date(u).toLocaleDateString('pl-PL')} · ${e}</p>`;
+  if(localStorage.getItem('rm_code')&&u>Date.now()) st.innerHTML=`<p class="status ok">✓ Pro aktywne (kod dostępu) do ${new Date(u).toLocaleDateString('pl-PL')}</p>`;
+  else if(C.enforce&&u>Date.now()) st.innerHTML=`<p class="status ok">✓ Pro aktywne do ${new Date(u).toLocaleDateString('pl-PL')} · ${e}</p>`;
   else if(!C.enforce) st.innerHTML='<p class="status trial">🎁 Trwa okres próbny: wszystkie treści Pro są teraz dostępne bezpłatnie. Płatności uruchomimy wkrótce.</p>';
   else if(e) st.innerHTML=`<p class="status no">Zalogowano jako ${e}. Pro nieaktywne.</p>`;
   if(e) st.insertAdjacentHTML('beforeend','<p class="note"><a href="#" id="lo">Wyloguj</a></p>'),document.getElementById('lo').onclick=ev=>{ev.preventDefault();RM.logout()};
@@ -117,6 +121,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  if(C.payments&&C.supabaseUrl){buy.href='#konto';buy.onclick=async ev=>{ev.preventDefault();const m=document.getElementById('bmsg');if(!document.getElementById('zgoda').checked){m.textContent='Zaznacz zgodę powyżej, aby przejść do płatności.';return}m.textContent='Łączę z Przelewy24…';try{await RM.buy()}catch(x){m.textContent=x.message;document.getElementById('konto').scrollIntoView({behavior:'smooth'})}}}
  else{buy.textContent='Płatności wkrótce – teraz Pro gratis';buy.href='egzamin.html';}
  if(location.search.includes('platnosc=ok'))st.insertAdjacentHTML('beforebegin','<p class="status ok">✓ Dziękujemy! Płatność jest przetwarzana. Pro włączy się w ciągu kilku minut, odśwież stronę.</p>');
+ document.getElementById('cf').onsubmit=async ev=>{ev.preventDefault();const m=document.getElementById('cmsg');try{await RM.redeem(document.getElementById('code').value);m.textContent='✓ Dostęp Pro aktywny na tym urządzeniu przez 365 dni.';show()}catch(x){m.textContent=x.message}};
  document.getElementById('lf').onsubmit=async ev=>{ev.preventDefault();const m=document.getElementById('msg');
   try{await RM.login(document.getElementById('em').value.trim());m.textContent='✓ Sprawdź skrzynkę i kliknij link logowania.'}catch(x){m.textContent=x.message}};
  show();

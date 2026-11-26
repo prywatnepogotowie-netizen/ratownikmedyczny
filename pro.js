@@ -6,7 +6,9 @@ window.RM_CFG = {
   supabaseKey: '',          // klucz "anon public"
   payments: false,          // true = przycisk Kup łączy z Przelewy24 (funkcja Supabase "p24")
   enforce: false,
-  price: '99 zł / rok'
+  price: '99 zł / rok',
+  // kody dostępu (zapisany tylko skrót SHA-256, nie sam kod)
+  codes: ['1e1caa6257e19c96ddf67502ceeb389fbdc33770cee552e34152a7d521ccf7e3']
 };
 (function(){
   const C = window.RM_CFG, LS = window.localStorage;
@@ -39,7 +41,16 @@ window.RM_CFG = {
     if (!r.ok || !d.url) throw new Error(d.error || 'Nie udało się rozpocząć płatności. Spróbuj za chwilę.');
     location.href = d.url;
   };
-  RM.logout = () => { ['rm_token','rm_pro_until','rm_email'].forEach(k => set(k, null)); location.reload(); };
+  // kod dostępu: właściciel, testerzy, kody podarunkowe
+  RM.redeem = async code => {
+    code = (code || '').trim().toUpperCase();
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(code));
+    const h = [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+    if (!(C.codes || []).includes(h)) throw new Error('Nieprawidłowy kod.');
+    set('rm_pro_until', String(Date.now() + 365 * 864e5)); set('rm_code', '1');
+    return true;
+  };
+  RM.logout = () => { ['rm_token','rm_pro_until','rm_email','rm_code'].forEach(k => set(k, null)); location.reload(); };
 
   // sprawdzenie dostępu Pro w bazie
   RM.refresh = async () => {
@@ -49,7 +60,7 @@ window.RM_CFG = {
         headers: { apikey: C.supabaseKey, Authorization: 'Bearer ' + t } });
       if (r.status === 401) { set('rm_token', null); return RM.isPro(); }
       const d = await r.json();
-      set('rm_pro_until', d[0] ? String(Date.parse(d[0].pro_until)) : '0');
+      if (!get('rm_code')) set('rm_pro_until', d[0] ? String(Date.parse(d[0].pro_until)) : '0');
     } catch(e) {}
     return RM.isPro();
   };
@@ -87,7 +98,17 @@ window.RM_CFG = {
 .rm-lock{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:rgba(255,255,255,.55);text-decoration:none;color:#0b1f3a;border-radius:inherit;z-index:2}
 .rm-lock b{font-size:17px}.rm-lock span{font-size:14px;background:#e63946;color:#fff;padding:6px 14px;border-radius:999px;font-weight:700}
 .rm-bar{background:linear-gradient(90deg,#2a9d8f,#457b9d);color:#fff;text-align:center;font:600 14px/1.4 system-ui,sans-serif;padding:8px 12px}
-.rm-bar a{color:#fff}`;
+.rm-bar a{color:#fff}
+@media(max-width:700px){
+ table.rm-r{border:0!important;width:100%!important;min-width:0!important}
+ table.rm-r thead{display:none}
+ table.rm-r tr{display:block;background:#fff;border:1px solid #dfe6ef;border-radius:12px;margin:0 0 10px;padding:8px 12px}
+ table.rm-r td,table.rm-r th{display:grid;grid-template-columns:38% 1fr;gap:10px;border:0!important;padding:4px 0!important;white-space:normal!important;text-align:left!important;font-size:15px}
+ table.rm-r td:before{content:attr(data-l);font-weight:700;color:#5b6b82}
+ table.rm-r td[data-l=""]{grid-template-columns:1fr}
+ table.rm-r td:first-child{font-weight:800;font-size:16px}
+ .scroll,.tw{overflow:visible!important}
+}`;
   document.head.appendChild(css);
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -97,6 +118,19 @@ window.RM_CFG = {
       document.body.prepend(b);
     }
     RM.gate();
+    // tabele na telefonie: każdy wiersz jako karta z podpisami kolumn
+    document.querySelectorAll('table').forEach(t => {
+      if (t.dataset.static !== undefined) return;
+      const hs = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim());
+      const first = t.querySelector('tr');
+      const head = hs.length ? hs : (first && first.querySelectorAll('th').length ? [...first.querySelectorAll('th')].map(th => th.textContent.trim()) : []);
+      if (!head.length) return;
+      t.classList.add('rm-r');
+      t.querySelectorAll('tbody tr, tr').forEach(tr => {
+        if (tr.closest('thead') || (!hs.length && tr === first)) { if (!hs.length && tr === first) tr.style.display = 'none'; return; }
+        [...tr.children].forEach((c, i) => c.setAttribute('data-l', head[i] || ''));
+      });
+    });
     RM.refresh();
   });
 })();

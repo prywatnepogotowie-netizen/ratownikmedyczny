@@ -146,7 +146,7 @@ function finish(){
  <div class="card"><b>Wynik według działów</b>
  <div class="legend" style="margin:6px 0 4px"><span><i style="background:var(--bad)"></i>poniżej ${PASS}%</span><span><i style="background:var(--warn)"></i>${PASS}–79%</span><span><i style="background:var(--ok)"></i>80% i więcej</span></div>
  ${Object.entries(by).sort((a,b)=>a[1].g/a[1].n-b[1].g/b[1].n).map(([s,v])=>{const p=Math.round(100*v.g/v.n);return `<div class="row"><span class="lbl">${esc(s)} (${v.g}/${v.n})</span><span class="meter"><i style="width:${p}%;background:${col(p)}"></i></span><span class="pc">${p}%</span></div>`}).join('')}
- <p style="color:var(--mute);font-size:14px;margin:8px 0 0">Działy od najsłabszego. Od nich zacznij powtórkę w aplikacji <a href="nauka.html">Nauka</a>.</p></div>
+ <p style="color:var(--mute);font-size:14px;margin:8px 0 0">Działy od najsłabszego. Od nich zacznij powtórkę w aplikacji <a href="index.html#narzedzia">Wszystkie działy</a>.</p></div>
  <div class="nav2" style="margin-bottom:16px"><button class="btn red" id="again">↻ Nowy test</button><button class="btn ghost" id="hm">Wybierz inny tryb</button></div>
  <h2>Omówienie błędów (${wrong.length})</h2>
  ${wrong.length?wrong.map(r=>`<div class="card"><div class="ctx">Pytanie ${r.k+1} · ${esc(r.Q.sec)} · ${esc(r.Q.ctx)}</div>${r.Q.html}${r.Q.opts.map((o,j)=>`<div class="opt ${o.ok?'ok':j===r.a?'no':''}" style="cursor:default">${String.fromCharCode(65+j)}. ${o.t}${o.ok?' ✓':j===r.a?' ✗ Twoja odpowiedź':''}</div>`).join('')}${r.a===undefined?'<p class="fail"><b>Brak odpowiedzi</b></p>':''}<div class="expl">${r.Q.expl}</div></div>`).join(''):'<div class="card">Bez błędów. Gratulacje! 💪</div>'}`;

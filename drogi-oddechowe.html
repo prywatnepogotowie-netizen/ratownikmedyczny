@@ -23,12 +23,18 @@ nav{background:var(--navy)}nav .w{display:flex;justify-content:space-between;ali
 .txt{padding:16px 20px}.txt h3{margin:0 0 6px;font-size:15px;color:var(--k)}.txt ol{margin:0 0 12px;padding-left:20px}.txt li{margin:3px 0}
 .yesno{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}.yesno div{border-radius:10px;padding:8px 10px;font-size:14px}.yes{background:#e6f6ea;border-left:5px solid var(--ok)}.no{background:#fdeaea;border-left:5px solid var(--bad)}.yesno b{display:block}
 .tip{font-size:14px;background:#fff7e6;border-left:5px solid #e9a400;border-radius:8px;padding:7px 10px;margin:8px 0 0}
-.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14.5px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;white-space:nowrap}td:last-child,th:last-child{white-space:normal}th{background:#eef2f7}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14.5px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;white-space:normal}td:last-child,th:last-child{white-space:normal}th{background:#eef2f7}
 .sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.2)}
 .full{padding:0 20px 18px}
 .note{background:#fff7e6;border:1px solid #f3d08a;border-left:6px solid #e9a400;border-radius:12px;padding:14px 16px;font-size:14px;margin:24px 0}
 footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin-top:40px}footer a{color:#fff}
+.photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:16px 20px 0}
+.photos figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.photos img{width:100%;height:210px;object-fit:contain;background:#f4f7fb;display:block}
+.photos figcaption{padding:8px 12px 10px;font-size:14px;line-height:1.35}
+.photos small{display:block;color:var(--mute);font-size:11.5px;margin-top:3px}.photos small a{color:inherit}
 </style>
+<script src="pro.js"></script>
 </head>
 <body>
 <nav><div class="w"><a href="/">← ratownikmedyczny.online</a><span>Drogi oddechowe</span></div></nav>
@@ -43,7 +49,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 <a href="#cico" style="--k:#0b1f3a">6. Konikotomia<span>CICO</span></a>
 </div>
 
-<section class="dev" id="manualne" style="--k:#2a9d8f"><header><h2>1. Rękoczyny i wentylacja workiem (BVM)</h2><span class="what">Zawsze zaczynasz od tego</span></header>
+<section class="dev" id="manualne" style="--k:#2a9d8f"><header><h2>1. Rękoczyny i wentylacja workiem (BVM)</h2><span class="what">Zawsze zaczynasz od tego</span></header><div class="photos"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Bag_valve_mask_with_BV_filter.png/960px-Bag_valve_mask_with_BV_filter.png" alt="Worek samorozprężalny z maską, zastawką i filtrem" loading="lazy"><figcaption>Worek samorozprężalny z maską, zastawką i filtrem<small>Fot./il.: Open Critical Care / WHO · <a href="https://commons.wikimedia.org/wiki/File:Bag_valve_mask_with_BV_filter.png" target="_blank" rel="noopener">CC BY 4.0, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="grid"><div class="fig">
 <svg viewBox="0 0 470 230" role="img" aria-label="Chwyt C-E przy wentylacji workiem samorozprężalnym">
 <ellipse cx="150" cy="130" rx="80" ry="70" fill="#f2c7a5" stroke="#d9a27f" stroke-width="3"/>
@@ -59,7 +65,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 <div class="txt"><h3>Kolejność</h3><ol><li>Odgięcie głowy i uniesienie żuchwy. Przy podejrzeniu urazu szyi: tylko wysunięcie żuchwy.</li><li>Odessij wydzielinę i usuń widoczne ciało obce.</li><li>Maska obejmuje nos i usta. Chwyt C-E jedną ręką albo, lepiej, oburącz z drugą osobą.</li><li>Ściskaj worek tylko do uniesienia klatki (ok. 500–600 ml, 1 s wdechu). Tlen 15 l/min z rezerwuarem.</li></ol>
 <div class="yesno"><div class="yes"><b>Częstość</b>Bez NZK 10/min · NZK bez rurki 30:2 · z rurką/SAD 10/min ciągle</div><div class="no"><b>Typowy błąd</b>Za dużo i za szybko, czyli wzdęcie żołądka, wymioty i aspiracja</div></div></div></div></section>
 
-<section class="dev" id="opa" style="--k:#457b9d"><header><h2>2. Rurka ustno-gardłowa (Guedel, OPA)</h2><span class="what">Pacjent nieprzytomny, bez odruchu wymiotnego</span></header>
+<section class="dev" id="opa" style="--k:#457b9d"><header><h2>2. Rurka ustno-gardłowa (Guedel, OPA)</h2><span class="what">Pacjent nieprzytomny, bez odruchu wymiotnego</span></header><div class="photos"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/One-piece_Guedel_Airways.jpg/960px-One-piece_Guedel_Airways.jpg" alt="Rurki Guedela w różnych rozmiarach" loading="lazy"><figcaption>Rurki Guedela w różnych rozmiarach<small>Fot./il.: Intersurgical Ltd · <a href="https://commons.wikimedia.org/wiki/File:One-piece_Guedel_Airways.jpg" target="_blank" rel="noopener">CC BY-SA 3.0, Wikimedia Commons</a></small></figcaption></figure><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Oral_pharyngeal_airway_%28OPA%29_insertion.png/960px-Oral_pharyngeal_airway_%28OPA%29_insertion.png" alt="Zakładanie: wprowadź wygięciem do góry, potem obróć o 180°" loading="lazy"><figcaption>Zakładanie: wprowadź wygięciem do góry, potem obróć o 180°<small>Fot./il.: Open Critical Care / WHO · <a href="https://commons.wikimedia.org/wiki/File:Oral_pharyngeal_airway_%28OPA%29_insertion.png" target="_blank" rel="noopener">CC BY 4.0, Wikimedia Commons</a></small></figcaption></figure><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Airway_oral_keeping_the_airway_open_in_an_unconscious_patient.jpg/960px-Airway_oral_keeping_the_airway_open_in_an_unconscious_patient.jpg" alt="Model: rurka unosi nasadę języka od tylnej ściany gardła" loading="lazy"><figcaption>Model: rurka unosi nasadę języka od tylnej ściany gardła<small>Fot./il.: Dr. Lorimer · <a href="https://commons.wikimedia.org/wiki/File:Airway_oral_keeping_the_airway_open_in_an_unconscious_patient.jpg" target="_blank" rel="noopener">CC BY-SA 4.0, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="grid"><div class="fig">
 <svg viewBox="0 0 470 250" role="img" aria-label="Dobór rurki Guedela od kącika ust do kąta żuchwy i wprowadzanie z obrotem o 180 stopni">
 <path d="M60 40 C30 70 30 170 70 200 C110 230 190 225 230 190 L240 150 C245 120 230 100 215 95 L200 60 C180 30 110 20 60 40 Z" fill="#f2c7a5" stroke="#d9a27f" stroke-width="3"/>
@@ -83,7 +89,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 <tr><td>000–00</td><td>noworodek, niemowlę</td><td>Bez obrotu, delikatnie</td></tr><tr><td>0–1</td><td>małe dziecko</td><td>Bez obrotu</td></tr><tr><td>2</td><td>starsze dziecko / drobna osoba dorosła</td><td>Dobór zawsze miarą na twarzy</td></tr><tr><td>3</td><td>kobieta</td><td>Obrót 180°</td></tr><tr><td>4</td><td>mężczyzna</td><td>Obrót 180°</td></tr><tr><td>5</td><td>duży dorosły</td><td>Obrót 180°</td></tr>
 </tbody></table></div></section>
 
-<section class="dev" id="npa" style="--k:#1d4e89"><header><h2>3. Rurka nosowo-gardłowa (NPA)</h2><span class="what">Gdy pacjent ma odruch wymiotny albo szczękościsk</span></header>
+<section class="dev" id="npa" style="--k:#1d4e89"><header><h2>3. Rurka nosowo-gardłowa (NPA)</h2><span class="what">Gdy pacjent ma odruch wymiotny albo szczękościsk</span></header><div class="photos"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Nasopharyngeal_Airway.JPG/960px-Nasopharyngeal_Airway.JPG" alt="Rurka nosowo-gardłowa z kołnierzem, który zostaje przy nozdrzu" loading="lazy"><figcaption>Rurka nosowo-gardłowa z kołnierzem, który zostaje przy nozdrzu<small>Fot./il.: ICUnurses · <a href="https://commons.wikimedia.org/wiki/File:Nasopharyngeal_Airway.JPG" target="_blank" rel="noopener">CC BY-SA 4.0, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="grid"><div class="fig">
 <svg viewBox="0 0 470 240" role="img" aria-label="Rurka nosowo-gardłowa wprowadzana poziomo w głąb nosa, prostopadle do twarzy">
 <path d="M80 30 C40 60 40 180 80 210 C120 235 200 225 230 190 L236 150 L262 128 C266 118 252 110 240 108 L226 70 C200 30 130 15 80 30 Z" fill="#f2c7a5" stroke="#d9a27f" stroke-width="3"/>
@@ -101,7 +107,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 <p class="tip">Krwawienie z nosa po założeniu jest częste. Przygotuj ssak.</p></div></div>
 <div class="full scroll"><table><thead><tr><th>Średnica wewnętrzna</th><th>Pacjent (orientacyjnie)</th></tr></thead><tbody><tr><td>6,0 mm</td><td>drobna kobieta / starsze dziecko</td></tr><tr><td>6,5–7,0 mm</td><td>kobieta</td></tr><tr><td>7,0–7,5 mm</td><td>mężczyzna</td></tr><tr><td>8,0 mm</td><td>duży mężczyzna</td></tr></tbody></table></div></section>
 
-<section class="dev" id="sad" style="--k:#8e5bd6"><header><h2>4. Przyrządy nadgłośniowe: i-gel i maska krtaniowa (LMA)</h2><span class="what">Szybkie zabezpieczenie bez laryngoskopu</span></header>
+<section class="dev" id="sad" style="--k:#8e5bd6"><header><h2>4. Przyrządy nadgłośniowe: i-gel i maska krtaniowa (LMA)</h2><span class="what">Szybkie zabezpieczenie bez laryngoskopu</span></header><div class="photos"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Masques_laryng%C3%A9s-_LMA_Unique_et_I-gel.jpg/960px-Masques_laryng%C3%A9s-_LMA_Unique_et_I-gel.jpg" alt="Maska krtaniowa (z lewej) i i-gel (z prawej) w opakowaniach" loading="lazy"><figcaption>Maska krtaniowa (z lewej) i i-gel (z prawej) w opakowaniach<small>Fot./il.: CYP3A42D6 · <a href="https://commons.wikimedia.org/wiki/File:Masques_laryng%C3%A9s-_LMA_Unique_et_I-gel.jpg" target="_blank" rel="noopener">CC BY-SA 4.0, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="grid"><div class="fig">
 <svg viewBox="0 0 470 275" role="img" aria-label="Maska nadgłośniowa i-gel uszczelniająca wejście do krtani">
 <path d="M60 30 C30 60 30 170 70 205 C110 235 190 230 225 195 L232 150 C236 125 225 105 212 100 L200 65 C180 30 110 15 60 30 Z" fill="#f2c7a5" stroke="#d9a27f" stroke-width="3"/>
@@ -119,7 +125,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 <tr><td>1</td><td><i class="sw" style="background:#f4a6c0"></i>różowy</td><td>2–5 kg</td></tr><tr><td>1,5</td><td><i class="sw" style="background:#8fc7ef"></i>jasnoniebieski</td><td>5–12 kg</td></tr><tr><td>2</td><td><i class="sw" style="background:#b8b8b8"></i>szary</td><td>10–25 kg</td></tr><tr><td>2,5</td><td><i class="sw" style="background:#fff;"></i>biały</td><td>25–35 kg</td></tr><tr><td>3</td><td><i class="sw" style="background:#f6d000"></i>żółty</td><td>30–60 kg</td></tr><tr><td>4</td><td><i class="sw" style="background:#38a845"></i>zielony</td><td>50–90 kg</td></tr><tr><td>5</td><td><i class="sw" style="background:#f39200"></i>pomarańczowy</td><td>powyżej 90 kg</td></tr>
 </tbody></table><p style="font-size:13px;color:var(--mute);margin:6px 0 0">Kolory według producenta i-gel. Zawsze sprawdź nadruk na opakowaniu.</p></div></section>
 
-<section class="dev" id="ett" style="--k:#e63946"><header><h2>5. Intubacja dotchawicza</h2><span class="what">Zawsze z kapnografią</span></header>
+<section class="dev" id="ett" style="--k:#e63946"><header><h2>5. Intubacja dotchawicza</h2><span class="what">Zawsze z kapnografią</span></header><div class="photos"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Laryngoscope.jpg/960px-Laryngoscope.jpg" alt="Laryngoskop z łyżką Macintosha" loading="lazy"><figcaption>Laryngoskop z łyżką Macintosha<small>Fot./il.: ignis · <a href="https://commons.wikimedia.org/wiki/File:Laryngoscope.jpg" target="_blank" rel="noopener">CC BY-SA 3.0, Wikimedia Commons</a></small></figcaption></figure><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Adult_and_pediatric_airway_anatomy.png/960px-Adult_and_pediatric_airway_anatomy.png" alt="Drogi oddechowe dziecka i dorosłego: u dziecka duży język i wyżej położona krtań" loading="lazy"><figcaption>Drogi oddechowe dziecka i dorosłego: u dziecka duży język i wyżej położona krtań<small>Fot./il.: Open Critical Care / WHO · <a href="https://commons.wikimedia.org/wiki/File:Adult_and_pediatric_airway_anatomy.png" target="_blank" rel="noopener">CC BY 4.0, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="grid"><div class="fig">
 <svg viewBox="0 0 470 220" role="img" aria-label="Rurka intubacyjna z mankietem i krzywa kapnografii potwierdzająca położenie">
 <path d="M30 60 L300 60 C330 60 340 80 340 100" fill="none" stroke="#e63946" stroke-width="12" stroke-linecap="round"/>
