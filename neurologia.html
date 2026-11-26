@@ -40,6 +40,9 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 .photos img{width:100%;height:200px;object-fit:contain;background:#f4f7fb;display:block}
 .photos figcaption{padding:8px 12px 10px;font-size:14px;line-height:1.35}
 .photos small{display:block;color:var(--mute);font-size:11.5px;margin-top:3px}.photos small a{color:inherit}
+.fig.real{padding:14px;display:block}.fig.real figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fig.real img{width:100%;max-height:340px;object-fit:contain;background:#f4f7fb;display:block}.fig.real figcaption{padding:8px 12px 10px;font-size:14px}.fig.real small{display:block;color:var(--mute);font-size:11.5px}.fig.real small a{color:inherit}
+.grid.one{grid-template-columns:1fr!important}
 </style>
 <script src="pro.js"></script>
 </head>
@@ -53,18 +56,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 
 <section class="sign" id="babinski" style="--k:#8e5bd6">
 <header><h2>Odruch Babińskiego</h2><span class="what">Objaw piramidowy – uszkodzenie drogi korowo-rdzeniowej</span></header><div class="photos" style="padding:14px 18px 0"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/BabinskiSign.jpg/960px-BabinskiSign.jpg" alt="Objaw Babińskiego dodatni: paluch idzie do góry, pozostałe palce się rozchodzą" loading="lazy"><figcaption>Objaw Babińskiego dodatni: paluch idzie do góry, pozostałe palce się rozchodzą<small>Fot./il.: Medicus of Borg · <a href="https://commons.wikimedia.org/wiki/File:BabinskiSign.jpg" target="_blank" rel="noopener">domena publiczna, Wikimedia Commons</a></small></figcaption></figure><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Babinski%27s_sign_%28de%29.png/960px-Babinski%27s_sign_%28de%29.png" alt="Jak badać: drażnisz boczny brzeg stopy od pięty do palców. Na górze wynik ujemny (prawidłowy), na dole dodatni" loading="lazy"><figcaption>Jak badać: drażnisz boczny brzeg stopy od pięty do palców. Na górze wynik ujemny (prawidłowy), na dole dodatni<small>Fot./il.: Roxbury-de · <a href="https://commons.wikimedia.org/wiki/File:Babinski%27s_sign_%28de%29.png" target="_blank" rel="noopener">CC BY-SA 3.0, Wikimedia Commons</a></small></figcaption></figure></div>
-<div class="grid"><div class="fig">
-<svg viewBox="0 0 440 270" role="img" aria-label="Odruch Babińskiego, widok stopy z boku: po lewej norma, paluch zgina się w dół; po prawej wynik dodatni, paluch unosi się"><defs><marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8e5bd6"/></marker></defs><g transform="translate(0,0)"><text x="105" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#2b9348">NORMA – paluch w dół</text>
-<path d="M20 200 C10 170 25 140 60 132 L120 120 C140 117 160 125 172 138 L178 150 C182 160 176 172 165 176 L60 200 C45 204 26 206 20 200 Z" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/>
-<path d="M30 180 L20 120 C18 100 30 80 50 78 L70 80 C78 100 70 125 62 132" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/>
-<path d="M168 140 C185 150 190 165 186 182" fill="none" stroke="var(--skin2)" stroke-width="13" stroke-linecap="round"/><path d="M196 160 l0 30" stroke="#2b9348" stroke-width="3.5" marker-end="url(#ab)"/>
-<path d="M40 214 C80 212 130 204 160 192" fill="none" stroke="#8e5bd6" stroke-width="4" stroke-dasharray="7 6" marker-end="url(#ab)"/>
-<text x="105" y="250" text-anchor="middle" font-size="13" fill="#5b6b82">kreska po podeszwie: pięta → palce</text></g><g transform="translate(220,0)"><text x="105" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#d62828">DODATNI – paluch w górę</text>
-<path d="M20 200 C10 170 25 140 60 132 L120 120 C140 117 160 125 172 138 L178 150 C182 160 176 172 165 176 L60 200 C45 204 26 206 20 200 Z" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/>
-<path d="M30 180 L20 120 C18 100 30 80 50 78 L70 80 C78 100 70 125 62 132" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/>
-<path d="M168 140 C180 115 186 100 182 86" fill="none" stroke="#d62828" stroke-width="13" stroke-linecap="round"/><path d="M188 120 l0 -36" stroke="#d62828" stroke-width="3.5" marker-end="url(#ab)"/>
-<path d="M40 214 C80 212 130 204 160 192" fill="none" stroke="#8e5bd6" stroke-width="4" stroke-dasharray="7 6" marker-end="url(#ab)"/>
-<text x="105" y="250" text-anchor="middle" font-size="13" fill="#5b6b82">+ pozostałe palce w wachlarz</text></g></svg></div>
+<div class="grid one">
 <div class="txt"><h3>Jak badać</h3><ol><li>Pacjent leży na plecach, nogi rozluźnione.</li><li>Tępym przedmiotem (trzonek młotka, kluczyk) prowadzisz powolną, pewną kreskę po <b>bocznym brzegu podeszwy</b> od pięty w stronę małego palca, a potem łukiem pod palcami.</li><li>Patrzysz na paluch i pozostałe palce.</li></ol>
 <div class="res"><div class="pos"><b>DODATNI (patologia)</b>Paluch zgina się do góry, palce rozchylają się wachlarzowato</div><div class="neg"><b>UJEMNY (norma)</b>Paluch i palce zginają się w dół</div></div>
 <p class="clin"><b>Co oznacza:</b> uszkodzenie górnego neuronu ruchowego, np. udar, uraz głowy, guz, SM, encefalopatia. Często towarzyszą mu wygórowane odruchy i spastyczność.</p>
@@ -72,19 +64,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 
 <section class="sign" id="karkowy" style="--k:#d62828">
 <header><h2>Sztywność karku</h2><span class="what">Objaw oponowy</span></header>
-<div class="grid"><div class="fig">
-<svg viewBox="0 0 440 220" role="img" aria-label="Badanie sztywności karku: ręce badającego zginają głowę pacjenta do przodu">
-<rect x="20" y="150" width="400" height="14" rx="7" fill="#cfd8e6"/>
-<path d="M150 150 L330 150 L330 128 C330 120 322 114 312 114 L170 116 Z" fill="#4a78b5"/>
-<circle cx="110" cy="112" r="34" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/>
-<path d="M140 120 L172 122" stroke="var(--skin2)" stroke-width="12" stroke-linecap="round"/>
-<path d="M70 70 C80 40 120 36 135 60" fill="none" stroke="#14213d" stroke-width="10" stroke-linecap="round"/>
-<path d="M60 100 C55 70 75 55 95 70" fill="none" stroke="#e9a400" stroke-width="9" stroke-linecap="round"/>
-<path d="M110 60 C125 30 160 45 150 75" fill="none" stroke="#d62828" stroke-width="4" marker-end="url(#ab)"/>
-<text x="175" y="50" font-size="14" font-weight="700" fill="#d62828">bierne zgięcie głowy do mostka</text>
-<text x="175" y="72" font-size="13" fill="#5b6b82">opór i ból = objaw dodatni</text>
-<text x="220" y="200" text-anchor="middle" font-size="13" fill="#5b6b82">ręce badającego pod potylicą</text>
-</svg></div>
+<div class="grid"><div class="fig real"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Neck_stiffness.jpg/960px-Neck_stiffness.jpg" alt="Dziecko z zapaleniem opon: wyraźna sztywność karku, głowa odgięta do tyłu" loading="lazy"><figcaption>Dziecko z zapaleniem opon: wyraźna sztywność karku, głowa odgięta do tyłu<small>Fot./il.: L.A. Marty M.D. · <a href="https://commons.wikimedia.org/wiki/File:Neck_stiffness.jpg" target="_blank" rel="noopener">domena publiczna, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="txt"><h3>Jak badać</h3><ol><li>Pacjent leży płasko na plecach.</li><li>Kładziesz dłonie pod potylicą i <b>biernie</b> przyginasz brodę do mostka.</li><li>Wcześniej wyklucz uraz kręgosłupa szyjnego.</li></ol>
 <div class="res"><div class="pos"><b>DODATNI</b>Opór i ból, broda nie dochodzi do mostka</div><div class="neg"><b>UJEMNY</b>Broda swobodnie dotyka mostka</div></div>
 <p class="clin"><b>Co oznacza:</b> podrażnienie opon, np. zapalenie opon mózgowo-rdzeniowych albo krwawienie podpajęczynówkowe (SAH).</p>
@@ -92,20 +72,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 
 <section class="sign" id="kernig" style="--k:#d62828">
 <header><h2>Objaw Kerniga</h2><span class="what">Objaw oponowy</span></header>
-<div class="grid"><div class="fig">
-<svg viewBox="0 0 440 240" role="img" aria-label="Objaw Kerniga: noga zgięta w biodrze i kolanie pod kątem 90 stopni, próba wyprostowania kolana">
-<rect x="20" y="196" width="400" height="14" rx="7" fill="#cfd8e6"/>
-<path d="M40 196 L190 196 L190 176 L40 176 Z" fill="#4a78b5"/>
-<circle cx="40" cy="170" r="24" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/>
-<path d="M190 186 L210 86" stroke="var(--skin)" stroke-width="26" stroke-linecap="round"/>
-<path d="M210 86 L320 96" stroke="var(--skin)" stroke-width="22" stroke-linecap="round"/>
-<path d="M210 86 L265 30" stroke="var(--skin2)" stroke-width="5" stroke-dasharray="6 6"/>
-<path d="M316 96 C350 80 360 50 340 34" fill="none" stroke="#d62828" stroke-width="4" marker-end="url(#ab)"/>
-<text x="350" y="24" font-size="13" font-weight="700" fill="#d62828">prostowanie</text>
-<path d="M196 160 A24 24 0 0 1 214 140" fill="none" stroke="#8e5bd6" stroke-width="3"/><text x="150" y="140" font-size="13" font-weight="700" fill="#8e5bd6">90°</text>
-<text x="226" y="128" font-size="13" font-weight="700" fill="#8e5bd6">90°</text>
-<text x="230" y="160" font-size="13" fill="#5b6b82">ból/opór: kolano</text><text x="230" y="176" font-size="13" fill="#5b6b82">nie prostuje się &gt;135°</text>
-</svg></div>
+<div class="grid"><div class="fig real"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Kernig%27s_sign_cerebrospinal_meningitis.jpg/960px-Kernig%27s_sign_cerebrospinal_meningitis.jpg" alt="Objaw Kerniga dodatni: przy zgiętym biodrze kolana nie da się wyprostować" loading="lazy"><figcaption>Objaw Kerniga dodatni: przy zgiętym biodrze kolana nie da się wyprostować<small>Fot./il.: R. G. Wiener, Harlem Hospital · <a href="https://commons.wikimedia.org/wiki/File:Kernig%27s_sign_cerebrospinal_meningitis.jpg" target="_blank" rel="noopener">domena publiczna, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="txt"><h3>Jak badać</h3><ol><li>Pacjent leży na plecach.</li><li>Zginasz nogę w biodrze i kolanie do 90°.</li><li>Trzymasz udo i próbujesz <b>wyprostować kolano</b>.</li></ol>
 <div class="res"><div class="pos"><b>DODATNI</b>Ból lub opór, kolana nie da się wyprostować (kąt &lt;135°)</div><div class="neg"><b>UJEMNY</b>Pełny wyprost bez bólu</div></div>
 <p class="clin"><b>Co oznacza:</b> zapalenie opon, SAH, zapalenie mózgu. Zwykle występuje razem ze sztywnością karku i objawem Brudzińskiego.</p></div></div></section>
@@ -150,18 +117,7 @@ footer{background:var(--navy);color:#cdd6e4;padding:28px 0;font-size:14px;margin
 
 <section class="sign" id="romberg" style="--k:#2a9d8f">
 <header><h2>Próba Romberga</h2><span class="what">Czucie głębokie (propriocepcja)</span></header>
-<div class="grid"><div class="fig">
-<svg viewBox="0 0 440 240" role="img" aria-label="Próba Romberga: z otwartymi oczami pacjent stoi stabilnie, z zamkniętymi się chwieje">
-<g><text x="110" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#2b9348">oczy OTWARTE – stoi</text>
-<circle cx="110" cy="54" r="18" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/><circle cx="104" cy="52" r="2.5" fill="#14213d"/><circle cx="116" cy="52" r="2.5" fill="#14213d"/>
-<rect x="94" y="74" width="32" height="70" rx="12" fill="#2a9d8f"/><path d="M104 144 L104 214 M116 144 L116 214" stroke="#14213d" stroke-width="10" stroke-linecap="round"/>
-<rect x="60" y="216" width="100" height="6" rx="3" fill="#cfd8e6"/></g>
-<g transform="translate(220,0)"><text x="110" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#d62828">oczy ZAMKNIĘTE – chwieje się</text>
-<g transform="rotate(-9 110 214)"><circle cx="110" cy="54" r="18" fill="var(--skin)" stroke="var(--skin2)" stroke-width="3"/><path d="M100 53 h8 M112 53 h8" stroke="#14213d" stroke-width="2.5"/>
-<rect x="94" y="74" width="32" height="70" rx="12" fill="#d62828"/><path d="M104 144 L104 214 M116 144 L116 214" stroke="#14213d" stroke-width="10" stroke-linecap="round"/></g>
-<path d="M40 100 C30 120 30 140 40 160 M180 100 C190 120 190 140 180 160" fill="none" stroke="#d62828" stroke-width="3"/>
-<rect x="60" y="216" width="100" height="6" rx="3" fill="#cfd8e6"/></g>
-</svg></div>
+<div class="grid"><div class="fig real"><figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Romberg.jpg/960px-Romberg.jpg" alt="Próba Romberga: stopy złączone, oczy zamknięte, obserwujesz chwianie" loading="lazy"><figcaption>Próba Romberga: stopy złączone, oczy zamknięte, obserwujesz chwianie<small>Fot./il.: Gonad · <a href="https://commons.wikimedia.org/wiki/File:Romberg.jpg" target="_blank" rel="noopener">CC BY-SA 3.0, Wikimedia Commons</a></small></figcaption></figure></div>
 <div class="txt"><h3>Jak badać</h3><ol><li>Pacjent stoi ze złączonymi stopami, ręce wzdłuż ciała. Stoisz tuż obok i asekurujesz.</li><li>Najpierw ok. 30 s z otwartymi oczami, potem ok. 30 s z zamkniętymi.</li></ol>
 <div class="res"><div class="pos"><b>DODATNI</b>Stoi z otwartymi oczami, a po zamknięciu wyraźnie się chwieje albo upada</div><div class="neg"><b>UJEMNY</b>Stabilny w obu próbach</div></div>
 <p class="clin"><b>Co oznacza:</b> zaburzenie czucia głębokiego, np. neuropatia albo uszkodzenie sznurów tylnych rdzenia.</p>
