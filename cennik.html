@@ -63,8 +63,8 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
    <li><b>Wszystkie 42 karty leków</b> ZRM</li>
    <li>Nowe egzaminy i scenariusze dodawane w trakcie roku</li>
   </ul>
-  <div class="foot"><a class="btn red" id="buy" href="#konto">Kup dostęp Pro – 99 zł</a>
-  <p class="note">Bez automatycznego odnawiania. Płatność BLIK, kartą albo przelewem. Faktura od MedKrak sp. z o.o.</p></div>
+  <div class="foot"><label class="note" style="display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;color:#14213d"><input type="checkbox" id="zgoda" style="margin-top:4px"> <span>Akceptuję <a href="regulamin.html">regulamin</a>. Żądam natychmiastowego dostępu do treści Pro i przyjmuję do wiadomości, że z chwilą jego udostępnienia tracę prawo odstąpienia od umowy.</span></label><a class="btn red" id="buy" href="#konto">Kup dostęp Pro – 99 zł</a>
+  <p id="bmsg" class="note" style="color:#b3261e;font-weight:700"></p><p class="note">Bez automatycznego odnawiania. Płatność przez Przelewy24: BLIK, szybki przelew, karta, Google Pay, Apple Pay. Faktura od MedKrak sp. z o.o.</p></div>
  </div>
 </div>
 
@@ -114,8 +114,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
   if(e) st.insertAdjacentHTML('beforeend','<p class="note"><a href="#" id="lo">Wyloguj</a></p>'),document.getElementById('lo').onclick=ev=>{ev.preventDefault();RM.logout()};
   document.getElementById('loginbox').style.display=(e||!C.supabaseUrl)?'none':'';
  }
- if(C.buyUrl){buy.href=C.buyUrl+(RM.email()?'?prefilled_email='+encodeURIComponent(RM.email()):'');}
+ if(C.payments&&C.supabaseUrl){buy.href='#konto';buy.onclick=async ev=>{ev.preventDefault();const m=document.getElementById('bmsg');if(!document.getElementById('zgoda').checked){m.textContent='Zaznacz zgodę powyżej, aby przejść do płatności.';return}m.textContent='Łączę z Przelewy24…';try{await RM.buy()}catch(x){m.textContent=x.message;document.getElementById('konto').scrollIntoView({behavior:'smooth'})}}}
  else{buy.textContent='Płatności wkrótce – teraz Pro gratis';buy.href='egzamin.html';}
+ if(location.search.includes('platnosc=ok'))st.insertAdjacentHTML('beforebegin','<p class="status ok">✓ Dziękujemy! Płatność jest przetwarzana. Pro włączy się w ciągu kilku minut, odśwież stronę.</p>');
  document.getElementById('lf').onsubmit=async ev=>{ev.preventDefault();const m=document.getElementById('msg');
   try{await RM.login(document.getElementById('em').value.trim());m.textContent='✓ Sprawdź skrzynkę i kliknij link logowania.'}catch(x){m.textContent=x.message}};
  show();

@@ -4,7 +4,7 @@
 window.RM_CFG = {
   supabaseUrl: '',          // np. https://xxxx.supabase.co
   supabaseKey: '',          // klucz "anon public"
-  buyUrl: '',               // link płatności Stripe (Payment Link) 99 zł / rok
+  payments: false,          // true = przycisk Kup łączy z Przelewy24 (funkcja Supabase "p24")
   enforce: false,
   price: '99 zł / rok'
 };
@@ -28,6 +28,16 @@ window.RM_CFG = {
     });
     if (!r.ok) throw new Error('Nie udało się wysłać linku. Sprawdź adres e-mail.');
     set('rm_email', email);
+  };
+  // zakup: rejestracja transakcji w Przelewy24 i przejście do płatności
+  RM.buy = async () => {
+    const t = get('rm_token');
+    if (!t) throw new Error('Najpierw zaloguj się adresem e-mail (niżej). Na ten adres włączymy Pro.');
+    const r = await fetch(C.supabaseUrl + '/functions/v1/p24?a=register', { method: 'POST',
+      headers: { apikey: C.supabaseKey, Authorization: 'Bearer ' + t } });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.url) throw new Error(d.error || 'Nie udało się rozpocząć płatności. Spróbuj za chwilę.');
+    location.href = d.url;
   };
   RM.logout = () => { ['rm_token','rm_pro_until','rm_email'].forEach(k => set(k, null)); location.reload(); };
 
