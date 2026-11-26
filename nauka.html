@@ -3,8 +3,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ratownik medyczny – nauka | ratownikmedyczny.online</title>
 <style>
-:root{--bg:#f6f5f2;--card:#fff;--ink:#1b1b1f;--mut:#6b6b74;--line:#e4e2dc;--acc:#c62828;--ok:#2e7d32;--warn:#ef6c00;--soft:#fbeaea}
-@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1f1f23;--ink:#ececf0;--mut:#9a9aa5;--line:#2f2f35;--soft:#3a1f1f}}
+:root{--bg:#f4f7fb;--card:#fff;--ink:#14213d;--mut:#6b6b74;--line:#dfe6ef;--acc:#e63946;--ok:#2e7d32;--warn:#ef6c00;--soft:#fbeaea}
+
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 14px}
 h1{font-size:17px;margin:0 0 8px;display:flex;align-items:center;gap:8px}h1 b{color:var(--acc)}
@@ -39,12 +39,17 @@ summary{cursor:pointer;list-style:none}summary::-webkit-details-marker{display:n
 .banner{border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:18px;font-weight:700;display:flex;gap:10px;align-items:center}
 .banner.good{background:#e3f4e4;color:#1b5e20;border:2px solid #2e7d32}.banner.badb{background:#fdecea;color:#b71c1c;border:2px solid #c62828}
 .banner small{display:block;font-weight:500;font-size:14.5px;margin-top:2px}
-@media (prefers-color-scheme:dark){.banner.good{background:#173a1a;color:#a5d6a7}.banner.badb{background:#3d1a1a;color:#ef9a9a}}
+
 .opts button.ok::before{content:"✓  ";font-weight:800}.opts button.bad::before{content:"✗  ";font-weight:800}
 .opts button.fade{opacity:.45}
 .card{font-size:16.5px}
-.zoom svg{width:100%;height:auto;display:block;border-radius:8px;background:#fff}.zoom{cursor:zoom-in;margin:6px 0}.zoom.big{position:fixed;inset:0;z-index:50;background:#fff;overflow:auto;padding:8px;cursor:zoom-out}.zoom.big svg{width:180%;max-width:none}.atr{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}.att{font-size:16px;margin-bottom:4px}table.at{border-collapse:collapse;width:100%;font-size:13.5px;margin:8px 0}table.at th{background:var(--acc);color:#fff;text-align:left;padding:5px}table.at td{border:1px solid var(--line);padding:5px;vertical-align:top}.tabs{grid-template-columns:repeat(3,1fr)!important}</style></head><body>
-<header><a href="/" style="text-decoration:none;font-size:14px;margin-right:8px;color:inherit">← Start</a><h1>🚑 <span>Ratownik medyczny – nauka</span></h1>
+.zoom svg{width:100%;height:auto;display:block;border-radius:8px;background:#fff}.zoom{cursor:zoom-in;margin:6px 0}.zoom.big{position:fixed;inset:0;z-index:50;background:#fff;overflow:auto;padding:8px;cursor:zoom-out}.zoom.big svg{width:180%;max-width:none}.atr{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}.att{font-size:16px;margin-bottom:4px}table.at{border-collapse:collapse;width:100%;font-size:13.5px;margin:8px 0}table.at th{background:var(--acc);color:#fff;text-align:left;padding:5px}table.at td{border:1px solid var(--line);padding:5px;vertical-align:top}.tabs{grid-template-columns:repeat(3,1fr)!important}.rmtop{background:#0b1f3a;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));font:700 15px system-ui,-apple-system,sans-serif}
+.rmtop a{color:#fff;text-decoration:none}.rmtop .lg b{color:#ff6b74}.rmtop .bk{font-size:13px;font-weight:600;background:rgba(255,255,255,.14);padding:6px 11px;border-radius:999px;white-space:nowrap}
+.rmhero{border-radius:18px;padding:18px;color:#fff;background:linear-gradient(120deg,rgba(11,31,58,.95),rgba(230,57,70,.78)),url(img/wnetrze.jpg) center/cover}
+.rmhero h1{margin:0 0 4px;font-size:24px;line-height:1.15;color:#fff}.rmhero h1 span{color:#ffd166}.rmhero p{margin:0;opacity:.92;font-size:14.5px}
+header{top:0}.solo header h1{font-size:20px;color:#fff;background:linear-gradient(120deg,#0b1f3a,#e63946);padding:14px;border-radius:14px;margin:4px 0 0}
+</style></head><body>
+<div class="rmtop"><a href="/" class="lg">🚑 ratownik<b>medyczny</b>.online</a><a href="/" class="bk">← Strona główna</a></div><header><h1>🚑 <span>Ratownik medyczny – nauka</span></h1>
 <div class="tabs"><button data-v="fis" class="on">🃏 Fiszki</button><button data-v="quiz">❓ Quiz</button><button data-v="tri">🚨 Triage</button><button data-v="case">🩺 Przypadki</button><button data-v="atlas">🦴 Atlas</button><button data-v="leki">💊 Leki</button><button data-v="licz">🧮 Liczenie</button><button data-v="szukaj">🔍 Szukaj</button><button data-v="post">📈 Postęp</button></div></header>
 <main id="app"></main>
 <script>
@@ -550,6 +555,6 @@ function go(v){if(v==='quiz'){location.href='egzamin.html#szybki';return}view=v;
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 const V=['fis','quiz','tri','case','atlas','leki','licz','szukaj','post'];
 const QT=new URLSearchParams(location.search).get('tab');
-if(QT&&V.includes(QT)){const tb=document.querySelector('.tabs');if(tb)tb.style.display='none';const NM={fis:'Fiszki',tri:'Segregacja (triage)',case:'Przypadki ZRM',atlas:'Atlas',leki:'Leki',licz:'Liczenie dawek',szukaj:'Szukaj',post:'Postęp'};const h=document.querySelector('h1');if(h&&NM[QT])h.textContent=NM[QT]+' – ratownik medyczny';}
+if(QT&&V.includes(QT)){const tb=document.querySelector('.tabs');if(tb)tb.style.display='none';const NM={fis:'Fiszki',tri:'Segregacja (triage)',case:'Przypadki ZRM',atlas:'Atlas',leki:'Leki',licz:'Liczenie dawek',szukaj:'Szukaj',post:'Postęp'};const h=document.querySelector('h1');if(h&&NM[QT])h.textContent=(QT==='tri'?'🚨 ':'')+NM[QT]+' – ratownik medyczny';document.body.classList.add('solo');}
 go(QT&&V.includes(QT)?QT:(V.includes(location.hash.slice(1))?location.hash.slice(1):'fis'));window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(V.includes(h)&&h!==view)go(h)});
 </script></body></html>
