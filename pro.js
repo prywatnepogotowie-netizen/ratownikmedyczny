@@ -26,7 +26,7 @@ window.RM_CFG = {
     if (!C.supabaseUrl) throw new Error('Logowanie zostanie uruchomione razem z płatnościami.');
     const r = await fetch(C.supabaseUrl + '/auth/v1/otp', {
       method: 'POST', headers: { apikey: C.supabaseKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, create_user: true, options: { emailRedirectTo: location.origin + '/cennik.html' } })
+      body: JSON.stringify({ email, create_user: true, options: { emailRedirectTo: location.origin + '/konto.html' } })
     });
     if (!r.ok) throw new Error('Nie udało się wysłać linku. Sprawdź adres e-mail.');
     set('rm_email', email);
@@ -107,6 +107,9 @@ window.RM_CFG = {
 .rm-lock b{font-size:17px}.rm-lock span{font-size:14px;background:#e63946;color:#fff;padding:6px 14px;border-radius:999px;font-weight:700}
 .rm-bar{background:linear-gradient(90deg,#2a9d8f,#457b9d);color:#fff;text-align:center;font:600 14px/1.4 system-ui,sans-serif;padding:8px 12px}
 .rm-bar a{color:#fff}
+.rm-acc{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;background:#0b1f3a;color:#fff!important;text-decoration:none;font:700 14px system-ui,sans-serif;padding:10px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(11,31,58,.3)}
+.rm-acc b{background:linear-gradient(135deg,#f4a261,#e63946);padding:1px 6px;border-radius:6px;font-size:11px}
+body.playing .rm-acc{display:none}
 @media(max-width:700px){
  table.rm-r{border:0!important;width:100%!important;min-width:0!important}
  table.rm-r thead{display:none}
@@ -124,6 +127,14 @@ window.RM_CFG = {
       const b = document.createElement('div'); b.className = 'rm-bar';
       b.innerHTML = '🎁 Okres próbny: treści <b>PRO</b> są teraz dostępne bezpłatnie. <a href="cennik.html">Zobacz, co obejmuje Pro →</a>';
       document.body.prepend(b);
+    }
+
+    // przycisk konta na każdej stronie
+    if (!/konto\.html/.test(location.pathname)) {
+      const a = document.createElement('a'); a.href = 'konto.html'; a.className = 'rm-acc';
+      const logged = get('rm_token') || get('rm_code');
+      a.innerHTML = logged ? ('👤 ' + (RM.proUntil() > Date.now() ? 'Moje konto <b>PRO</b>' : 'Moje konto')) : '👤 Zaloguj';
+      document.body.appendChild(a);
     }
     RM.gate();
     // tabele na telefonie: każdy wiersz jako karta z podpisami kolumn
