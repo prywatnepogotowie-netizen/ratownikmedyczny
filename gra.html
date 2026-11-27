@@ -77,6 +77,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
  <div class="pt"><div class="av" id="pav">😰</div><div><b>Pan Andrzej, 58 lat</b><small id="pst">Siedzi na kanapie, trzyma się za klatkę piersiową, spocony, blady.</small></div></div>
  <div class="tabs" id="gt"><button data-g="wyw" class="on">🗣️ Wywiad</button><button data-g="a">A</button><button data-g="b">B</button><button data-g="c">C</button><button data-g="d">D</button><button data-g="e">E</button><button data-g="lek">💊 Leki</button><button data-g="tr">🚑 Transport</button></div>
  <div class="acts" id="ga"></div>
+ <div id="pend"></div>
  <div id="go"></div>
  <div id="trc"></div>
  <div class="log" id="lg"></div>
@@ -154,7 +155,12 @@ function renderActs(){if(G.over||G.rh!=='sin'){$('ga').innerHTML='';return}
 function out(h,body){$('go').innerHTML=`<div class="out" style="--c:#457b9d"><h3>${h}</h3>${body||''}</div>`;$('go').scrollIntoView({behavior:'smooth',block:'nearest'})}
 function cost(id){for(const k in A)for(const a of A[k])if(a[0]===id)return a[3];return 1}
 const REPEAT=['nacl','fen','morf','bp','jedz','o2','usp','boc','coc','avpu'];
+let conf=null;
 function act(id){if(G.over||G.rh!=='sin')return;
+ if(A.lek.some(x=>x[0]===id)&&conf!==id&&!(G.f[id]&&!REPEAT.includes(id))){const n=A.lek.find(x=>x[0]===id);conf=null;
+  out('💊 Podać lek?','<p><b>'+n[2]+'</b></p><div style="display:flex;gap:8px"><button class="btn g" id="cfy" type="button" style="flex:1">✅ Podaj</button><button class="btn gh" id="cfn" type="button" style="flex:1">✖ Anuluj</button></div>');
+  $('cfy').onclick=()=>{conf=id;act(id)};$('cfn').onclick=()=>{$('go').innerHTML=''};return}
+ conf=null;
  if(G.f[id]&&!REPEAT.includes(id)){out('Już wykonane');return}
  if(['hep','fen','morf','keto','nacl','atr','meto','furo','amio','adr','metk','diaz','hydro'].includes(id)&&!G.iv){out('Brak dostępu naczyniowego');return}
  if(['e12','v4r','mon4','pads','bp','spo2','etco'].includes(id)&&!G.eq.mon&&!G.f.monFetched){G.f.monFetched=1;if(G.ph==='scene')tick(3);L('Powrót do karetki po monitor (+3 min).')}
@@ -187,13 +193,13 @@ function act(id){if(G.over||G.rh!=='sin')return;
  case'fast':out('🧠 FAST','<p>Twarz symetryczna, siła kończyn prawidłowa, mowa prawidłowa.</p>');L('Test FAST.');break;
  case'uraz':out('🔍 Badanie urazowe','<p>Bez obrażeń.</p>');L('Badanie urazowe.');break;
  case'nogi':out('🦵 Kończyny dolne','<p>Bez obrzęków, łydki niebolesne.</p>');L('Kończyny dolne.');break;
- case'e12':G.mon=true;out('📈 EKG 12 odprowadzeń','<div class="e12w"><div class="e12">'+E12+'</div></div><p class="e12h">👉 Przesuń zapis w bok.</p><p style="margin-top:8px"><b>Twoja interpretacja?</b></p><div class="q" id="ek"></div>');L('EKG 12-odprowadzeniowe.');
-  pick('ek',[['STEMI ściany dolnej','inf'],['STEMI ściany przedniej','ant'],['NSTEMI / niestabilna dławica','nste'],['Zatorowość płucna','pe'],['Prawidłowe EKG','norm'],['Blok lewej odnogi pęczka Hisa','lbbb']],v=>{G.ekgRead=v;L('Interpretacja EKG: '+{inf:'STEMI ściany dolnej',ant:'STEMI ściany przedniej',nste:'NSTEMI',pe:'zatorowość płucna',norm:'prawidłowe',lbbb:'LBBB'}[v]+'.')});break;
+ case'e12':G.mon=true;out('📈 EKG 12 odprowadzeń','<p>Zapis wykonany – oceń go poniżej.</p>');$('pend').innerHTML='<div class="out" style="--c:#e63946"><h3>📈 EKG 12 odprowadzeń – Twoja interpretacja</h3><div class="e12w"><div class="e12">'+E12+'</div></div><p class="e12h">👉 Przesuń zapis w bok. Oceń odcinek ST w każdym odprowadzeniu.</p><div class="q" id="ek"></div></div>';L('EKG 12-odprowadzeniowe.');
+  pick('ek',[['STEMI ściany dolnej','inf'],['STEMI ściany przedniej','ant'],['NSTEMI / niestabilna dławica','nste'],['Zatorowość płucna','pe'],['Prawidłowe EKG','norm'],['Blok lewej odnogi pęczka Hisa','lbbb']],v=>{G.ekgRead=v;setTimeout(()=>{$('pend').innerHTML=''},700);L('Interpretacja EKG: '+{inf:'STEMI ściany dolnej',ant:'STEMI ściany przedniej',nste:'NSTEMI',pe:'zatorowość płucna',norm:'prawidłowe',lbbb:'LBBB'}[v]+'.')});break;
  case'v4r':out('➡️ V4R','<div style="max-width:260px">'+V4R+'</div>');L('V4R.');break;
  case'o2':G.o2=true;out('🫧 Tlen','<p>Maska z tlenem 10 l/min.</p>');L('Tlen.');break;
  case'iv':G.iv=true;out('💉 Dostęp dożylny','<p>Wenflon 18G, przedramię lewe.</p>');L('Dostęp iv.');break;
  case'io':G.iv=true;out('🦴 Dostęp doszpikowy','<p>Igła w kości piszczelowej. Pacjent krzyczy z bólu.</p>');G.pain=Math.min(10,G.pain+1);L('Dostęp doszpikowy.');break;
- case'tele':G.f.consult=1;out('📡 Konsultacja','<p>Kardiolog: „Przywieźcie pacjenta bezpośrednio na pracownię hemodynamiki.”</p>');L('Konsultacja z pracownią hemodynamiki.');break;
+ case'tele':G.f.consult=1;{const miss=[];if(!G.f.asa)miss.push('ASA 300 mg');if(!G.f.hep)miss.push('heparynę 5000 j. iv');if(!G.f.tik&&!G.f.klo)miss.push('tikagrelor 180 mg');G.f.orderTik=1;out('📡 Konsultacja','<p>Kardiolog dyżurny pracowni: „Widzę zapis. Przywieźcie pacjenta bezpośrednio do nas, z pominięciem SOR.'+(miss.length?' Proszę podać: '+miss.join(', ')+'.':' Leki macie podane – jedźcie.')+'”</p>')}L('Konsultacja z pracownią hemodynamiki.');break;
  case'pol':out('🛋️ Pozycja półsiedząca','<p>Pacjent ułożony.</p>');L('Pozycja półsiedząca.');break;
  case'plas':out('🛏️ Pozycja płaska','<p>Pacjent ułożony płasko z uniesionymi nogami.</p>');L('Pozycja płaska z uniesionymi nogami.');break;
  case'kol':out('🦴 Stabilizacja','<p>Założony kołnierz. Pacjent jest zdezorientowany, pyta po co.</p>');L('Kołnierz (bez wskazań).');break;
@@ -285,14 +291,15 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  const N=(bad,p,t,why)=>{if(bad)pts.push([false,-p,t,why,0])};// kary
  const e12t=(G.log.find(l=>l[1].startsWith('EKG 12'))||[99])[0];
  P(F.e12&&e12t<=10,15,'EKG 12-odprowadzeniowe w ciągu 10 min od przyjazdu','W bólu w klatce piersiowej EKG wykonujesz jak najszybciej – rozpoznanie STEMI uruchamia całą ścieżkę.');
- P(G.ekgRead==='inf',10,'Prawidłowa interpretacja: STEMI ściany dolnej','Uniesienia ST w II, III, aVF, obniżenia w I i aVL (zmiany lustrzane).');
+ P(G.ekgRead==='inf',10,'Prawidłowa interpretacja: STEMI ściany dolnej',(G.ekgRead?'':'Nie wybrałeś interpretacji. ')+'Jak czytać: 1) znajdź linię izoelektryczną (odcinek PR), 2) sprawdź, czy odcinek ST zaraz za QRS jest powyżej niej – tu w II, III i aVF jest wyraźnie uniesiony („grzbiet”), 3) szukaj zmian lustrzanych – w I i aVL ST jest obniżony. II, III, aVF = ściana dolna (zwykle prawa tętnica wieńcowa) → zrób V4R.<div class="e12w" style="margin-top:6px"><div class="e12">'+E12+'</div></div>');
  P(!!F.v4r,10,'Odprowadzenia prawokomorowe (V4R)','Przy zawale ściany dolnej zawsze sprawdź prawą komorę: uniesienie ST w V4R = zawał RV → bez nitratów, płyny przy hipotensji.');
  P(!!F.consult,10,'Teletransmisja i konsultacja z pracownią','Pozwala przywieźć pacjenta prosto na stół hemodynamiki.');
  P(!!F.asa,10,'ASA 300 mg','Podstawowy lek w ostrym zespole wieńcowym.');
  P(!!F.hep,10,'Heparyna 5000 j. iv','W STEMI przed PCI – 70–100 j./kg, maks. 5000 j.');
- P((F.tik&&!F.tikPre)||(F.klo&&!F.kloPre),5,'Drugi lek przeciwpłytkowy po konsultacji','Tikagrelor 180 mg (lub klopidogrel 600 mg) – zgodnie z decyzją ośrodka PCI.');
+ if(F.consult)P(F.tik||F.klo,5,'Drugi lek przeciwpłytkowy zgodnie ze zleceniem pracowni','Tikagrelor 180 mg (lub klopidogrel 600 mg) podajesz po konsultacji – zlecił go kardiolog.');
+ N((F.tikPre||F.kloPre),3,'Drugi lek przeciwpłytkowy przed konsultacją','O tikagrelorze/klopidogrelu decyduje ośrodek PCI – najpierw teletransmisja.');
  P(F.fen||F.morf,5,'Leczenie bólu','Fentanyl lub morfina – ból zwiększa zapotrzebowanie serca na tlen.');
- P(F.pads&&(G.log.find(l=>l[1].startsWith('Elektrody defibrylacyjne.'))||[99])[0]<=10,10,'Elektrody defibrylacyjne naklejone wcześnie','W świeżym zawale VF zdarza się często – naklejone elektrody = wyładowanie w kilka sekund.');
+ P(F.pads&&(G.log.find(l=>l[1].startsWith('Elektrody defibrylacyjne.'))||[99])[0]<=10,10,'Elektrody defibrylacyjne naklejone wcześnie (dobrze!)','U pacjenta ze świeżym zawałem elektrody naklejasz od razu – VF może pojawić się w każdej chwili, a wtedy wyładowanie jest w kilka sekund.');
  P(F.e12||F.mon4,0,'','');pts.pop();
  P(F.coc&&F.bp&&F.boc&&F.spo2&&F.avpu,5,'Pełne ABCDE (oddech, SpO₂, tętno, ciśnienie, świadomość)','Badanie ABCDE robisz w całości – parametry na monitorze są dopiero po ich zmierzeniu.');
  P(F.wyw||F.opqrst,5,'Wywiad (SAMPLE / OPQRST)','Pytanie o leki na potencję jest kluczowe przed nitratami.');
@@ -300,7 +307,7 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  P(F.krz||F.nosz,5,'Pacjent zniesiony, nie schodził sam','Wysiłek w trakcie zawału zwiększa ryzyko arytmii.');
  P(G.dest==='pci',15,'Transport bezpośrednio do pracowni hemodynamiki','Omijając SOR, skracasz czas do udrożnienia tętnicy („czas to mięsień”).');
  P(G.trStart!=null&&G.trStart<=25,10,'Czas na miejscu ≤ 25 min','Nie zwlekaj – leczeniem zawału jest udrożnienie tętnicy w pracowni.');
- if(F.vfDone)P(F.vfSec!=null&&F.vfSec<=30,15,'Pierwsza defibrylacja w ciągu 30 s','W VF każda minuta zwłoki zmniejsza szansę przeżycia o ok. 10%. Najpierw prąd, potem leki.');
+ if(F.vfDone)P(F.vfSec!=null&&F.vfSec<=30,15,'Pierwsza defibrylacja w ciągu 30 s'+(F.vfSec!=null?' (Twój czas: '+F.vfSec+' s)':''),'Liczy się od utraty przytomności do pierwszego wyładowania. W VF każda minuta zwłoki zmniejsza szansę przeżycia o ok. 10%. Najpierw prąd, potem leki.');
  if(F.vfDone&&G.padsBefore)P(F.shock3,10,'3 wyładowania pod rząd w NZK monitorowanym','NZK przy zespole, pacjent monitorowany, elektrody naklejone: do 3 szybkich wyładowań pod rząd (krótka ocena rytmu między nimi), dopiero potem RKO. Cała seria liczy się w algorytmie jako JEDNO – pierwsze – wyładowanie (ERC).');
  P(G.hand==='ok',5,'Przekazanie MIST','Konkretnie: wiek, rozpoznanie, czas, zdarzenia, leki, parametry.');
  N(F.ntg,15,'Nitrogliceryna w zawale prawej komory','Pacjent zależny od obciążenia wstępnego – nitrogliceryna powoduje gwałtowną hipotensję. Przeciwwskazana także przy RR < 90 i po lekach na potencję.');
@@ -311,7 +318,8 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  N(F.keto,10,'Ketoprofen w zawale','NLPZ są przeciwwskazane w ostrym zespole wieńcowym.');
  N(F.furo,10,'Furosemid bez zastoju','Brak cech obrzęku płuc; u pacjenta z zajęciem RV pogłębia hipotensję.');
  N(F.amio,10,'Amiodaron bez arytmii','Brak wskazań – obniża ciśnienie i zwalnia tętno.');
- N(F.salb||F.hydro||F.diaz,5,'Leki bez wskazań (salbutamol / hydrokortyzon / diazepam)','Nie mają miejsca w leczeniu STEMI.');
+ N(F.salb||F.hydro||F.diaz,5,'Leki bez wskazań: '+[F.salb&&'salbutamol',F.hydro&&'hydrokortyzon',F.diaz&&'diazepam'].filter(Boolean).join(', '),'Nie mają miejsca w leczeniu STEMI.');
+ N(F.metk&&false,0,'','');
  N(F.io,5,'Dostęp doszpikowy u przytomnego pacjenta z dobrymi żyłami','Doszpikowy – gdy nie da się założyć wkłucia iv.');
  N(F.kol||F.rur,5,'Czynności bez wskazań (kołnierz / intubacja)','Brak urazu, pacjent przytomny i wydolny oddechowo.');
  N(F.walk,10,'Pacjent schodził sam z III piętra','Wysiłek fizyczny w zawale – ryzyko arytmii.');
