@@ -39,6 +39,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 .q{margin-top:8px}.q button{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;margin:6px 0;font:600 15px system-ui;cursor:pointer;color:var(--ink)}
 .q button.ok{border-color:var(--g);background:#d8f8ea}.q button.no{border-color:var(--red);background:#ffe3e3}
 .log{font-size:13px;color:var(--mute);max-height:150px;overflow:auto;background:#fff;border-radius:14px;padding:8px 12px;margin-top:12px}.log div{padding:2px 0;border-bottom:1px dashed #eef2f7}.log b{color:var(--ink)}
+.trbar{position:sticky;bottom:0;z-index:8;background:#0b1f3a;color:#fff;border-radius:16px;padding:10px 12px;margin:12px 0;display:flex;align-items:center;gap:10px;justify-content:space-between;box-shadow:0 -4px 16px rgba(11,31,58,.25)}.trbar b{font-size:15px}.trbar .btn{padding:11px 14px;font-size:15px;flex:0 0 auto}
 .go{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%);z-index:9}.go .w{padding:0}
 /* VF */
 .vfbox{background:#2b0508;color:#fff;border-radius:18px;padding:14px;margin:12px 0;border:3px solid #ff4d6d;animation:pulse 1s infinite}@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(255,77,109,.25)}}.vfbox h3{margin:0 0 6px;font-size:20px}.vfbox .clk{font-size:28px;font-weight:900;color:#ffd166}
@@ -77,6 +78,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
  <div class="tabs" id="gt"><button data-g="bad" class="on">🩺 Badanie</button><button data-g="dz">🛠️ Działania</button><button data-g="lek">💊 Leki</button><button data-g="tr">🚑 Transport</button></div>
  <div class="acts" id="ga"></div>
  <div id="go"></div>
+ <div id="trc"></div>
  <div class="log" id="lg"></div>
 </section>
 
@@ -128,7 +130,7 @@ function anim(ts){const dt=Math.min(50,ts-last);last=ts;const W=cv.width,H=cv.he
  requestAnimationFrame(anim)}
 requestAnimationFrame(anim);
 function draw(){
- $('h-t').textContent=G.t;
+ $('h-t').textContent=G.t;setTimeout(trCheck,0);
  const m=G.mon;$('v-hr').textContent=m?(G.rh==='vf'?'VF':G.hr):'--';$('v-sp').textContent=m&&G.rh!=='vf'?G.sp:'--';
  $('v-bp').textContent=m&&G.rh!=='vf'?(G.f.bp?G.sbp+'/'+G.dbp:'--/--'):'--/--';$('v-rr').textContent=m&&G.rh!=='vf'?G.rr:'--';
  $('hud').classList.toggle('alarm',G.rh==='vf'||(m&&G.sbp<85&&G.f.bp));
@@ -188,19 +190,22 @@ function act(id){if(G.over||G.rh==='vf')return;
 function quiz(el,opts,fb){const box=$(el);box.innerHTML=opts.map((o,i)=>`<button type="button" data-i="${i}">${o[0]}</button>`).join('');
  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];box.querySelectorAll('button').forEach(z=>z.disabled=true);b.classList.add(o[1]?'ok':'no');box.insertAdjacentHTML('beforeend','<p><b>'+(o[1]?'✅ ':'❌ ')+'</b>'+fb(!!o[1],o)+'</p>')})}
 // ---------- transport
-function chooseDest(){if(G.ph==='tr'){out('#9aa5b1','Już jedziecie','');return}
+function chooseDest(){if(G.ph!=='scene'){trCheck();return}
  if(!G.f.krz&&!G.f.carried){out('#e63946','Pacjent jest jeszcze w mieszkaniu','<p>Najpierw bezpiecznie przetransportuj go do karetki (krzesełko).</p>');return}
  out('#e63946','🚑 Dokąd jedziesz?','<div class="q" id="ds"></div>');
  const box=$('ds');const opts=[['🫀 Pracownia hemodynamiki (szpital wojewódzki, 25 min) – bezpośrednio','pci'],['🏥 SOR najbliższego szpitala (8 min) – bez pracowni','sor'],['🏥 SOR szpitala z pracownią (25 min) – przez SOR','sorpci']];
  box.innerHTML=opts.map(o=>`<button type="button" data-d="${o[1]}">${o[0]}</button>`).join('');
- box.querySelectorAll('button').forEach(b=>b.onclick=()=>{G.dest=b.dataset.d;G.ph='tr';G.trStart=G.t;$('h-ph').textContent='🚑 Transport';L('Transport: '+b.textContent.replace(/^\S+ /,''));out('#e63946','🚑 Jedziecie','<p>Pacjent na noszach, monitor '+(G.mon?'podłączony':'<b>niepodłączony!</b>')+'. Możesz dalej działać w karetce.</p>');tab='lek';document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x.dataset.g==='lek'));draw();trCheck()})}
+ box.querySelectorAll('button').forEach(b=>b.onclick=()=>{G.dest=b.dataset.d;G.ph='tr';G.trStart=G.t;$('h-ph').textContent='🚑 Transport';L('Transport: '+b.textContent.replace(/^\S+ /,''));out('#e63946','🚑 Jedziecie','<p>Pacjent na noszach, monitor '+(G.mon?'podłączony':'<b>niepodłączony!</b>')+'. Możesz dalej działać w karetce – albo jedź dalej przyciskiem na dole.</p>');tab='lek';document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x.dataset.g==='lek'));draw();trCheck()})}
 function trLen(){return G.dest==='sor'?8:25}
-function trCheck(){if(G.over||G.rh==='vf')return;const left=trLen()-(G.t-G.trStart);
- if(!G.f.vfDone){if(G.t-G.trStart>=6)startVF();else{$('go').insertAdjacentHTML('beforeend',`<div class="out" style="--c:#264653"><p>Do szpitala: ok. ${left} min. <button class="btn n" id="wait" type="button" style="margin-top:6px">⏩ Jedź dalej (bez działań)</button></p></div>`);$('wait').onclick=()=>{tick(Math.min(2,left));trCheck()}}}
- else if(left<=0)arrive();else{$('go').insertAdjacentHTML('beforeend',`<div class="out" style="--c:#264653"><p>Do szpitala: ok. ${left} min.</p><button class="btn n" id="wait" type="button">⏩ Dojedź na miejsce</button></div>`);$('wait').onclick=()=>{tick(left);arrive()}}}
+function trCheck(){const box=$('trc');if(!box)return;if(G.over||G.rh==='vf'||G.ph!=='tr'){box.innerHTML='';return}
+ const left=Math.max(0,trLen()-(G.t-G.trStart));
+ box.innerHTML=`<div class="trbar"><b>🚑 Do szpitala: ok. ${left} min</b><button class="btn" id="wait" type="button">${left<=2&&G.f.vfDone?'🏥 Dojedź':'⏩ Jedź dalej'}</button></div>`;
+ $('wait').onclick=()=>{if(G.rh==='vf'||G.over)return;const l=Math.max(0,trLen()-(G.t-G.trStart));
+  if(!G.f.vfDone){tick(Math.max(1,Math.min(2,l)));return}
+  if(l<=2){tick(l);arrive()}else tick(2)}}
 // ---------- VF
 let vfTimer=null,vfSec=0;
-function startVF(){G.rh='vf';G.f.vfDone=1;G.vfStart=G.t;vfSec=0;L('⚠️ Utrata przytomności – migotanie komór!');draw();
+function startVF(){$('trc').innerHTML='';G.rh='vf';G.f.vfDone=1;G.vfStart=G.t;vfSec=0;L('⚠️ Utrata przytomności – migotanie komór!');draw();
  $('go').innerHTML=`<div class="vfbox"><h3>🚨 Pacjent traci przytomność!</h3><p>${G.mon?'Na monitorze: <b>migotanie komór</b>.':'Pacjent nie reaguje, nie oddycha prawidłowo. Monitor nie był podłączony.'}</p><div class="clk">⏱ <span id="vfc">0</span> s bez krążenia</div><div class="q" id="vq"></div></div>`;
  $('go').scrollIntoView({behavior:'smooth'});vfOpts();vfTimer=setInterval(()=>{vfSec++;$('vfc')&&($('vfc').textContent=vfSec);if(vfSec>=120)vfFail()},1000)}
 function vfOpts(){const pads=G.pads;const o=pads?[['⚡ Defibrylacja 150–200 J od razu','def'],['💉 Adrenalina 1 mg iv','adr'],['🫁 Najpierw 2 min RKO, potem ocena rytmu','rko'],['📞 Wezwanie zespołu S do pomocy','call']]:[['📟 Natychmiast elektrody na klatkę i ocena rytmu','pads'],['🫁 Uciskanie klatki piersiowej','rko'],['💉 Adrenalina 1 mg iv','adr']];
@@ -215,7 +220,7 @@ function vfAct(v,b){vfSec+=v==='def'?0:15;
  $('vq').insertAdjacentHTML('afterend','<p style="color:#ffd166"><b>⏱ +15 s.</b> '+(msg||'')+'</p>')}
 function vfFail(){clearInterval(vfTimer);G.over=true;G.deathCause='Zbyt długi czas migotania komór bez defibrylacji.';L('Pacjent zmarł – brak skutecznej defibrylacji.');setTimeout(finish,600)}
 // ---------- przekazanie
-function arrive(){G.ph='hand';$('h-ph').textContent=G.dest==='pci'?'🫀 Pracownia hemodynamiki':'🏥 SOR';L('Przyjazd: '+(G.dest==='pci'?'pracownia hemodynamiki.':'SOR.'));
+function arrive(){G.ph='hand';$('trc').innerHTML='';$('h-ph').textContent=G.dest==='pci'?'🫀 Pracownia hemodynamiki':'🏥 SOR';L('Przyjazd: '+(G.dest==='pci'?'pracownia hemodynamiki.':'SOR.'));
  out('#0b1f3a','🗣️ Przekazanie pacjenta (MIST)','<p>Lekarz pyta: „Co przywozicie?” Wybierz najlepsze przekazanie:</p><div class="q" id="hq"></div>');
  const o=[['58 lat, STEMI ściany dolnej z zajęciem prawej komory, ból od ok. 1 h. W transporcie VF – 1 wyładowanie, ROSC. Podane: ASA, heparyna, tikagrelor, fentanyl. RR, HR, SpO₂ aktualnie… Bez nitrogliceryny.',1],['Pan z bólem w klatce, dostał leki, raz się zatrzymał, ale już jest dobrze.',0],['58 lat, prawdopodobnie zawał przedni, podaliśmy nitroglicerynę i tlen.',0]];
  quiz('hq',o,ok=>{G.hand=ok;setTimeout(finish,1800);return ok?'Konkretnie: kto, co się stało, co stwierdziłeś, co zrobiłeś (MIST).':'Przekazanie powinno być konkretne: wiek, rozpoznanie, czas, zdarzenia (VF!), podane leki.'})}
