@@ -58,7 +58,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
  <button class="case" id="c-stemi" type="button"><b>❤️ Ból w klatce piersiowej</b><small>Mężczyzna 58 lat · kod 1 · ok. 15 minut gry · poziom: średni</small></button>
  <button class="case lock" type="button" disabled><b>🧠 Nagła słabość ręki</b><small>wkrótce</small></button>
  <button class="case lock" type="button" disabled><b>🧒 Dziecko z dusznością</b><small>wkrótce</small></button>
- <div class="how"><b>Jak grać</b><ul><li>Każde działanie zabiera czas – zegar w rogu monitora pokazuje minuty od przyjazdu.</li><li>Parametry widzisz dopiero po podłączeniu monitora.</li><li>Nie ma podpowiedzi – jak na prawdziwym wyjeździe. Omówienie dostaniesz na końcu.</li></ul></div>
+ <div class="how"><b>Jak grać</b><ul><li>Każde działanie zabiera czas – zegar w rogu monitora pokazuje minuty od przyjazdu.</li><li>Badaj schematem ABCDE – każdy parametr pojawia się na monitorze dopiero, gdy go zmierzysz.</li><li>Nie ma podpowiedzi – jak na prawdziwym wyjeździe. Błąd krytyczny kończy grę. Omówienie dostaniesz na końcu.</li><li>Transport jedzie sam – po drodze coś może się wydarzyć… albo nie.</li></ul></div>
  <p class="disc">Gra edukacyjna. Postępowanie oparte na wytycznych ESC i ERC oraz rozporządzeniu MZ w sprawie czynności ratownika medycznego. Nie zastępuje zajęć symulacyjnych ani procedur Twojej jednostki.</p>
 </section>
 
@@ -75,7 +75,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
  <div class="hud" id="hud"><div class="tt"><span id="h-ph">📍 Mieszkanie pacjenta</span><span>⏱ <b id="h-t">0</b> min</span></div><canvas id="ecg" width="800" height="150"></canvas>
   <div class="vit"><div class="v1"><small>HR</small><b id="v-hr">--</b></div><div class="v2"><small>SpO₂</small><b id="v-sp">--</b></div><div class="v3"><small>NIBP</small><b id="v-bp" style="font-size:18px">--/--</b></div><div class="v4"><small>RR odd.</small><b id="v-rr">--</b></div></div></div>
  <div class="pt"><div class="av" id="pav">😰</div><div><b>Pan Andrzej, 58 lat</b><small id="pst">Siedzi na kanapie, trzyma się za klatkę piersiową, spocony, blady.</small></div></div>
- <div class="tabs" id="gt"><button data-g="bad" class="on">🩺 Badanie</button><button data-g="dz">🛠️ Działania</button><button data-g="lek">💊 Leki</button><button data-g="tr">🚑 Transport</button></div>
+ <div class="tabs" id="gt"><button data-g="wyw" class="on">🗣️ Wywiad</button><button data-g="a">A</button><button data-g="b">B</button><button data-g="c">C</button><button data-g="d">D</button><button data-g="e">E</button><button data-g="lek">💊 Leki</button><button data-g="tr">🚑 Transport</button></div>
  <div class="acts" id="ga"></div>
  <div id="go"></div>
  <div id="trc"></div>
@@ -90,170 +90,237 @@ const $=id=>document.getElementById(id);
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0)}
 let qx=0;$('qx').onclick=e=>{e.preventDefault();if(!G.started||G.over||qx){location.href='index.html';return}qx=1;$('qx').textContent='✕ Na pewno? Dotknij jeszcze raz'};
 // ---------- stan gry
-const G={started:false,over:false,t:0,ph:'scene',hr:56,sbp:102,dbp:64,sp:95,rr:18,rh:'sin',pain:8,mon:false,pads:false,iv:false,o2:false,f:{},log:[],eq:{},vfStart:null,shocks:0,rosc:false,cprMin:0,trStart:null,dest:null,hand:null,ekgRead:null,nitroDrop:false,deathCause:null};
+const G={started:false,over:false,t:0,ph:'scene',hr:56,sbp:102,dbp:64,sp:95,rr:18,rh:'sin',pain:8,mon:false,pads:false,iv:false,o2:false,f:{},log:[],eq:{},err:[],
+ trStart:null,dest:null,hand:null,ekgRead:null,hypoT:null,vfAt:null,vfSec:0,rosc:false,deathCause:null};
 function L(txt){G.log.push([G.t,txt]);$('lg').innerHTML=G.log.slice().reverse().map(l=>`<div><b>${fmtT(l[0])}</b> ${l[1]}</div>`).join('')}
 function fmtT(t){return Math.floor(t)+'′'}
 // ---------- sprzęt
-const EQ=[['tor','🎒','Torba ratownicza','zawsze'],['mon','📟','Monitor-defibrylator','z EKG 12'],['o2','🫧','Tlen','butla przenośna'],['krz','🪑','Krzesełko kardiologiczne','do zniesienia'],['ssak','🌀','Ssak','do odsysania'],['deska','🛹','Deska ortopedyczna','unieruchomienie']];
-$('eq').innerHTML=EQ.map(e=>`<button class="ac" data-e="${e[0]}" type="button" style="--c:#457b9d"><i>${e[1]}</i>${e[2]}<small>${e[3]}</small></button>`).join('');
+const EQ=[['tor','🎒','Torba ratownicza'],['mon','📟','Monitor-defibrylator'],['o2','🫧','Tlen przenośny'],['krz','🪑','Krzesełko kardiologiczne'],['ssak','🌀','Ssak'],['deska','🛹','Deska ortopedyczna'],['kol','🦴','Kołnierz szyjny'],['nos','🛏️','Nosze podbierakowe'],['inf','🧴','Zestaw do porodu'],['pomp','⏱️','Pompa infuzyjna']];
+$('eq').innerHTML=EQ.map(e=>`<button class="ac" data-e="${e[0]}" type="button" style="--c:#457b9d"><i>${e[1]}</i>${e[2]}</button>`).join('');
 document.querySelectorAll('#eq .ac').forEach(b=>b.onclick=()=>{G.eq[b.dataset.e]=!G.eq[b.dataset.e];b.classList.toggle('dn',G.eq[b.dataset.e])});
 $('c-stemi').onclick=()=>show('s-zl');
-$('b-jedz').onclick=()=>{show('s-drive');setTimeout(()=>{G.started=true;document.body.classList.add('playing');show('s-game');L('Przyjazd na miejsce. '+(G.eq.mon?'Monitor zabrany.':'⚠️ Monitor został w karetce.'));draw()},3300)};
+$('b-jedz').onclick=()=>{show('s-drive');setTimeout(()=>{G.started=true;document.body.classList.add('playing');show('s-game');L('Przyjazd na miejsce.');draw()},3300)};
 // ---------- czas i fizjologia
-function tick(min){for(let i=0;i<min;i++){G.t++;phys()}draw()}
+function tick(min){for(let i=0;i<min&&!G.over;i++){G.t++;phys()}draw()}
 function phys(){
- if(G.rh==='vf')return;
- // ból i niepokój
- if(G.f.opioid){G.pain=Math.max(3,G.pain-1)}
- // hipotensja po nitroglicerynie – stopniowo wraca tylko po płynach
- if(G.nitroDrop&&!G.f.fluid){G.sbp=Math.max(64,G.sbp-1)}
- if(G.f.fluid&&G.sbp<98){G.sbp=Math.min(98,G.sbp+3)}
- G.hr=Math.round(54+ (G.pain-3)*0.8 + (G.sbp<85?8:0) + (G.rosc?18:0));
- G.dbp=Math.round(G.sbp*0.62);
- G.sp=G.o2?98:(G.rosc?93:95);
- G.rr=G.pain>6?20:17;
- // VF w transporcie po 6 min
- if(G.ph==='tr'&&!G.f.vfDone&&G.t-G.trStart>=6){startVF()}
+ if(G.rh!=='sin')return;
+ if(G.f.fen||G.f.morf)G.pain=Math.max(3,G.pain-1);
+ if(G.hypoT!=null){ // ciężka hipotensja (nitrogliceryna/furosemid/amiodaron) – bez płynów prowadzi do NZK
+  if(G.f.nacl&&G.f.naclT>=G.hypoT){G.sbp=Math.min(98,G.sbp+4);if(G.sbp>=90)G.hypoT=null}
+  else{G.sbp=Math.max(50,G.sbp-3);if(G.t-G.hypoT>=4){die('PEA – zatrzymanie krążenia w przebiegu ciężkiej hipotensji, której nie leczono płynami.');return}}}
+ G.hr=Math.round((G.f.bradyDrug?34:54)+(G.pain-3)*0.8+(G.sbp<85?8:0)+(G.rosc?18:0)+(G.f.atr?20:0)+(G.f.salb?14:0));
+ G.dbp=Math.round(G.sbp*0.62);G.sp=G.o2?98:(G.rosc?93:95);G.rr=G.pain>6?20:17;
+ if(G.ph==='tr'&&G.vfAt!=null&&!G.f.vfDone&&G.t-G.trStart>=G.vfAt)startVF();
 }
-// ---------- monitor (canvas)
+// ---------- monitor
 const cv=$('ecg'),cx=cv.getContext('2d');let px=0,last=0,beatT=0,prevY=75;
-function wave(ph){// ph 0..1 w cyklu serca
- const g=(c,w,a)=>a*Math.exp(-(((ph-c)/w)**2));
- const st=G.f.ekg12?0:0.0; return g(.16,.03,.12)+g(.3,.012,-.12)+g(.33,.014,1)+g(.36,.012,-.3)+g(.42,.05,0.28)+g(.6,.06,.3)}
-function anim(ts){const dt=Math.min(50,ts-last);last=ts;const W=cv.width,H=cv.height,spd=W/4000;// 4 s na szerokość
- const n=Math.max(1,Math.round(dt*spd));
- for(let k=0;k<n;k++){px=(px+1)%W;cx.fillStyle='#05080d';cx.fillRect(px,0,14,H);
-  let y;if(!G.mon){y=H/2+Math.sin(ts/90+px)*0.5}
-  else if(G.rh==='vf'){y=H/2+Math.sin(px/7)*22+Math.sin(px/3.3)*12+Math.sin(px/1.7)*6}
-  else{beatT+=1/spd;const per=60000/G.hr;const ph=(beatT%per)/per;y=H*0.62-wave(ph)*H*0.5}
+function wave(ph){const g=(c,w,a)=>a*Math.exp(-(((ph-c)/w)**2));return g(.16,.03,.12)+g(.3,.012,-.12)+g(.33,.014,1)+g(.36,.012,-.3)+g(.42,.05,0.28)+g(.6,.06,.3)}
+function anim(ts){const dt=Math.min(50,ts-last);last=ts;const W=cv.width,H=cv.height,spd=W/4000;const n=Math.max(1,Math.round(dt*spd));
+ for(let k=0;k<n;k++){px=(px+1)%W;cx.fillStyle='#05080d';cx.fillRect(px,0,14,H);let y;
+  if(!G.mon)y=H/2+Math.sin(ts/90+px)*0.5;
+  else if(G.rh==='vf')y=H/2+Math.sin(px/7)*22+Math.sin(px/3.3)*12+Math.sin(px/1.7)*6;
+  else if(G.rh==='asys')y=H/2+Math.sin(px/40)*1.5;
+  else{beatT+=1/spd;const per=60000/G.hr;y=H*0.62-wave((beatT%per)/per)*H*0.5}
   cx.strokeStyle=G.mon?'#38f27a':'#334';cx.lineWidth=2.4;cx.beginPath();cx.moveTo(px-1,prevY);cx.lineTo(px,y);cx.stroke();prevY=y}
  requestAnimationFrame(anim)}
 requestAnimationFrame(anim);
 function draw(){
- $('h-t').textContent=G.t;setTimeout(trCheck,0);
- const m=G.mon;$('v-hr').textContent=m?(G.rh==='vf'?'VF':G.hr):'--';$('v-sp').textContent=m&&G.rh!=='vf'?G.sp:'--';
- $('v-bp').textContent=m&&G.rh!=='vf'?(G.f.bp?G.sbp+'/'+G.dbp:'--/--'):'--/--';$('v-rr').textContent=m&&G.rh!=='vf'?G.rr:'--';
- $('hud').classList.toggle('alarm',G.rh==='vf'||(m&&G.sbp<85&&G.f.bp));
- $('pav').textContent=G.rh==='vf'?'😵':G.sbp<80?'🥶':G.pain>6?'😰':'😐';
- $('pst').textContent=G.rh==='vf'?'Nagle traci przytomność, nie oddycha!':G.sbp<80?'Bardzo blady, mówi że „robi mu się słabo”.':G.pain>6?'Spocony, blady, ból zamostkowy 8/10.':'Spokojniejszy, ból 3/10.';
- renderActs()}
-// ---------- działania
-let tab='bad';
+ $('h-t').textContent=G.t;const m=G.mon,ok=G.rh==='sin';
+ $('v-hr').textContent=m?(G.rh==='vf'?'VF':G.rh==='asys'?'0':G.hr):'--';$('v-sp').textContent=G.f.spo2&&ok?G.sp:'--';
+ $('v-bp').textContent=ok&&G.f.bp?G.sbp+'/'+G.dbp:'--/--';$('v-rr').textContent=ok&&G.f.boc?G.rr:'--';
+ $('hud').classList.toggle('alarm',!ok||(m&&G.f.bp&&G.sbp<85));
+ $('pav').textContent=!ok?'😵':G.sbp<80?'🥶':G.pain>6?'😰':'😐';
+ $('pst').textContent=!ok?'Nie reaguje, nie oddycha prawidłowo!':G.sbp<80?'Bardzo blady, splątany, mówi że „robi mu się słabo”.':G.pain>6?'Spocony, blady, trzyma się za klatkę piersiową.':'Spokojniejszy, mówi że ból „trochę odpuścił”.';
+ renderActs();trBar()}
+// ---------- działania [id, ikona, nazwa, minuty, kolor]
+let tab='wyw';
 document.querySelectorAll('#gt button').forEach(b=>b.onclick=()=>{tab=b.dataset.g;document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x===b));renderActs()});
 const A={
- bad:[
-  ['wyw','🗣️','Wywiad SAMPLE',2,'#457b9d'],['abc','🩺','Badanie ABCDE',2,'#2a9d8f'],['bp','💪','Pomiar ciśnienia',1,'#2a9d8f'],['gl','🩸','Glikemia',1,'#f77f00'],['e12','📈','EKG 12 odprowadzeń',3,'#e63946'],['v4r','➡️','Odprowadzenia prawokomorowe (V4R)',2,'#e63946']],
- dz:[
-  ['mon','📟','Monitor + elektrody defibrylacyjne',1,'#e63946'],['o2','🫧','Tlen',1,'#4cc9f0'],['iv','💉','Dostęp dożylny',2,'#264653'],['tele','📡','Teletransmisja EKG i konsultacja z pracownią hemodynamiki',2,'#9d4edd']],
- lek:[
-  ['asa','💊','Kwas acetylosalicylowy 300 mg do rozgryzienia',1,'#e63946'],['hep','💉','Heparyna 5000 j. iv',1,'#e63946'],['tik','💊','Tikagrelor 180 mg doustnie',1,'#9d4edd'],['ntg','💊','Nitrogliceryna 0,4 mg podjęzykowo',1,'#f77f00'],['fen','💉','Fentanyl 50 µg iv',1,'#c1121f'],['nacl','💧','Płyn zbilansowany 250 ml iv',2,'#2a9d8f'],['atr','💉','Atropina iv',1,'#457b9d']],
- tr:[
-  ['krz','🪑','Znoszenie na krzesełku do karetki',3,'#264653'],['jedz','🚑','Wybierz szpital i jedź',0,'#e63946']]};
-function renderActs(){if(G.over)return;if(G.rh==='vf'){$('ga').innerHTML='';return}
- $('ga').innerHTML=A[tab].map(a=>`<button class="ac${G.f[a[0]]&&a[0]!=='jedz'?' dn':''}" data-a="${a[0]}" type="button" style="--c:${a[4]}"><i>${a[1]}</i>${a[2]}<small>${a[3]?'⏱ '+a[3]+' min':''}</small></button>`).join('');
+ wyw:[['wyw','🗣️','Wywiad SAMPLE',2],['opqrst','❓','Charakter bólu (OPQRST)',1],['dok','📄','Dokumentacja medyczna i leki pacjenta',1],['usp','🤝','Uspokojenie pacjenta i rodziny',1]],
+ a:[['aoc','🗣️','Ocena drożności (czy mówi)',0],['ssa','🌀','Odsysanie',1],['rug','〰️','Rurka ustno-gardłowa',1],['rur','🫁','Intubacja dotchawicza',3],['kol','🦴','Kołnierz i stabilizacja kręgosłupa',3]],
+ b:[['boc','👀','Oddech: liczba, tor, wysiłek oddechowy',1],['osl','🎧','Osłuchiwanie płuc',1],['spo2','☝️','Pulsoksymetr',0],['etco','📉','Kapnografia',1],['o2','🫧','Tlen przez maskę 10 l/min',1],['pol','🛋️','Pozycja półsiedząca',0]],
+ c:[['coc','✋','Tętno, skóra, nawrót kapilarny',1],['bp','💪','Pomiar ciśnienia (mankiet NIBP)',1],['mon4','📟','Monitorowanie EKG – 4 odprowadzenia',1],['e12','📈','EKG 12 odprowadzeń',3],['v4r','➡️','Odprowadzenia prawokomorowe V4R',2],['pads','⚡','Elektrody defibrylacyjne',1],['ser','❤️','Osłuchiwanie serca, żyły szyjne',1],['iv','💉','Dostęp dożylny',2],['io','🦴','Dostęp doszpikowy',2],['tele','📡','Teletransmisja EKG i konsultacja',2],['plas','🛏️','Ułożenie płasko, nogi w górę',0]],
+ d:[['avpu','🧠','AVPU / GCS',1],['zr','👁️','Źrenice',1],['gl','🩸','Glikemia',1],['fast','🗣️','Test FAST (udar)',1]],
+ e:[['uraz','🔍','Badanie urazowe całego ciała',3],['brz','🫃','Badanie brzucha',1],['nogi','🦵','Kończyny dolne (obrzęki, zakrzepica)',1],['temp','🌡️','Temperatura',1],['koc','🧣','Ochrona przed wychłodzeniem',1]],
+ lek:[['asa','💊','Kwas acetylosalicylowy 300 mg doustnie',1],['hep','💉','Heparyna 5000 j. iv',1],['tik','💊','Tikagrelor 180 mg doustnie',1],['klo','💊','Klopidogrel 600 mg doustnie',1],['ntg','💊','Nitrogliceryna 0,4 mg podjęzykowo',1],['fen','💉','Fentanyl 50 µg iv',1],['morf','💉','Morfina 3 mg iv',1],['keto','💉','Ketoprofen 100 mg iv',1],['nacl','💧','Płyn zbilansowany 250 ml iv',2],['atr','💉','Atropina 0,5 mg iv',1],['meto','💉','Metoprolol 5 mg iv',1],['furo','💉','Furosemid 40 mg iv',1],['amio','💉','Amiodaron 300 mg iv',1],['adr','💉','Adrenalina 1 mg iv',1],['metk','💉','Metoklopramid 10 mg iv',1],['diaz','💉','Diazepam 5 mg iv',1],['salb','🫧','Salbutamol 5 mg w nebulizacji',1],['hydro','💉','Hydrokortyzon 100 mg iv',1]],
+ tr:[['krz','🪑','Znoszenie na krzesełku',3],['nosz','🛏️','Znoszenie na noszach podbierakowych',4],['pie','🚶','Pacjent schodzi sam do karetki',2],['jedz','🚑','Wybierz szpital i jedź',0]]};
+const COL={wyw:'#457b9d',a:'#2a9d8f',b:'#4cc9f0',c:'#e63946',d:'#9d4edd',e:'#f77f00',lek:'#c1121f',tr:'#0b1f3a'};
+function renderActs(){if(G.over||G.rh!=='sin'){$('ga').innerHTML='';return}
+ $('ga').innerHTML=A[tab].map(a=>`<button class="ac${G.f[a[0]]&&a[0]!=='jedz'?' dn':''}" data-a="${a[0]}" type="button" style="--c:${COL[tab]}"><i>${a[1]}</i>${a[2]}<small>${G.ph==='scene'&&a[3]?'⏱ '+a[3]+' min':''}</small></button>`).join('');
  document.querySelectorAll('#ga .ac').forEach(b=>b.onclick=()=>act(b.dataset.a))}
-function out(c,h,body){$('go').innerHTML=`<div class="out" style="--c:${c}"><h3>${h}</h3>${body}</div>`;$('go').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function out(h,body){$('go').innerHTML=`<div class="out" style="--c:#457b9d"><h3>${h}</h3>${body||''}</div>`;$('go').scrollIntoView({behavior:'smooth',block:'nearest'})}
 function cost(id){for(const k in A)for(const a of A[k])if(a[0]===id)return a[3];return 1}
-function act(id){if(G.over||G.rh==='vf')return;
- const again=G.f[id];
- if(again&&!['nacl','fen','bp','jedz'].includes(id)){out('#9aa5b1','To już zrobione','<p>Wybierz inne działanie.</p>');return}
- // wymagania
- const needIV=['hep','fen','nacl','atr'];if(needIV.includes(id)&&!G.iv){out('#e63946','⚠️ Brak dostępu dożylnego','<p>Najpierw załóż wkłucie (zakładka Działania).</p>');return}
- if(['e12','v4r','mon'].includes(id)&&!G.eq.mon&&!G.f.monFetched){G.f.monFetched=1;tick(3);L('Kolega wraca do karetki po monitor (+3 min).');}
- if(id==='v4r'&&!G.f.e12){out('#9aa5b1','Najpierw EKG 12-odprowadzeniowe','<p>V4R dokładasz po zwykłym zapisie.</p>');return}
- if(id==='tele'&&!G.f.e12){out('#9aa5b1','Nie masz czego przesłać','<p>Najpierw wykonaj EKG 12-odprowadzeniowe.</p>');return}
- if(id==='krz'&&G.ph==='tr'){out('#9aa5b1','Jesteście już w karetce','');return}
- if(id==='jedz'){return chooseDest()}
+const REPEAT=['nacl','fen','morf','bp','jedz','o2','usp','boc','coc','avpu'];
+function act(id){if(G.over||G.rh!=='sin')return;
+ if(G.f[id]&&!REPEAT.includes(id)){out('Już wykonane');return}
+ if(['hep','fen','morf','keto','nacl','atr','meto','furo','amio','adr','metk','diaz','hydro'].includes(id)&&!G.iv){out('Brak dostępu naczyniowego');return}
+ if(['e12','v4r','mon4','pads','bp','spo2','etco'].includes(id)&&!G.eq.mon&&!G.f.monFetched){G.f.monFetched=1;if(G.ph==='scene')tick(3);L('Powrót do karetki po monitor (+3 min).')}
+ if(id==='v4r'&&!G.f.e12){out('Brak zapisu EKG');return}
+ if(id==='tele'&&!G.f.e12){out('Nie ma czego przesłać');return}
+ if(['krz','nosz','pie'].includes(id)&&G.f.down){out('Pacjent jest już w karetce');return}
+ if(id==='jedz')return chooseDest();
  G.f[id]=(G.f[id]||0)+1;
- const t0=G.t;
  switch(id){
- case'wyw':out('#457b9d','🗣️ Wywiad SAMPLE','<ul><li><b>S</b> – ból zamostkowy, gniotący, od ok. 50 min, promieniuje do żuchwy i lewego barku, 8/10. Nudności.</li><li><b>A</b> – alergii nie zgłasza.</li><li><b>M</b> – ramipril, atorwastatyna. <b>Nie</b> przyjmował leków na potencję.</li><li><b>P</b> – nadciśnienie, pali 30 lat.</li><li><b>L</b> – śniadanie 2 h temu.</li><li><b>E</b> – ból zaczął się przy noszeniu zakupów, nie mija w spoczynku.</li></ul>');L('Wywiad SAMPLE.');break;
- case'abc':out('#2a9d8f','🩺 ABCDE','<ul><li><b>A</b> – drożne, mówi pełnymi zdaniami.</li><li><b>B</b> – oddech 18/min, szmer pęcherzykowy symetryczny, bez trzeszczeń.</li><li><b>C</b> – tętno na tętnicy promieniowej miarowe, wolne; skóra blada, spocona, nawrót kapilarny 2 s. Żyły szyjne lekko poszerzone.</li><li><b>D</b> – GCS 15, źrenice równe.</li><li><b>E</b> – bez obrzęków, bez urazów.</li></ul>');L('Badanie ABCDE.');break;
- case'bp':G.f.bp=1;out('#2a9d8f','💪 Ciśnienie tętnicze',`<p><b>${G.sbp}/${G.dbp} mmHg</b>${G.sbp<90?' – <b style="color:#e63946">hipotensja!</b>':''}</p>`);L('RR '+G.sbp+'/'+G.dbp+'.');break;
- case'gl':out('#f77f00','🩸 Glikemia','<p><b>132 mg/dl</b></p>');L('Glikemia 132 mg/dl.');break;
- case'mon':G.mon=true;G.pads=true;G.f.bp=1;out('#e63946','📟 Monitor podłączony','<p>Na monitorze rytm zatokowy ok. 56/min. Elektrody defibrylacyjne naklejone – w razie VF możesz od razu wyładować.</p>');L('Monitor i elektrody.');break;
- case'e12':G.mon=true;G.f.bp=1;out('#e63946','📈 EKG 12 odprowadzeń','<div class="e12w"><div class="e12">'+E12+'</div></div><p class="e12h">👉 Przesuń zapis w bok, żeby zobaczyć wszystkie odprowadzenia. Szukaj uniesień i obniżeń odcinka ST.</p><p style="margin-top:8px"><b>Twoja interpretacja?</b></p><div class="q" id="ek"></div>');L('EKG 12-odprowadzeniowe.');quiz('ek',[['STEMI ściany dolnej (uniesienia ST w II, III, aVF)',1],['STEMI ściany przedniej (V1–V4)',0],['Prawidłowe EKG',0],['Blok lewej odnogi pęczka Hisa',0]],ok=>{G.ekgRead=ok;L(ok?'Rozpoznanie: STEMI ściany dolnej.':'Błędna interpretacja EKG.');return ok?'Tak – uniesienia ST w II, III i aVF, obniżenia w I i aVL (zmiany lustrzane). Przy zawale ściany dolnej zawsze sprawdź prawą komorę (V4R).':'Spójrz jeszcze raz na II, III i aVF – tam są uniesienia ST, a w I i aVL obniżenia (odbicie lustrzane). To STEMI ściany dolnej.'});break;
- case'v4r':out('#e63946','➡️ V4R','<div style="max-width:260px">'+V4R+'</div><p>Uniesienie ST w V4R ≥ 1 mm → <b>zawał prawej komory</b>. Taki pacjent jest zależny od obciążenia wstępnego – <b>nitrogliceryna jest przeciwwskazana</b>, a przy hipotensji podajesz płyny.</p>');G.f.rv=1;L('V4R: uniesienie ST – zajęcie prawej komory.');break;
- case'o2':G.o2=true;out('#4cc9f0','🫧 Tlen',G.mon?'<p>Tlen podany. SpO₂ przed tlenem była <b>95%</b>.</p>':'<p>Tlen podany. Saturacji jeszcze nie znasz – monitor nie jest podłączony.</p>');L('Tlen.');break;
- case'iv':G.iv=true;out('#264653','💉 Dostęp dożylny','<p>Wenflon 18G w lewym przedramieniu, pobrana krew.</p>');L('Dostęp iv.');break;
- case'tele':out('#9d4edd','📡 Konsultacja z pracownią hemodynamiki','<p>Kardiolog dyżurny: „Widzę STEMI ściany dolnej. Pacjent do nas bezpośrednio, z pominięciem SOR – sala jest wolna. Podajcie ASA 300 mg, heparynę 5000 j. i tikagrelor 180 mg.”</p>');G.f.consult=1;L('Konsultacja z pracownią PCI – przyjęcie bezpośrednie.');break;
- case'asa':out('#e63946','💊 ASA 300 mg','<p>Pacjent rozgryzł i połknął tabletkę.</p>');L('ASA 300 mg.');break;
- case'hep':out('#e63946','💉 Heparyna 5000 j. iv','<p>Bolus podany. (70 j./kg, maks. 5000 j.)</p>');L('Heparyna 5000 j.');break;
- case'tik':out('#9d4edd','💊 Tikagrelor 180 mg',G.f.consult?'<p>Podany po konsultacji – zgodnie z zaleceniem pracowni.</p>':'<p>Podany przed konsultacją z ośrodkiem kardiologii inwazyjnej.</p>');G.f.tikPre=!G.f.consult;L('Tikagrelor 180 mg'+(G.f.consult?'':' (przed konsultacją)')+'.');break;
- case'ntg':G.nitroDrop=true;G.sbp=Math.min(G.sbp,74);
-  out('#f77f00','💊 Nitrogliceryna','<p>Po 2 minutach pacjent mówi, że „robi mu się ciemno przed oczami”. '+(G.f.bp||G.mon?'Ciśnienie spada do <b>74/46</b>.':'Jest bardzo blady, tętno słabo wyczuwalne.')+'</p><p>W zawale prawej komory nitrogliceryna odbiera serce obciążenie wstępne – stąd gwałtowny spadek ciśnienia.</p>');L('⚠️ Nitrogliceryna → spadek RR.');break;
- case'fen':G.f.opioid=1;out('#c1121f','💉 Fentanyl 50 µg','<p>Ból zmniejsza się. Obserwujesz oddech – bez depresji.</p>');L('Fentanyl 50 µg.');break;
- case'nacl':G.f.fluid=(G.f.fluid||0)+1;G.sbp=Math.min(104,G.sbp+10);out('#2a9d8f','💧 Płyn 250 ml','<p>'+(G.nitroDrop?'Ciśnienie stopniowo rośnie.':'Podany bolus.')+'</p>');L('Płyn 250 ml.');break;
- case'atr':out('#457b9d','💉 Atropina','<p>Tętno rośnie do 78/min, pacjent bez zmian samopoczucia.</p><p>Przy tętnie 56/min bez objawów niestabilności atropina nie była potrzebna.</p>');G.f.atrNoInd=1;L('Atropina (bez wskazań).');break;
- case'krz':out('#264653','🪑 Znoszenie','<p>Pacjent zniesiony na krzesełku kardiologicznym – bez wysiłku z jego strony. Jesteście w karetce.</p>');G.f.carried=1;L('Zniesienie na krzesełku do karetki.');break;}
- tick(cost(id));if(G.ph==='tr'&&!G.over)trCheck()}
-function quiz(el,opts,fb){const box=$(el);box.innerHTML=opts.map((o,i)=>`<button type="button" data-i="${i}">${o[0]}</button>`).join('');
- box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];box.querySelectorAll('button').forEach(z=>z.disabled=true);b.classList.add(o[1]?'ok':'no');box.insertAdjacentHTML('beforeend','<p><b>'+(o[1]?'✅ ':'❌ ')+'</b>'+fb(!!o[1],o)+'</p>')})}
-// ---------- transport
-function chooseDest(){if(G.ph!=='scene'){trCheck();return}
- if(!G.f.krz&&!G.f.carried){out('#e63946','Pacjent jest jeszcze w mieszkaniu','<p>Najpierw bezpiecznie przetransportuj go do karetki (krzesełko).</p>');return}
- out('#e63946','🚑 Dokąd jedziesz?','<div class="q" id="ds"></div>');
- const box=$('ds');const opts=[['🫀 Pracownia hemodynamiki (szpital wojewódzki, 25 min) – bezpośrednio','pci'],['🏥 SOR najbliższego szpitala (8 min) – bez pracowni','sor'],['🏥 SOR szpitala z pracownią (25 min) – przez SOR','sorpci']];
- box.innerHTML=opts.map(o=>`<button type="button" data-d="${o[1]}">${o[0]}</button>`).join('');
- box.querySelectorAll('button').forEach(b=>b.onclick=()=>{G.dest=b.dataset.d;G.ph='tr';G.trStart=G.t;$('h-ph').textContent='🚑 Transport';L('Transport: '+b.textContent.replace(/^\S+ /,''));out('#e63946','🚑 Jedziecie','<p>Pacjent na noszach, monitor '+(G.mon?'podłączony':'<b>niepodłączony!</b>')+'. Możesz dalej działać w karetce – albo jedź dalej przyciskiem na dole.</p>');tab='lek';document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x.dataset.g==='lek'));draw();trCheck()})}
-function trLen(){return G.dest==='sor'?8:25}
-function trCheck(){const box=$('trc');if(!box)return;if(G.over||G.rh==='vf'||G.ph!=='tr'){box.innerHTML='';return}
- const left=Math.max(0,trLen()-(G.t-G.trStart));
- box.innerHTML=`<div class="trbar"><b>🚑 Do szpitala: ok. ${left} min</b><button class="btn" id="wait" type="button">${left<=2&&G.f.vfDone?'🏥 Dojedź':'⏩ Jedź dalej'}</button></div>`;
- $('wait').onclick=()=>{if(G.rh==='vf'||G.over)return;const l=Math.max(0,trLen()-(G.t-G.trStart));
-  if(!G.f.vfDone){tick(Math.max(1,Math.min(2,l)));return}
-  if(l<=2){tick(l);arrive()}else tick(2)}}
-// ---------- VF
-let vfTimer=null,vfSec=0;
-function startVF(){$('trc').innerHTML='';G.rh='vf';G.f.vfDone=1;G.vfStart=G.t;vfSec=0;L('⚠️ Utrata przytomności – migotanie komór!');draw();
- $('go').innerHTML=`<div class="vfbox"><h3>🚨 Pacjent traci przytomność!</h3><p>${G.mon?'Na monitorze: <b>migotanie komór</b>.':'Pacjent nie reaguje, nie oddycha prawidłowo. Monitor nie był podłączony.'}</p><div class="clk">⏱ <span id="vfc">0</span> s bez krążenia</div><div class="q" id="vq"></div></div>`;
- $('go').scrollIntoView({behavior:'smooth'});vfOpts();vfTimer=setInterval(()=>{vfSec++;$('vfc')&&($('vfc').textContent=vfSec);if(vfSec>=120)vfFail()},1000)}
-function vfOpts(){const pads=G.pads;const o=pads?[['⚡ Defibrylacja 150–200 J od razu','def'],['💉 Adrenalina 1 mg iv','adr'],['🫁 Najpierw 2 min RKO, potem ocena rytmu','rko'],['📞 Wezwanie zespołu S do pomocy','call']]:[['📟 Natychmiast elektrody na klatkę i ocena rytmu','pads'],['🫁 Uciskanie klatki piersiowej','rko'],['💉 Adrenalina 1 mg iv','adr']];
+ case'wyw':out('🗣️ Wywiad SAMPLE','<ul><li><b>S</b> – ból zamostkowy, gniotący, od ok. 50 min, promieniuje do żuchwy i lewego barku. Nudności.</li><li><b>A</b> – nie zgłasza.</li><li><b>M</b> – ramipril, atorwastatyna. Leków na potencję nie przyjmował.</li><li><b>P</b> – nadciśnienie, pali 30 lat.</li><li><b>L</b> – śniadanie 2 h temu.</li><li><b>E</b> – zaczęło się przy noszeniu zakupów, nie mija w spoczynku.</li></ul>');L('Wywiad.');break;
+ case'opqrst':out('❓ OPQRST','<ul><li><b>O</b> – nagle, przy wysiłku.</li><li><b>P</b> – nie zmienia się przy oddychaniu ani zmianie pozycji.</li><li><b>Q</b> – gniotący, „jakby słoń siedział na klatce”.</li><li><b>R</b> – do żuchwy i lewego barku.</li><li><b>S</b> – 8/10.</li><li><b>T</b> – od ok. 50 minut, stały.</li></ul>');L('OPQRST.');break;
+ case'dok':out('📄 Dokumentacja','<p>Karta wypisowa sprzed 2 lat: nadciśnienie tętnicze, hipercholesterolemia. EKG sprzed roku – prawidłowe.</p>');L('Dokumentacja.');break;
+ case'aoc':out('🗣️ Drożność','<p>Pacjent mówi pełnymi zdaniami – drogi oddechowe drożne.</p>');L('A: drożne.');break;
+ case'rug':out('〰️ Rurka UG','<p>Pacjent krztusi się i wypluwa rurkę.</p>');L('Rurka ustno-gardłowa u przytomnego.');break;
+ case'boc':out('👀 Oddech','<p>'+G.rr+'/min, tor piersiowy, symetryczny, bez użycia dodatkowych mięśni.</p>');L('B: oddech '+G.rr+'/min.');break;
+ case'osl':out('🎧 Płuca','<p>Szmer pęcherzykowy symetryczny, bez trzeszczeń i świstów.</p>');L('B: osłuchowo bez zmian.');break;
+ case'spo2':out('☝️ Pulsoksymetr','<p>SpO₂ <b>'+G.sp+'%</b>.</p>');L('SpO₂ '+G.sp+'%.');break;
+ case'etco':out('📉 Kapnografia','<p>EtCO₂ 36 mmHg.</p>');L('EtCO₂ 36.');break;
+ case'coc':out('✋ Krążenie','<p>Tętno na tętnicy promieniowej '+(G.sbp<80?'słabo wyczuwalne':'wyczuwalne')+', miarowe, ok. '+G.hr+'/min. Skóra blada, spocona, chłodna. Nawrót kapilarny '+(G.sbp<80?'4':'2')+' s.</p>');L('C: tętno '+G.hr+'/min.');break;
+ case'mon4':G.mon=true;out('📟 Monitorowanie 4 odprowadzeń','<p>Rytm na monitorze miarowy, ok. '+G.hr+'/min.</p>');L('Monitorowanie EKG (4 odprowadzenia).');break;
+ case'pads':G.pads=true;G.mon=true;out('⚡ Elektrody defibrylacyjne','<p>Naklejone.</p>');L('Elektrody defibrylacyjne.');break;
+ case'ser':out('❤️ Serce','<p>Tony serca ciche, miarowe, bez szmerów. Żyły szyjne poszerzone.</p>');L('C: osłuchiwanie serca.');break;
+ case'avpu':out('🧠 Świadomość','<p>'+(G.sbp<80?'V – reaguje na głos, splątany. GCS 13.':'A – przytomny, zorientowany. GCS 15.')+'</p>');L('D: '+(G.sbp<80?'GCS 13':'GCS 15')+'.');break;
+ case'koc':out('🧣 Ochrona termiczna','<p>Pacjent okryty kocem.</p>');L('Koc.');break;
+ case'bp':G.f.bp=1;out('💪 Ciśnienie',`<p><b>${G.sbp}/${G.dbp} mmHg</b></p>`);L('RR '+G.sbp+'/'+G.dbp+'.');break;
+ case'gl':out('🩸 Glikemia','<p><b>132 mg/dl</b></p>');L('Glikemia 132.');break;
+ case'zr':out('👁️ Źrenice','<p>Równe, reagują prawidłowo na światło.</p>');L('Źrenice.');break;
+ case'temp':out('🌡️ Temperatura','<p>36,6 °C</p>');L('Temperatura.');break;
+ case'brz':out('🫃 Brzuch','<p>Miękki, niebolesny, perystaltyka obecna.</p>');L('Badanie brzucha.');break;
+ case'fast':out('🧠 FAST','<p>Twarz symetryczna, siła kończyn prawidłowa, mowa prawidłowa.</p>');L('Test FAST.');break;
+ case'uraz':out('🔍 Badanie urazowe','<p>Bez obrażeń.</p>');L('Badanie urazowe.');break;
+ case'nogi':out('🦵 Kończyny dolne','<p>Bez obrzęków, łydki niebolesne.</p>');L('Kończyny dolne.');break;
+ case'e12':G.mon=true;out('📈 EKG 12 odprowadzeń','<div class="e12w"><div class="e12">'+E12+'</div></div><p class="e12h">👉 Przesuń zapis w bok.</p><p style="margin-top:8px"><b>Twoja interpretacja?</b></p><div class="q" id="ek"></div>');L('EKG 12-odprowadzeniowe.');
+  pick('ek',[['STEMI ściany dolnej','inf'],['STEMI ściany przedniej','ant'],['NSTEMI / niestabilna dławica','nste'],['Zatorowość płucna','pe'],['Prawidłowe EKG','norm'],['Blok lewej odnogi pęczka Hisa','lbbb']],v=>{G.ekgRead=v;L('Interpretacja EKG: '+{inf:'STEMI ściany dolnej',ant:'STEMI ściany przedniej',nste:'NSTEMI',pe:'zatorowość płucna',norm:'prawidłowe',lbbb:'LBBB'}[v]+'.')});break;
+ case'v4r':out('➡️ V4R','<div style="max-width:260px">'+V4R+'</div>');L('V4R.');break;
+ case'o2':G.o2=true;out('🫧 Tlen','<p>Maska z tlenem 10 l/min.</p>');L('Tlen.');break;
+ case'iv':G.iv=true;out('💉 Dostęp dożylny','<p>Wenflon 18G, przedramię lewe.</p>');L('Dostęp iv.');break;
+ case'io':G.iv=true;out('🦴 Dostęp doszpikowy','<p>Igła w kości piszczelowej. Pacjent krzyczy z bólu.</p>');G.pain=Math.min(10,G.pain+1);L('Dostęp doszpikowy.');break;
+ case'tele':G.f.consult=1;out('📡 Konsultacja','<p>Kardiolog: „Przywieźcie pacjenta bezpośrednio na pracownię hemodynamiki.”</p>');L('Konsultacja z pracownią hemodynamiki.');break;
+ case'pol':out('🛋️ Pozycja półsiedząca','<p>Pacjent ułożony.</p>');L('Pozycja półsiedząca.');break;
+ case'plas':out('🛏️ Pozycja płaska','<p>Pacjent ułożony płasko z uniesionymi nogami.</p>');L('Pozycja płaska z uniesionymi nogami.');break;
+ case'kol':out('🦴 Stabilizacja','<p>Założony kołnierz. Pacjent jest zdezorientowany, pyta po co.</p>');L('Kołnierz (bez wskazań).');break;
+ case'ssa':out('🌀 Odsysanie','<p>W jamie ustnej brak treści.</p>');L('Odsysanie.');break;
+ case'rur':out('🫁 Intubacja','<p>Pacjent jest przytomny i broni się – intubacja niemożliwa.</p>');L('Próba intubacji przytomnego pacjenta.');break;
+ case'usp':out('🤝 Rozmowa','<p>Pacjent i żona trochę spokojniejsi.</p>');L('Uspokojenie pacjenta.');break;
+ case'asa':out('💊 ASA 300 mg','<p>Podane.</p>');L('ASA 300 mg.');break;
+ case'hep':out('💉 Heparyna 5000 j.','<p>Podane.</p>');L('Heparyna 5000 j.');break;
+ case'tik':out('💊 Tikagrelor 180 mg','<p>Podane.</p>');G.f.tikPre=!G.f.consult;L('Tikagrelor 180 mg.');break;
+ case'klo':out('💊 Klopidogrel 600 mg','<p>Podane.</p>');G.f.kloPre=!G.f.consult;L('Klopidogrel 600 mg.');break;
+ case'ntg':G.hypoT=G.t;G.sbp=Math.min(G.sbp,66);out('💊 Nitrogliceryna','<p>Po chwili pacjent mówi, że „robi mu się ciemno przed oczami”. Jest bardzo blady.</p>');L('Nitrogliceryna.');break;
+ case'furo':if(G.hypoT==null)G.hypoT=G.t;G.sbp=Math.min(G.sbp-14,80);out('💉 Furosemid','<p>Podane. Pacjent zgłasza zawroty głowy.</p>');L('Furosemid 40 mg.');break;
+ case'amio':if(G.hypoT==null)G.hypoT=G.t;G.sbp=Math.min(G.sbp-20,74);G.f.bradyDrug=1;out('💉 Amiodaron','<p>Podane. Pacjent coraz bardziej blady.</p>');L('Amiodaron 300 mg.');break;
+ case'meto':L('Metoprolol 5 mg iv.');G.hr=30;draw();return die('Asystolia – po beta-blokerze iv u pacjenta z bradykardią w zawale ściany dolnej.',3);
+ case'adr':L('Adrenalina 1 mg iv u pacjenta z zachowanym krążeniem.');return die('Migotanie komór i zgon po adrenalinie 1 mg iv podanej pacjentowi z zachowanym krążeniem.',2);
+ case'fen':out('💉 Fentanyl 50 µg','<p>Podane.</p>');L('Fentanyl 50 µg.');break;
+ case'morf':out('💉 Morfina 3 mg','<p>Podane. Pacjent ma nudności.</p>');L('Morfina 3 mg.');break;
+ case'keto':out('💉 Ketoprofen','<p>Podane.</p>');L('Ketoprofen 100 mg.');break;
+ case'nacl':G.f.naclT=G.t;G.sbp=Math.min(104,G.sbp+8);out('💧 Płyn 250 ml','<p>Podane.</p>');L('Płyn 250 ml.');break;
+ case'atr':out('💉 Atropina','<p>Podane.</p>');L('Atropina 0,5 mg.');break;
+ case'metk':out('💉 Metoklopramid','<p>Podane. Nudności mniejsze.</p>');L('Metoklopramid 10 mg.');break;
+ case'diaz':out('💉 Diazepam','<p>Podane. Pacjent senny.</p>');L('Diazepam 5 mg.');break;
+ case'salb':out('🫧 Salbutamol','<p>Podane. Pacjent czuje kołatanie serca.</p>');L('Salbutamol.');break;
+ case'hydro':out('💉 Hydrokortyzon','<p>Podane.</p>');L('Hydrokortyzon 100 mg.');break;
+ case'krz':case'nosz':G.f.down=1;out('🚑 W karetce','<p>Pacjent zniesiony do karetki.</p>');L(id==='krz'?'Zniesienie na krzesełku.':'Zniesienie na noszach.');break;
+ case'pie':G.f.down=1;G.f.walk=1;out('🚶 W karetce','<p>Pacjent zszedł sam z III piętra. Na dole jest bardzo spocony i zdyszany.</p>');G.pain=Math.min(10,G.pain+1);L('Pacjent schodzi sam z III piętra.');if(Math.random()<0.5&&!G.f.vfDone){G.vfAt=0}break;}
+ if(G.over)return;
+ if(G.ph==='scene')tick(cost(id));else draw();
+ autoNext(id);
+ if(G.f.walk&&G.vfAt===0&&!G.f.vfDone&&G.ph==='scene'){G.f.vfDone=0;startVF()}}
+
+const ORDER=['wyw','a','b','c','d','e','lek','tr'],NEED={wyw:1,a:1,b:2,c:3,d:2,e:1,lek:3},ADV={};
+const TNAME={wyw:'🗣️ Wywiad',a:'A – drogi oddechowe',b:'B – oddychanie',c:'C – krążenie',d:'D – stan neurologiczny',e:'E – ekspozycja',lek:'💊 Leki',tr:'🚑 Transport'};
+function setTab(t){tab=t;document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x.dataset.g===t));const b=document.querySelector('#gt button[data-g="'+t+'"]');b&&b.scrollIntoView({inline:'center',block:'nearest'});renderActs()}
+function autoNext(id){if(G.over||G.rh!=='sin'||G.ph!=='scene'||!NEED[tab]||ADV[tab])return;if(!A[tab].some(a=>a[0]===id))return;
+ const n=A[tab].filter(a=>G.f[a[0]]).length;if(n<NEED[tab])return;ADV[tab]=1;const nx=ORDER[ORDER.indexOf(tab)+1];if(!nx)return;
+ setTimeout(()=>{if(G.rh!=='sin'||G.over)return;setTab(nx);$('go').insertAdjacentHTML('afterbegin','<div class="out" style="--c:#0b1f3a;padding:8px 12px"><b>➡️ '+TNAME[nx]+'</b></div>')},700)}
+function pick(el,opts,cb){const box=$(el);box.innerHTML=opts.map((o,i)=>`<button type="button" data-i="${i}">${o[0]}</button>`).join('');
+ box.querySelectorAll('button').forEach(b=>b.onclick=()=>{box.querySelectorAll('button').forEach(z=>z.disabled=true);b.style.borderColor='#0b1f3a';b.style.background='#e8eef7';cb(opts[+b.dataset.i][1])})}
+// ---------- transport – jedzie sam
+let trTimer=null;
+function chooseDest(){if(G.ph!=='scene'){out('Jesteście w drodze');return}
+ if(!G.f.down){out('Pacjent jest jeszcze w mieszkaniu');return}
+ out('🚑 Dokąd jedziesz?','<div class="q" id="ds"></div>');
+ pick('ds',[['🫀 Pracownia hemodynamiki – szpital wojewódzki (25 min), bezpośrednio','pci'],['🏥 SOR najbliższego szpitala (8 min) – bez pracowni','sor'],['🏥 SOR szpitala z pracownią (25 min)','sorpci'],['🏥 Izba przyjęć szpitala powiatowego (12 min)','ip']],d=>{
+  G.dest=d;G.ph='tr';G.trStart=G.t;$('h-ph').textContent='🚑 Transport';
+  G.trLen={pci:25,sor:8,sorpci:25,ip:12}[d];
+  // zdarzenie w drodze – albo się wydarzy, albo nie
+  if(!G.f.vfDone&&G.vfAt==null){const risk=0.35+(G.f.walk?0.25:0)+(!G.f.asa?0.05:0)+(!(G.f.fen||G.f.morf)?0.05:0);G.vfAt=Math.random()<risk?3+Math.floor(Math.random()*Math.max(1,Math.min(10,G.trLen-4))):null}
+  L('Wyjazd do: '+{pci:'pracownia hemodynamiki',sor:'SOR najbliższego szpitala',sorpci:'SOR szpitala z pracownią',ip:'izba przyjęć szpitala powiatowego'}[d]+'.');
+  out('🚑 Jedziecie','<p>Pacjent na noszach'+(G.mon?', monitor podłączony':'')+'.</p>');setTab('c');runTr()})}
+function runTr(){clearInterval(trTimer);trTimer=setInterval(()=>{if(G.over||G.rh!=='sin'){clearInterval(trTimer);return}
+ tick(1);if(G.ph==='tr'&&G.rh==='sin'&&G.t-G.trStart>=G.trLen){clearInterval(trTimer);arrive()}},2000);draw()}
+function trBar(){const box=$('trc');if(!box)return;if(G.over||G.rh!=='sin'||G.ph!=='tr'){box.innerHTML='';return}
+ const left=Math.max(0,G.trLen-(G.t-G.trStart)),pc=Math.round((G.t-G.trStart)/G.trLen*100);
+ box.innerHTML=`<div class="trbar" style="display:block"><b>🚑 W drodze · do szpitala ok. ${left} min</b><div style="height:8px;background:rgba(255,255,255,.2);border-radius:9px;margin-top:8px;overflow:hidden"><i style="display:block;height:100%;width:${pc}%;background:#ffd166;transition:width 1.8s linear"></i></div></div>`}
+// ---------- NZK (VF)
+let vfTimer=null;
+function startVF(){clearInterval(trTimer);G.rh='vf';G.f.vfDone=1;G.vfSec=0;L('Pacjent traci przytomność.');draw();
+ $('go').innerHTML=`<div class="vfbox"><h3>🚨 Pacjent traci przytomność!</h3><p>${G.mon?'Alarm monitora.':'Nie reaguje, oddech agonalny.'}</p><div class="clk">⏱ <span id="vfc">0</span> s</div><div class="q" id="vq"></div></div>`;
+ $('go').scrollIntoView({behavior:'smooth'});vfOpts();vfTimer=setInterval(()=>{G.vfSec++;$('vfc')&&($('vfc').textContent=G.vfSec);if(G.vfSec>=90)die('Migotanie komór – zbyt długi czas bez defibrylacji.')},1000)}
+function vfOpts(){const o=G.pads?[['⚡ Defibrylacja 150–200 J','def'],['💉 Adrenalina 1 mg iv','adr'],['🫁 Uciskanie klatki piersiowej 2 min','rko'],['💉 Amiodaron 300 mg iv','amio'],['📞 Wezwanie drugiego zespołu','call'],['🫁 Intubacja','rur'],['👆 Uderzenie przedsercowe','pre']]
+ :[['📟 Naklej elektrody i oceń rytm','pads'],['🫁 Uciskanie klatki piersiowej','rko'],['💉 Adrenalina 1 mg iv','adr'],['🩺 Sprawdź tętno na tętnicy szyjnej przez 30 s','tet'],['📞 Wezwanie drugiego zespołu','call'],['👆 Uderzenie przedsercowe','pre']];
+ o.sort(()=>Math.random()-0.5);
  $('vq').innerHTML=o.map(x=>`<button type="button" data-v="${x[1]}">${x[0]}</button>`).join('');
  $('vq').querySelectorAll('button').forEach(b=>b.onclick=()=>vfAct(b.dataset.v,b))}
-function vfAct(v,b){vfSec+=v==='def'?0:15;
- if(v==='def'){clearInterval(vfTimer);G.shocks++;G.rh='sin';G.rosc=true;G.mon=true;G.f.vfSec=vfSec;L('⚡ Defibrylacja po '+vfSec+' s → powrót krążenia (ROSC).');tick(1);
-  $('go').innerHTML=`<div class="out" style="--c:#2a9d8f"><h3>⚡ Wyładowanie – ROSC!</h3><p>Po wyładowaniu wraca rytm zatokowy ${G.hr}/min. Pacjent otwiera oczy, oddycha. Czas bez krążenia: <b>${vfSec} s</b>.</p><p>${vfSec<=30?'Świetnie – dzięki naklejonym elektrodom zareagowałeś w kilka sekund. W VF każda minuta zwłoki zmniejsza szansę przeżycia o ok. 10%.':'Udało się, ale każda sekunda w VF to mniejsza szansa na przeżycie bez uszkodzeń.'}</p></div>`;trCheck();return}
- if(v==='pads'){G.pads=true;G.mon=true;b.disabled=true;L('Elektrody naklejone w trakcie NZK (+15 s).');$('vq').insertAdjacentHTML('beforebegin','<p>Elektrody naklejone – na monitorze <b>VF</b>.</p>');vfOpts();return}
- b.disabled=true;b.classList.add('no');
- const msg={adr:'W VF adrenalinę podajesz dopiero po 3. wyładowaniu. Teraz liczy się defibrylacja.',rko:'Przy świadkowanym VF z podłączonym defibrylatorem – najpierw wyładowanie, bez zwłoki.',call:'Możesz wezwać, ale nie kosztem zwłoki w defibrylacji.'}[v];
- $('vq').insertAdjacentHTML('afterend','<p style="color:#ffd166"><b>⏱ +15 s.</b> '+(msg||'')+'</p>')}
-function vfFail(){clearInterval(vfTimer);G.over=true;G.deathCause='Zbyt długi czas migotania komór bez defibrylacji.';L('Pacjent zmarł – brak skutecznej defibrylacji.');setTimeout(finish,600)}
+function vfAct(v,b){if(G.over)return;G.f['vf_'+v]=1;
+ if(v==='def'){clearInterval(vfTimer);G.rh='sin';G.rosc=true;G.mon=true;G.f.vfSec=G.vfSec;L('Defibrylacja po '+G.vfSec+' s – powrót krążenia.');draw();
+  $('go').innerHTML=`<div class="out" style="--c:#2a9d8f"><h3>⚡ Wyładowanie</h3><p>Na monitorze rytm zatokowy ok. ${G.hr}/min. Pacjent otwiera oczy, oddycha.</p></div>`;if(G.ph==='tr')runTr();return}
+ if(v==='pads'){G.pads=true;G.mon=true;G.vfSec+=10;L('Elektrody naklejone w trakcie NZK.');$('vq').insertAdjacentHTML('beforebegin','<p>Na monitorze: <b>migotanie komór</b>.</p>');vfOpts();return}
+ b.disabled=true;G.vfSec+=v==='tet'?30:v==='rko'?20:15;
+ L({adr:'Adrenalina w trakcie VF przed defibrylacją.',rko:'RKO bez defibrylacji.',amio:'Amiodaron przed defibrylacją.',call:'Wezwanie wsparcia.',rur:'Próba intubacji w trakcie VF.',pre:'Uderzenie przedsercowe.',tet:'Badanie tętna 30 s.'}[v]);
+ b.insertAdjacentHTML('afterend','<p style="color:#ffd166;margin:2px 0 6px">Bez zmian na monitorze.</p>')}
+function die(cause,delay){clearInterval(vfTimer);clearInterval(trTimer);G.over=true;G.deathCause=cause;G.rh=G.rh==='vf'?'vf':'asys';draw();
+ $('go').innerHTML=`<div class="vfbox"><h3>💀 Zatrzymanie krążenia</h3><p>Mimo resuscytacji nie udaje się przywrócić krążenia.</p></div>`;setTimeout(finish,(delay||2)*1000)}
 // ---------- przekazanie
-function arrive(){G.ph='hand';$('trc').innerHTML='';$('h-ph').textContent=G.dest==='pci'?'🫀 Pracownia hemodynamiki':'🏥 SOR';L('Przyjazd: '+(G.dest==='pci'?'pracownia hemodynamiki.':'SOR.'));
- out('#0b1f3a','🗣️ Przekazanie pacjenta (MIST)','<p>Lekarz pyta: „Co przywozicie?” Wybierz najlepsze przekazanie:</p><div class="q" id="hq"></div>');
- const o=[['58 lat, STEMI ściany dolnej z zajęciem prawej komory, ból od ok. 1 h. W transporcie VF – 1 wyładowanie, ROSC. Podane: ASA, heparyna, tikagrelor, fentanyl. RR, HR, SpO₂ aktualnie… Bez nitrogliceryny.',1],['Pan z bólem w klatce, dostał leki, raz się zatrzymał, ale już jest dobrze.',0],['58 lat, prawdopodobnie zawał przedni, podaliśmy nitroglicerynę i tlen.',0]];
- quiz('hq',o,ok=>{G.hand=ok;setTimeout(finish,1800);return ok?'Konkretnie: kto, co się stało, co stwierdziłeś, co zrobiłeś (MIST).':'Przekazanie powinno być konkretne: wiek, rozpoznanie, czas, zdarzenia (VF!), podane leki.'})}
+function arrive(){G.ph='hand';trBar();$('h-ph').textContent=G.dest==='pci'?'🫀 Pracownia hemodynamiki':'🏥 Szpital';L('Przyjazd do szpitala.');
+ out('🗣️ Przekazanie pacjenta','<p>Lekarz: „Co przywozicie?”</p><div class="q" id="hq"></div>');
+ const o=[['58 lat, STEMI ściany dolnej z zajęciem prawej komory, ból od ok. godziny. Zdarzenia w transporcie, podane leki, aktualne parametry.','ok'],['Pan z bólem w klatce, dostał leki, jest stabilny.','vague'],['58 lat, zawał przedni, podaliśmy tlen i nitroglicerynę.','wrong'],['Najpierw przekazujesz dokumentację, ustnie nic nie mówisz.','none']];
+ o.sort(()=>Math.random()-0.5);pick('hq',o,v=>{G.hand=v;setTimeout(finish,900)})}
 // ---------- wynik
-function finish(){G.over=true;clearInterval(vfTimer);const F=G.f,pts=[];
+function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);const F=G.f,pts=[];
  const P=(ok,p,t,why)=>pts.push([!!ok,ok?p:0,t,why,p]);
- P(F.e12&&G.log.find(l=>l[1].startsWith('EKG 12'))[0]<=10,15,'EKG 12-odprowadzeniowe w ciągu 10 min','W bólu w klatce EKG to podstawa – im szybciej, tym szybciej trafi na pracownię.');
- P(G.ekgRead===true,10,'Prawidłowa interpretacja: STEMI ściany dolnej','Uniesienia ST w II, III, aVF + zmiany lustrzane w I, aVL.');
- P(!!F.v4r,10,'Sprawdzenie prawej komory (V4R)','Przy zawale ściany dolnej zawsze V4R – zmienia leczenie (bez nitratów, płyny).');
- P(!!F.consult,10,'Teletransmisja i konsultacja z pracownią','Pozwala przywieźć pacjenta prosto na stół – oszczędza 30–60 min.');
- P(!!F.asa,10,'ASA 300 mg','Lek podstawowy w każdym ostrym zespole wieńcowym.');
- P(!!F.hep,10,'Heparyna 5000 j. iv','W STEMI przed PCI – 70 j./kg, maks. 5000 j.');
- P(!!F.tik&&!F.tikPre,5,'Tikagrelor po konsultacji','Drugi lek przeciwpłytkowy – podajesz zgodnie z zaleceniem ośrodka PCI.');
- P(!!F.opioid,5,'Leczenie bólu (fentanyl)','Ból zwiększa zużycie tlenu przez serce.');
- P(!F.ntg,10,'Bez nitrogliceryny','Zawał prawej komory = nitrogliceryna przeciwwskazana (gwałtowna hipotensja).');
- if(F.ntg)P(!!F.fluid,5,'Płyny po spadku ciśnienia','Przy hipotensji w zawale RV – bolus płynu.');
- P(!G.o2,5,'Tlen tylko gdy SpO₂ < 90%','Przy SpO₂ 95% tlen nie pomaga, a może szkodzić.');
- P(!F.atrNoInd,5,'Bez niepotrzebnej atropiny','Tętno 56/min bez objawów – nie wymaga leczenia.');
- P(G.pads&&G.f.vfSec!=null&&G.f.vfSec<=30,15,'Elektrody naklejone przed transportem, defibrylacja ≤ 30 s','W świeżym zawale VF zdarza się często – elektrody od początku = wyładowanie w sekundy.');
- P(G.dest==='pci',15,'Transport bezpośrednio do pracowni hemodynamiki','Omijając SOR, skracasz czas do udrożnienia tętnicy.');
- P(G.trStart!=null&&G.trStart<=25,10,'Czas na miejscu ≤ 25 min','Zawał to czas: „czas to mięsień”.');
- P(G.hand===true,5,'Dobre przekazanie (MIST)','Konkretnie i z czasem zdarzeń.');
- const sc=pts.reduce((a,p)=>a+p[1],0),max=pts.reduce((a,p)=>a+p[4],0),pc=Math.round(sc/max*100);
+ const N=(bad,p,t,why)=>{if(bad)pts.push([false,-p,t,why,0])};// kary
+ const e12t=(G.log.find(l=>l[1].startsWith('EKG 12'))||[99])[0];
+ P(F.e12&&e12t<=10,15,'EKG 12-odprowadzeniowe w ciągu 10 min od przyjazdu','W bólu w klatce piersiowej EKG wykonujesz jak najszybciej – rozpoznanie STEMI uruchamia całą ścieżkę.');
+ P(G.ekgRead==='inf',10,'Prawidłowa interpretacja: STEMI ściany dolnej','Uniesienia ST w II, III, aVF, obniżenia w I i aVL (zmiany lustrzane).');
+ P(!!F.v4r,10,'Odprowadzenia prawokomorowe (V4R)','Przy zawale ściany dolnej zawsze sprawdź prawą komorę: uniesienie ST w V4R = zawał RV → bez nitratów, płyny przy hipotensji.');
+ P(!!F.consult,10,'Teletransmisja i konsultacja z pracownią','Pozwala przywieźć pacjenta prosto na stół hemodynamiki.');
+ P(!!F.asa,10,'ASA 300 mg','Podstawowy lek w ostrym zespole wieńcowym.');
+ P(!!F.hep,10,'Heparyna 5000 j. iv','W STEMI przed PCI – 70–100 j./kg, maks. 5000 j.');
+ P((F.tik&&!F.tikPre)||(F.klo&&!F.kloPre),5,'Drugi lek przeciwpłytkowy po konsultacji','Tikagrelor 180 mg (lub klopidogrel 600 mg) – zgodnie z decyzją ośrodka PCI.');
+ P(F.fen||F.morf,5,'Leczenie bólu','Fentanyl lub morfina – ból zwiększa zapotrzebowanie serca na tlen.');
+ P(F.pads&&(G.log.find(l=>l[1].startsWith('Elektrody defibrylacyjne.'))||[99])[0]<=10,10,'Elektrody defibrylacyjne naklejone wcześnie','W świeżym zawale VF zdarza się często – naklejone elektrody = wyładowanie w kilka sekund.');
+ P(F.e12||F.mon4,0,'','');pts.pop();
+ P(F.coc&&F.bp&&F.boc&&F.spo2&&F.avpu,5,'Pełne ABCDE (oddech, SpO₂, tętno, ciśnienie, świadomość)','Badanie ABCDE robisz w całości – parametry na monitorze są dopiero po ich zmierzeniu.');
+ P(F.wyw||F.opqrst,5,'Wywiad (SAMPLE / OPQRST)','Pytanie o leki na potencję jest kluczowe przed nitratami.');
+ P(!!F.pol,3,'Pozycja półsiedząca','Ułatwia oddychanie i zmniejsza obciążenie serca.');
+ P(F.krz||F.nosz,5,'Pacjent zniesiony, nie schodził sam','Wysiłek w trakcie zawału zwiększa ryzyko arytmii.');
+ P(G.dest==='pci',15,'Transport bezpośrednio do pracowni hemodynamiki','Omijając SOR, skracasz czas do udrożnienia tętnicy („czas to mięsień”).');
+ P(G.trStart!=null&&G.trStart<=25,10,'Czas na miejscu ≤ 25 min','Nie zwlekaj – leczeniem zawału jest udrożnienie tętnicy w pracowni.');
+ if(F.vfDone)P(F.vfSec!=null&&F.vfSec<=30,15,'Defibrylacja w ciągu 30 s','W VF każda minuta zwłoki zmniejsza szansę przeżycia o ok. 10%. Najpierw prąd, potem leki.');
+ P(G.hand==='ok',5,'Przekazanie MIST','Konkretnie: wiek, rozpoznanie, czas, zdarzenia, leki, parametry.');
+ N(F.ntg,15,'Nitrogliceryna w zawale prawej komory','Pacjent zależny od obciążenia wstępnego – nitrogliceryna powoduje gwałtowną hipotensję. Przeciwwskazana także przy RR < 90 i po lekach na potencję.');
+ N(G.o2,5,'Tlen przy SpO₂ 95%','Wytyczne ESC: tlen tylko gdy SpO₂ < 90%.');
+ N(F.rug,3,'Rurka ustno-gardłowa u przytomnego','Zakładasz tylko u nieprzytomnego bez odruchów obronnych.');
+ N(!F.e12,15,'Brak EKG 12-odprowadzeniowego','Monitorowanie 4 odprowadzeń nie wystarcza do rozpoznania zawału.');
+ N(F.atr,5,'Atropina bez wskazań','Tętno 56/min bez objawów niestabilności nie wymaga leczenia.');
+ N(F.keto,10,'Ketoprofen w zawale','NLPZ są przeciwwskazane w ostrym zespole wieńcowym.');
+ N(F.furo,10,'Furosemid bez zastoju','Brak cech obrzęku płuc; u pacjenta z zajęciem RV pogłębia hipotensję.');
+ N(F.amio,10,'Amiodaron bez arytmii','Brak wskazań – obniża ciśnienie i zwalnia tętno.');
+ N(F.salb||F.hydro||F.diaz,5,'Leki bez wskazań (salbutamol / hydrokortyzon / diazepam)','Nie mają miejsca w leczeniu STEMI.');
+ N(F.io,5,'Dostęp doszpikowy u przytomnego pacjenta z dobrymi żyłami','Doszpikowy – gdy nie da się założyć wkłucia iv.');
+ N(F.kol||F.rur,5,'Czynności bez wskazań (kołnierz / intubacja)','Brak urazu, pacjent przytomny i wydolny oddechowo.');
+ N(F.walk,10,'Pacjent schodził sam z III piętra','Wysiłek fizyczny w zawale – ryzyko arytmii.');
+ N(F.plas&&G.hypoT==null,3,'Pozycja płaska bez hipotensji','U pacjenta z bólem w klatce i bez spadku ciśnienia lepsza półsiedząca.');
+ N(G.dest==='sor'||G.dest==='ip',15,'Szpital bez pracowni hemodynamiki','Pacjent ze STEMI wymaga PCI – przewiezienie do szpitala bez pracowni opóźnia leczenie o godziny.');
+ if(F.vfDone)N(F.vf_adr||F.vf_amio,5,'Leki w VF przed defibrylacją','Adrenalina i amiodaron dopiero po 3. wyładowaniu.');
+ if(F.vfDone)N(F.vf_tet,5,'Badanie tętna przez 30 s w NZK','Ocena maks. 10 s – potem działaj.');
+ const sc=Math.max(0,pts.reduce((a,p)=>a+p[1],0)),max=pts.reduce((a,p)=>a+p[4],0),pc=Math.round(sc/max*100);
  let res,ic,col,txt;
  if(G.deathCause){res='Pacjent zmarł';ic='🕯️';col='linear-gradient(135deg,#3d0a0f,#0b1f3a)';txt=G.deathCause}
- else if(G.dest==='sor'||(F.ntg&&!F.fluid)||pc<60){res='Pacjent przeżył – z powikłaniami';ic='🏥';col='linear-gradient(135deg,#f77f00,#0b1f3a)';txt=G.dest==='sor'?'Szpital bez pracowni musiał przekazać pacjenta dalej – tętnica została udrożniona dużo później. Rozległy zawał, niewydolność serca.':'Pacjent przeżył, ale opóźnienia i błędy zwiększyły obszar zawału.'}
- else{res='Pacjent przeżył!';ic='❤️';col='linear-gradient(135deg,#2a9d8f,#0b1f3a)';txt='Tętnica udrożniona szybko, pacjent wychodzi do domu po kilku dniach. Świetna robota zespołu.'}
+ else if(G.dest==='sor'||G.dest==='ip'||pc<60){res='Pacjent przeżył – z powikłaniami';ic='🏥';col='linear-gradient(135deg,#f77f00,#0b1f3a)';txt=G.dest==='sor'||G.dest==='ip'?'Szpital bez pracowni musiał przekazać pacjenta dalej – tętnica została udrożniona dużo później. Rozległy zawał, niewydolność serca.':'Pacjent przeżył, ale błędy i opóźnienia powiększyły obszar zawału.'}
+ else{res='Pacjent przeżył!';ic='❤️';col='linear-gradient(135deg,#2a9d8f,#0b1f3a)';txt='Tętnica udrożniona szybko, pacjent wychodzi do domu po kilku dniach.'}
  const best=+localStorage.getItem('rm_gra_stemi')||0;try{if(sc>best)localStorage.setItem('rm_gra_stemi',sc)}catch(e){}
  $('endbox').innerHTML=`<div class="res" style="background:${col}"><div class="ic">${ic}</div><h2>${res}</h2><p>${txt}</p><div class="sc">${sc} / ${max} pkt</div><small>${pc}% · rekord: ${Math.max(sc,best)} pkt · czas akcji ${G.t} min</small></div>
- <h3 style="margin:18px 0 6px">📋 Omówienie</h3><div class="chk">${pts.map(p=>`<div><span>${p[0]?'✅':'❌'}</span><span><b>${p[2]}</b><small>${p[3]}</small></span><span class="p" style="color:${p[0]?'#2a9d8f':'#e63946'}">${p[0]?'+'+p[1]:'0/'+p[4]}</span></div>`).join('')}</div>
+ <h3 style="margin:18px 0 6px">📋 Omówienie</h3><div class="chk">${pts.map(p=>`<div><span>${p[0]?'✅':'❌'}</span><span><b>${p[2]}</b><small>${p[3]}</small></span><span class="p" style="color:${p[0]?'#2a9d8f':'#e63946'}">${p[0]?'+'+p[1]:(p[1]<0?p[1]:'0/'+p[4])}</span></div>`).join('')}</div>
  <h3 style="margin:18px 0 6px">⏱ Twoja oś czasu</h3><div class="tl">${G.log.map(l=>`<div><b>${fmtT(l[0])}</b><span>${l[1]}</span></div>`).join('')}</div>
  <div style="display:grid;gap:8px;margin-top:16px"><button class="btn big" onclick="location.reload()" type="button">🔁 Zagraj jeszcze raz</button><a class="btn big n" href="ekg.html#zawal">❤️ Powtórz zawał w kursie EKG</a><a class="btn big gh" href="kurs.html?lek=nitrogliceryna">💊 Kurs: nitrogliceryna</a></div>
- <p class="disc">Gra edukacyjna. Dawki: ASA 150–300 mg, heparyna niefrakcjonowana 70–100 j./kg (maks. 5000 j.), tikagrelor 180 mg po konsultacji z ośrodkiem kardiologii inwazyjnej – wg wytycznych ESC i procedur. Nie zastępuje szkolenia.</p>`;
+ <p class="disc">Każda rozgrywka może przebiec inaczej – zdarzenia w transporcie są losowe. Gra edukacyjna oparta na wytycznych ESC i ERC; nie zastępuje szkolenia.</p>`;
  show('s-end')}
 </script>
 </body></html>
