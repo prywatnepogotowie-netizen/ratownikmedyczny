@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Statystyki odwiedzin | ratownikmedyczny.online</title>
+<meta name="robots" content="noindex">
+<script src="pro.js"></script>
+<style>
+:root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#f4f7fb;--line:#dfe6ef;--teal:#2a9d8f;--blue:#457b9d;--or:#f4a261;--vi:#7b2cbf}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+nav{background:var(--navy)}nav .w{display:flex;justify-content:space-between;align-items:center;height:56px}nav a{color:#fff;text-decoration:none;font-weight:700}
+.w{max-width:980px;margin:0 auto;padding:0 16px}
+.hero{background:linear-gradient(120deg,#0b1f3a,#457b9d);color:#fff;padding:30px 0 46px}.hero h1{margin:0 0 4px;font-size:clamp(24px,4vw,36px)}.hero p{margin:0;opacity:.9}
+.tabs{display:flex;gap:8px;margin:14px 0 0;flex-wrap:wrap}.tabs button{border:0;border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;background:rgba(255,255,255,.18);color:#fff;cursor:pointer}.tabs button.on{background:#fff;color:var(--navy)}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:-28px 0 18px;position:relative}
+.k{background:#fff;border-radius:16px;padding:14px;box-shadow:0 6px 18px rgba(11,31,58,.08);border-top:5px solid var(--c)}.k b{display:block;font-size:30px;line-height:1.1;color:var(--c)}.k span{font-size:13px;color:var(--mute);font-weight:600}
+.box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 16px}.box h2{margin:0 0 12px;font-size:18px}
+.chart{display:flex;align-items:flex-end;gap:3px;height:160px;border-bottom:2px solid var(--line);padding-top:18px}
+.chart .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;min-width:0}
+.chart .c i{display:block;background:linear-gradient(180deg,#e63946,#f4a261);border-radius:4px 4px 0 0;min-height:2px}
+.chart .c em{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:10px;font-style:normal;color:var(--mute);font-weight:700}
+.axis{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-top:4px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.row .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.row .bar{grid-column:1/-1;height:8px;border-radius:99px;background:#eef2f7;overflow:hidden}.row .bar i{display:block;height:100%;background:var(--c,#457b9d);border-radius:99px}
+.row b{font-size:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:720px){.two{grid-template-columns:1fr}.kpi{grid-template-columns:1fr 1fr 1fr;gap:8px}.k b{font-size:24px}}
+.msg{background:#fff4e5;border:2px solid var(--or);border-radius:14px;padding:14px;font-weight:600}
+.sm{font-size:13px;color:var(--mute)}label.sw{display:flex;gap:8px;align-items:center;font-weight:600}
+</style></head><body data-nobar="1">
+<nav><div class="w"><a href="konto.html">← Moje konto</a><a href="index.html">ratownikmedyczny.online</a></div></nav>
+<section class="hero"><div class="w"><h1>📊 Statystyki odwiedzin</h1><p>Bez ciasteczek, bez IP – tylko liczba wejść, strony i źródła.</p>
+<div class="tabs" id="tabs"><button data-d="1">Dziś</button><button data-d="7">7 dni</button><button data-d="30" class="on">30 dni</button><button data-d="90">90 dni</button></div></div></section>
+<div class="w" id="app"><div class="msg" style="margin-top:20px">Ładuję…</div></div>
+<script>
+const NAMES={'/index.html':'🏠 Strona główna','/materialy.html':'📚 Materiały','/ekg.html':'❤️ EKG od podstaw','/kurs.html':'🎓 Kursy leków','/fiszki.html':'🃏 Fiszki','/nauka.html':'🚨 Nauka / triage','/egzamin.html':'📝 Egzamin próbny','/scenariusze.html':'🎬 Scenariusze','/przypadki.html':'🩺 Przypadki','/neurologia.html':'🧠 Neurologia','/objawy-brzuszne.html':'🫃 Objawy otrzewnowe','/cennik.html':'💳 Cennik','/konto.html':'👤 Konto','/biblioteka.html':'📖 Biblioteka PDF','/drogi-oddechowe.html':'🫁 Drogi oddechowe','/regulamin.html':'📄 Regulamin','/prywatnosc.html':'🔒 Prywatność'};
+const nm=p=>NAMES[p]||p, $=id=>document.getElementById(id), app=$('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const list=(a,k,c,f)=>{const m=Math.max(1,...a.map(x=>x.v));return a.length?a.map(x=>`<div class="row" style="--c:${c}"><span class="n">${esc(f?f(x[k]):x[k])}</span><b>${x.v}</b><div class="bar"><i style="width:${Math.round(x.v/m*100)}%"></i></div></div>`).join(''):'<p class="sm">Brak danych.</p>'};
+async function load(days){
+  const t=localStorage.getItem('rm_token');
+  if(!t){app.innerHTML='<div class="msg" style="margin-top:20px">Zaloguj się na <a href="konto.html">Moje konto</a> adresem właściciela.</div>';return}
+  await RM.refresh();
+  const r=await fetch(RM_CFG.supabaseUrl+'/rest/v1/rpc/rm_stats',{method:'POST',headers:{apikey:RM_CFG.supabaseKey,Authorization:'Bearer '+localStorage.getItem('rm_token'),'Content-Type':'application/json'},body:JSON.stringify({days})});
+  if(!r.ok){app.innerHTML='<div class="msg" style="margin-top:20px">Brak dostępu. Statystyki widzi tylko właściciel strony.</div>';return}
+  const d=await r.json();
+  // pełna lista dni (także z zerem)
+  const map={};(d.days||[]).forEach(x=>map[x.d]=x);const ds=[];
+  for(let i=days-1;i>=0;i--){const dt=new Date(Date.now()-i*864e5);const k=dt.toLocaleDateString('sv-SE',{timeZone:'Europe/Warsaw'});ds.push({d:k,v:map[k]?map[k].v:0,e:map[k]?map[k].e:0})}
+  const mx=Math.max(1,...ds.map(x=>x.v)),fmt=k=>k.slice(8,10)+'.'+k.slice(5,7);
+  const devC={telefon:'#e63946',komputer:'#457b9d',tablet:'#2a9d8f'};
+  app.innerHTML=`
+  <div class="kpi"><div class="k" style="--c:#e63946"><b>${d.visits}</b><span>wizyt</span></div><div class="k" style="--c:#457b9d"><b>${d.total}</b><span>wyświetleń stron</span></div><div class="k" style="--c:#2a9d8f"><b>${d.today}</b><span>wyświetleń dziś</span></div></div>
+  ${days>1?`<div class="box"><h2>📈 Wyświetlenia dzień po dniu</h2><div class="chart">${ds.map(x=>`<div class="c" title="${fmt(x.d)}: ${x.v} wyświetleń, ${x.e} wizyt"><i style="height:${Math.round(x.v/mx*100)}%"></i>${days<=31&&x.v?`<em>${x.v}</em>`:''}</div>`).join('')}</div><div class="axis"><span>${fmt(ds[0].d)}</span><span>${fmt(ds[ds.length-1].d)}</span></div></div>`:''}
+  <div class="box"><h2>🔥 Najczęściej czytane</h2>${list(d.pages||[],'path','#e63946',nm)}</div>
+  <div class="two"><div class="box"><h2>🔗 Skąd przychodzą</h2>${list((d.refs||[]),'ref','#7b2cbf')}<p class="sm">Wejścia wpisane ręcznie lub z zakładek nie mają źródła.</p></div>
+  <div class="box"><h2>📱 Urządzenia</h2>${(d.devs||[]).length?(d.devs||[]).map(x=>{const s=(d.devs||[]).reduce((a,b)=>a+b.v,0);return `<div class="row" style="--c:${devC[x.dev]||'#457b9d'}"><span class="n">${x.dev==='telefon'?'📱':x.dev==='tablet'?'📟':'💻'} ${esc(x.dev||'?')}</span><b>${Math.round(x.v/s*100)}%</b><div class="bar"><i style="width:${Math.round(x.v/s*100)}%"></i></div></div>`}).join(''):'<p class="sm">Brak danych.</p>'}</div></div>
+  <div class="box"><label class="sw"><input type="checkbox" id="nost" ${localStorage.getItem('rm_nostat')?'checked':''}> Nie licz moich wejść na tym urządzeniu</label><p class="sm">Wizyta = wejście na stronę z zewnątrz (Google, link, zakładka). Wyświetlenie = każda otwarta podstrona.</p></div>`;
+  $('nost').onchange=e=>{e.target.checked?localStorage.setItem('rm_nostat','1'):localStorage.removeItem('rm_nostat')};
+}
+let cur=30;$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));cur=+b.dataset.d;load(cur)};
+load(cur);
+</script>
+</body></html>

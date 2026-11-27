@@ -32,11 +32,11 @@ window.RM_CFG = {
     set('rm_email', email);
   };
   // zakup: rejestracja transakcji w Przelewy24 i przejście do płatności
-  RM.buy = async () => {
+  RM.buy = async (inv) => {
     const t = get('rm_token');
     if (!t) throw new Error('Najpierw zaloguj się adresem e-mail (niżej). Na ten adres włączymy Pro.');
     const r = await fetch(C.supabaseUrl + '/functions/v1/p24?a=register', { method: 'POST',
-      headers: { apikey: C.supabaseKey, Authorization: 'Bearer ' + t } });
+      headers: { apikey: C.supabaseKey, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify(inv || {}) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || !d.url) throw new Error(d.error || 'Nie udało się rozpocząć płatności. Spróbuj za chwilę.');
     location.href = d.url;
@@ -121,6 +121,20 @@ body.playing .rm-acc{display:none}
  .scroll,.tw{overflow:visible!important}
 }`;
   document.head.appendChild(css);
+
+  // licznik odwiedzin bez ciasteczek: zapisujemy tylko adres strony, skąd przyszło wejście i typ urządzenia (bez IP, bez identyfikatora)
+  RM.hit = () => {
+    try {
+      if (!C.supabaseUrl || get('rm_nostat') || /^(localhost|127\.)/.test(location.hostname) || navigator.webdriver) return;
+      let ref = ''; try { const u = new URL(document.referrer); ref = u.hostname === location.hostname ? '' : u.hostname.replace(/^www\./, ''); } catch(e) {}
+      const own = !!document.referrer && !ref;
+      fetch(C.supabaseUrl + '/rest/v1/page_views', { method: 'POST', keepalive: true,
+        headers: { apikey: C.supabaseKey, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ path: (location.pathname.replace(/\/$/, '/index.html') || '/index.html').slice(0, 120), ref: ref.slice(0, 80), entry: !own,
+          dev: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'telefon' : (/iPad|Tablet/i.test(navigator.userAgent) ? 'tablet' : 'komputer') }) }).catch(() => {});
+    } catch(e) {}
+  };
+  RM.hit();
 
   document.addEventListener('DOMContentLoaded', () => {
     if (RM.trial() && !document.body.dataset.nobar) {

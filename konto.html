@@ -46,6 +46,7 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
  <p class="sm" style="margin-top:14px">Masz kod dostępu?</p>
  <form id="cf2"><input id="code2" placeholder="RM-XXXX-XXXX" autocomplete="off" style="text-transform:uppercase"><button class="btn" type="submit">Aktywuj kod</button></form>
  <div class="msg" id="cm"></div>
+ <a class="btn ghost" id="statl" href="statystyki.html" hidden style="margin-top:12px">📊 Statystyki odwiedzin</a>
  <button class="out" id="out" type="button">Wyloguj się</button>
 </div>
 <div class="acc" id="outbox" hidden>
@@ -58,6 +59,7 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
 </div>
 <script>
 const $=id=>document.getElementById(id);
+if((RM.email()||'').toLowerCase()==='rafalwoloch@icloud.com')$('statl').hidden=false;
 function fmt(t){return new Date(t).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'})}
 async function show(){
   const logged=!!localStorage.getItem('rm_token')||!!localStorage.getItem('rm_code');

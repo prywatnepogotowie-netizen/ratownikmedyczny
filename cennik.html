@@ -31,6 +31,9 @@ input[type=email]{width:100%;padding:12px 14px;font-size:16px;border:1px solid v
 table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{background:var(--navy);color:#fff}td.y{color:var(--ok);font-weight:800}td.n{color:#b3b9c4}
 details{border-bottom:1px solid var(--line);padding:10px 0}summary{font-weight:700;cursor:pointer}
 footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-size:14px}footer a{color:#fff}
+.fv{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 12px;background:#f7f9fc}.fv summary{font-weight:800;cursor:pointer;color:#14213d}
+.fvtyp{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 8px;font-weight:600;color:#14213d}.fvtyp label{display:flex;gap:6px;align-items:center}
+.fv input:not([type=radio]){width:100%;box-sizing:border-box;padding:11px 12px;font-size:16px;border:1px solid var(--line);border-radius:10px;margin:0 0 8px;background:#fff}
 </style>
 </head>
 <body>
@@ -55,7 +58,7 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
   </ul>
   <div class="foot"><a class="btn ghost" href="index.html">Zacznij za darmo</a></div>
  </div>
- <div class="plan" style="--k:#e63946"><header><h2>Pro <span style="font-size:14px;opacity:.9">wszystko z Free, oraz:</span></h2><div class="price">99 zł <small>/ rok, płatność jednorazowa</small></div></header>
+ <div class="plan" style="--k:#e63946"><header><h2>Pro <span style="font-size:14px;opacity:.9">wszystko z Free, oraz:</span></h2><div class="price">99 zł <small>brutto / rok, płatność jednorazowa</small></div></header>
   <ul>
    <li><b>Egzamin próbny</b>: 60 pytań w 60 minut, z wynikiem i omówieniem błędów</li>
    <li><b>Egzaminy tematyczne</b>: przypadki kliniczne, medycyna ratunkowa, pediatria, urazy klatki piersiowej, choroby wewnętrzne</li>
@@ -63,8 +66,14 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
    <li><b>Wszystkie 51 kart leków</b> ZRM</li>
    <li>Nowe egzaminy i scenariusze dodawane w trakcie roku</li>
   </ul>
-  <div class="foot"><label class="note" style="display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;color:#14213d"><input type="checkbox" id="zgoda" style="margin-top:4px"> <span>Akceptuję <a href="regulamin.html">regulamin</a>. Żądam natychmiastowego dostępu do treści Pro i przyjmuję do wiadomości, że z chwilą jego udostępnienia tracę prawo odstąpienia od umowy.</span></label><a class="btn red" id="buy" href="#konto">Kup dostęp Pro – 99 zł</a>
-  <p id="bmsg" class="note" style="color:#b3261e;font-weight:700"></p><p class="note">Bez automatycznego odnawiania. Płatność przez Przelewy24: BLIK, szybki przelew, karta, Google Pay, Apple Pay. Faktura od MedKrak sp. z o.o.</p></div>
+  <div class="foot"><details class="fv" id="fv" open><summary>🧾 Dane do faktury</summary>
+   <div class="fvtyp"><label><input type="radio" name="fvt" value="osoba" checked> Osoba prywatna</label><label><input type="radio" name="fvt" value="firma"> Firma (z NIP)</label></div>
+   <div data-fv="osoba"><input id="fv_imie" placeholder="Imię" autocomplete="given-name"><input id="fv_nazwisko" placeholder="Nazwisko" autocomplete="family-name"></div>
+   <div data-fv="firma" hidden><input id="fv_nazwa" placeholder="Nazwa firmy" autocomplete="organization"><input id="fv_nip" placeholder="NIP (10 cyfr)" inputmode="numeric"><input id="fv_ulica" placeholder="Ulica i numer" autocomplete="address-line1"><div style="display:flex;gap:8px"><input id="fv_kod" placeholder="Kod" style="max-width:110px" autocomplete="postal-code"><input id="fv_miasto" placeholder="Miasto" autocomplete="address-level2"></div></div>
+   <p class="note" style="margin:6px 0 0">Fakturę VAT wyślemy na adres e-mail, którym się logujesz.</p>
+  </details>
+  <label class="note" style="display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;color:#14213d"><input type="checkbox" id="zgoda" style="margin-top:4px"> <span>Akceptuję <a href="regulamin.html">regulamin</a>. Żądam natychmiastowego dostępu do treści Pro i przyjmuję do wiadomości, że z chwilą jego udostępnienia tracę prawo odstąpienia od umowy.</span></label><a class="btn red" id="buy" href="#konto">Kup dostęp Pro – 99 zł</a>
+  <p id="bmsg" class="note" style="color:#b3261e;font-weight:700"></p><p class="note">Bez automatycznego odnawiania. Płatność przez Przelewy24: BLIK, szybki przelew, karta, Google Pay, Apple Pay. Cena zawiera 23% VAT (80,49 zł netto + 18,51 zł VAT). Faktura VAT od MedKrak sp. z o.o. przychodzi e-mailem zaraz po płatności.</p></div>
  </div>
 </div>
 
@@ -95,7 +104,7 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
 
 <div class="box">
  <h2>Pytania</h2>
- <details><summary>Czy dostęp odnawia się sam?</summary><p>Nie. Płacisz raz 99 zł i masz Pro przez 365 dni od dnia zakupu. Po roku możesz kupić kolejny rok, jeśli zechcesz.</p></details>
+ <details><summary>Czy dostęp odnawia się sam?</summary><p>Nie. Płacisz raz 99 zł brutto (z 23% VAT) i masz Pro przez 365 dni od dnia zakupu. Po roku możesz kupić kolejny rok, jeśli zechcesz.</p></details>
  <details><summary>Czy dostanę fakturę?</summary><p>Tak. Sprzedawcą jest MedKrak sp. z o.o. Fakturę na firmę albo rachunek dostaniesz e-mailem. Dane do faktury podajesz przy płatności.</p></details>
  <details><summary>Na ilu urządzeniach działa Pro?</summary><p>Na każdym, na którym zalogujesz się swoim adresem e-mail: telefon, tablet, komputer. Konto jest dla jednej osoby.</p></details>
  <details><summary>Czy mogę odstąpić od umowy?</summary><p>Masz 14 dni na odstąpienie, dopóki nie zaczniesz korzystać z treści Pro. Przy zakupie możesz poprosić o natychmiastowy dostęp. Wtedy prawo odstąpienia wygasa z chwilą udostępnienia treści. Szczegóły są w <a href="regulamin.html">regulaminie</a>.</p></details>
@@ -107,7 +116,13 @@ footer{background:var(--navy);color:#cbd5e1;padding:22px 0;margin-top:30px;font-
 
 <script>
 document.addEventListener('DOMContentLoaded',async()=>{
- const C=RM_CFG,st=document.getElementById('st'),buy=document.getElementById('buy');
+ 
+const fvSel=()=>document.querySelector('input[name=fvt]:checked').value;
+document.querySelectorAll('input[name=fvt]').forEach(r=>r.onchange=()=>document.querySelectorAll('[data-fv]').forEach(d=>d.hidden=d.dataset.fv!==fvSel()));
+function fvData(){const v=i=>document.getElementById('fv_'+i).value.trim();
+ if(fvSel()==='firma'){const nip=v('nip').replace(/[^0-9]/g,'');if(!v('nazwa')||!v('ulica')||!v('kod')||!v('miasto'))return{err:'Uzupełnij nazwę firmy i adres do faktury.'};if(nip.length!==10)return{err:'NIP musi mieć 10 cyfr.'};return{typ:'firma',nazwa:v('nazwa'),nip,ulica:v('ulica'),kod:v('kod'),miasto:v('miasto')}}
+ if(!v('imie')||!v('nazwisko'))return{err:'Podaj imię i nazwisko do faktury.'};return{typ:'osoba',imie:v('imie'),nazwisko:v('nazwisko')}}
+const C=RM_CFG,st=document.getElementById('st'),buy=document.getElementById('buy');
  async function show(){
   await RM.refresh();
   const e=RM.email(),u=RM.proUntil();
@@ -118,8 +133,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
   if(e) st.insertAdjacentHTML('beforeend','<p class="note"><a href="#" id="lo">Wyloguj</a></p>'),document.getElementById('lo').onclick=ev=>{ev.preventDefault();RM.logout()};
   document.getElementById('loginbox').style.display=(e||!C.supabaseUrl)?'none':'';
  }
- if(C.payments&&C.supabaseUrl){buy.href='#konto';buy.onclick=async ev=>{ev.preventDefault();const m=document.getElementById('bmsg');if(!document.getElementById('zgoda').checked){m.textContent='Zaznacz zgodę powyżej, aby przejść do płatności.';return}m.textContent='Łączę z Przelewy24…';try{await RM.buy()}catch(x){m.textContent=x.message;document.getElementById('konto').scrollIntoView({behavior:'smooth'})}}}
- else{buy.textContent='Płatności wkrótce – teraz Pro gratis';buy.href='egzamin.html';}
+ if(C.payments&&C.supabaseUrl){buy.href='#konto';buy.onclick=async ev=>{ev.preventDefault();const m=document.getElementById('bmsg');if(!document.getElementById('zgoda').checked){m.textContent='Zaznacz zgodę powyżej, aby przejść do płatności.';return}m.textContent='Łączę z Przelewy24…';const inv=fvData();if(inv.err){m.textContent=inv.err;document.getElementById('fv').open=true;return}try{await RM.buy(inv)}catch(x){m.textContent=x.message;document.getElementById('konto').scrollIntoView({behavior:'smooth'})}}}
+ else{buy.textContent='Płatności wkrótce – teraz Pro gratis';buy.href='egzamin.html';document.getElementById('fv').hidden=true;}
  if(location.search.includes('platnosc=ok'))st.insertAdjacentHTML('beforebegin','<p class="status ok">✓ Dziękujemy! Płatność jest przetwarzana. Pro włączy się w ciągu kilku minut, odśwież stronę.</p>');
  document.getElementById('cf').onsubmit=async ev=>{ev.preventDefault();const m=document.getElementById('cmsg');try{await RM.redeem(document.getElementById('code').value);m.textContent='✓ Dostęp Pro aktywny na tym urządzeniu przez 365 dni.';show()}catch(x){m.textContent=x.message}};
  document.getElementById('lf').onsubmit=async ev=>{ev.preventDefault();const m=document.getElementById('msg');
