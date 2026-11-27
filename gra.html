@@ -109,7 +109,7 @@ function tick(min){for(let i=0;i<min&&!G.over;i++){G.t++;phys()}draw()}
 function phys(){
  if(G.rh!=='sin')return;
  if(G.f.fen||G.f.morf)G.pain=Math.max(3,G.pain-1);
- if(G.hypoT!=null){ // ciężka hipotensja (nitrogliceryna/furosemid/amiodaron) – bez płynów prowadzi do NZK
+ if(G.hypoT!=null){G.f.hypoEp=1; // ciężka hipotensja (nitrogliceryna/furosemid/amiodaron) – bez płynów prowadzi do NZK
   if(G.f.nacl&&G.f.naclT>=G.hypoT){G.sbp=Math.min(98,G.sbp+4);if(G.sbp>=90)G.hypoT=null}
   else{G.sbp=Math.max(50,G.sbp-3);if(G.t-G.hypoT>=4){die('PEA – zatrzymanie krążenia w przebiegu ciężkiej hipotensji, której nie leczono płynami.');return}}}
  G.hr=Math.round((G.f.bradyDrug?34:54)+(G.pain-3)*0.8+(G.sbp<85?8:0)+(G.rosc?18:0)+(G.f.atr?20:0)+(G.f.salb?14:0));
@@ -226,7 +226,7 @@ function act(id){if(G.over||G.rh!=='sin')return;
  case'salb':out('🫧 Salbutamol','<p>Podane. Pacjent czuje kołatanie serca.</p>');L('Salbutamol.');break;
  case'hydro':out('💉 Hydrokortyzon','<p>Podane.</p>');L('Hydrokortyzon 100 mg.');break;
  case'krz':case'nosz':G.f.down=1;out('🚑 W karetce','<p>Pacjent zniesiony do karetki.</p>');L(id==='krz'?'Zniesienie na krzesełku.':'Zniesienie na noszach.');break;
- case'pie':G.f.down=1;G.f.walk=1;out('🚶 W karetce','<p>Pacjent zszedł sam z III piętra. Na dole jest bardzo spocony i zdyszany.</p>');G.pain=Math.min(10,G.pain+1);L('Pacjent schodzi sam z III piętra.');if(Math.random()<0.5&&!G.f.vfDone){G.vfAt=0}break;}
+ case'pie':G.f.down=1;G.f.walk=1;out('🚶 W karetce','<p>Pacjent zszedł sam z III piętra. Na dole jest bardzo spocony i zdyszany.</p>');G.pain=Math.min(10,G.pain+1);L('Pacjent schodzi sam z III piętra.');if(Math.random()<0.7&&!G.f.vfDone){G.vfAt=0}break;}
  if(G.over)return;
  if(G.ph==='scene')tick(cost(id));else draw();
  autoNext(id);
@@ -247,9 +247,17 @@ function chooseDest(){if(G.ph!=='scene'){out('Jesteście w drodze');return}
   G.dest=d;G.ph='tr';G.trStart=G.t;$('h-ph').textContent='🚑 Transport';
   G.trLen={pci:25,sor:8,sorpci:25,ip:12}[d];
   // zdarzenie w drodze – albo się wydarzy, albo nie
-  if(!G.f.vfDone&&G.vfAt==null){const risk=0.35+(G.f.walk?0.25:0)+(!G.f.asa?0.05:0)+(!(G.f.fen||G.f.morf)?0.05:0);G.vfAt=Math.random()<risk?3+Math.floor(Math.random()*Math.max(1,Math.min(10,G.trLen-4))):null}
+  if(!G.f.vfDone&&G.vfAt==null){const r=vfRisk();G.risk=r;G.vfAt=Math.random()<r.p?2+Math.floor(Math.random()*Math.max(1,Math.min(8,G.trLen-3))):null}
   L('Wyjazd do: '+{pci:'pracownia hemodynamiki',sor:'SOR najbliższego szpitala',sorpci:'SOR szpitala z pracownią',ip:'izba przyjęć szpitala powiatowego'}[d]+'.');
   out('🚑 Jedziecie','<p>Pacjent na noszach'+(G.mon?', monitor podłączony':'')+'.</p>');setTab('c');runTr()})}
+
+// ryzyko VF zależne od decyzji gracza
+function vfRisk(){const F=G.f,why=[];let p=0.1;const add=(c,v,t)=>{if(c){p+=v;why.push([t,Math.round(v*100)])}};
+ add(!F.asa,0.15,'brak ASA');add(!F.hep,0.05,'brak heparyny');add(!(F.fen||F.morf),0.12,'nieleczony ból (katecholaminy)');
+ add(F.walk,0.3,'wysiłek – pacjent schodził sam');add(F.atr,0.15,'atropina – przyspieszenie akcji serca');add(F.salb,0.15,'salbutamol – tachykardia');
+ add(F.adrSc,0.3,'adrenalina');add(F.keto,0.08,'NLPZ w zawale');add(G.f.hypoEp,0.15,'epizod ciężkiej hipotensji');add(F.o2&&false,0,'');
+ add(G.t>25,Math.min(0.2,(G.t-25)*0.02),'długi czas na miejscu ('+G.t+' min)');
+ return {p:Math.min(0.95,p),why}}
 function runTr(){clearInterval(trTimer);trTimer=setInterval(()=>{if(G.over||G.rh!=='sin'){clearInterval(trTimer);return}
  tick(1);if(G.ph==='tr'&&G.rh==='sin'&&G.t-G.trStart>=G.trLen){clearInterval(trTimer);arrive()}},2000);draw()}
 function trBar(){const box=$('trc');if(!box)return;if(G.over||G.rh!=='sin'||G.ph!=='tr'){box.innerHTML='';return}
@@ -329,6 +337,7 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  N(G.dest==='sor'||G.dest==='ip',15,'Szpital bez pracowni hemodynamiki','Pacjent ze STEMI wymaga PCI – przewiezienie do szpitala bez pracowni opóźnia leczenie o godziny.');
  if(F.vfDone)N(F.vf_adr||F.vf_amio,5,'Leki w VF przed defibrylacją','Adrenalina i amiodaron dopiero po 3. wyładowaniu.');
  if(F.vfDone)N(F.vf_tet,5,'Badanie tętna przez 30 s w NZK','Ocena maks. 10 s – potem działaj.');
+ const rk=G.risk||vfRisk();
  const sc=Math.max(0,pts.reduce((a,p)=>a+p[1],0)),max=pts.reduce((a,p)=>a+p[4],0),pc=Math.round(sc/max*100);
  let res,ic,col,txt;
  if(G.deathCause){res='Pacjent zmarł';ic='🕯️';col='linear-gradient(135deg,#3d0a0f,#0b1f3a)';txt=G.deathCause}
@@ -336,6 +345,7 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  else{res='Pacjent przeżył!';ic='❤️';col='linear-gradient(135deg,#2a9d8f,#0b1f3a)';txt='Tętnica udrożniona szybko, pacjent wychodzi do domu po kilku dniach.'}
  const best=+localStorage.getItem('rm_gra_stemi')||0;try{if(sc>best)localStorage.setItem('rm_gra_stemi',sc)}catch(e){}
  $('endbox').innerHTML=`<div class="res" style="background:${col}"><div class="ic">${ic}</div><h2>${res}</h2><p>${txt}</p><div class="sc">${sc} / ${max} pkt</div><small>${pc}% · rekord: ${Math.max(sc,best)} pkt · czas akcji ${G.t} min</small></div>
+ <div class="chk" style="border-left:6px solid ${rk.p>0.4?'#e63946':rk.p>0.2?'#f77f00':'#2a9d8f'}"><b>⚡ Ryzyko migotania komór w tej rozgrywce: ${Math.round(rk.p*100)}%</b><small style="display:block;color:#5b6b82;margin-top:4px">${rk.why.length?'Zwiększyły je: '+rk.why.map(w=>w[0]+' (+'+w[1]+'%)').join(', ')+'.':'Dobre postępowanie – ryzyko podstawowe świeżego zawału (10%).'} ${G.f.vfDone?'Tym razem doszło do VF.':'Tym razem VF nie wystąpiło – ale przy takim ryzyku w kolejnej rozgrywce może.'}</small></div>
  <h3 style="margin:18px 0 6px">📋 Omówienie</h3><div class="chk">${pts.map(p=>`<div><span>${p[0]?'✅':'❌'}</span><span><b>${p[2]}</b><small>${p[3]}</small></span><span class="p" style="color:${p[0]?'#2a9d8f':'#e63946'}">${p[0]?'+'+p[1]:(p[1]<0?p[1]:'0/'+p[4])}</span></div>`).join('')}</div>
  <h3 style="margin:18px 0 6px">⏱ Twoja oś czasu</h3><div class="tl">${G.log.map(l=>`<div><b>${fmtT(l[0])}</b><span>${l[1]}</span></div>`).join('')}</div>
  <div style="display:grid;gap:8px;margin-top:16px"><button class="btn big" onclick="location.reload()" type="button">🔁 Zagraj jeszcze raz</button><a class="btn big n" href="ekg.html#zawal">❤️ Powtórz zawał w kursie EKG</a><a class="btn big gh" href="kurs.html?lek=nitrogliceryna">💊 Kurs: nitrogliceryna</a></div>
