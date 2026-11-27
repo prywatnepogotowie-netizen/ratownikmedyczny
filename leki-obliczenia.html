@@ -3,7 +3,7 @@
 <title>Leki i obliczenia – koło pediatryczne i kalkulator dawek | ratownikmedyczny.online</title>
 <meta name="description" content="Interaktywne koło pediatryczne dla ratownika medycznego: masa ciała, rurka, i-gel, energia defibrylacji i dawki leków u dzieci według wieku. Kalkulator dawek ze wzorem krok po kroku i ćwiczenia z liczenia.">
 <link rel="canonical" href="https://ratownikmedyczny.online/leki-obliczenia.html">
-<script src="pro.js"></script><script src="pedi.js"></script>
+<script src="pro.js"></script><script src="pedi.js"></script><script src="pedi-scen.js"></script>
 <style>
 :root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#f4f7fb;--line:#dfe6ef}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
@@ -43,11 +43,25 @@ h2{font-size:22px;margin:4px 0 10px}.lead{color:var(--mute);margin:0 0 14px}
 .btn.ghost{background:#eef2f7;color:var(--ink)}
 .fb{border-radius:14px;padding:12px;margin:8px 0;font-weight:700}.fb.ok{background:#d8f8ea}.fb.no{background:#ffe3e3}
 .score{display:flex;gap:10px;margin:0 0 10px;font-weight:800}.score span{background:#fff;border-radius:999px;padding:6px 12px;border:1px solid var(--line)}
+/* scenariusze */
+.sl{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}.sc{display:block;text-align:left;border:0;cursor:pointer;background:#fff;border-radius:18px;padding:14px;border-left:8px solid var(--c);box-shadow:0 4px 14px rgba(11,31,58,.07);font:inherit;color:inherit}
+.sc i{font-style:normal;font-size:30px}.sc b{display:block;font-size:18px;margin:4px 0 2px}.sc small{color:var(--mute)}.sc .dn{float:right;font-size:13px;color:#2a9d8f;font-weight:800}
+.case{background:linear-gradient(120deg,var(--c),#0b1f3a);color:#fff;border-radius:18px;padding:16px}.case h3{margin:2px 0 6px;font-size:21px}.case p{margin:0;opacity:.95}
+.vit{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin:10px 0}.vit div{background:#fff;border-radius:12px;padding:8px;text-align:center;font-size:12.5px;color:var(--mute);border:1px solid var(--line)}.vit b{display:block;font-size:19px;color:var(--ink)}
+.cq{font-size:18px;font-weight:800;margin:14px 0 8px}.op{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;margin:7px 0;font:600 16px system-ui;cursor:pointer;color:var(--ink)}
+.op.good{border-color:#2a9d8f;background:#d8f8ea}.op.bad{border-color:#e63946;background:#ffe3e3;animation:shk .35s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.stp{font-size:13px;font-weight:800;color:var(--mute);margin-top:12px}.endc{background:#d8f8ea;border-radius:16px;padding:14px;font-weight:700;margin:12px 0}
+/* fiszki */
+.fz{perspective:1200px;max-width:520px;margin:0 auto}.fzc{position:relative;height:260px;transition:transform .6s;transform-style:preserve-3d;cursor:pointer}.fzc.flip{transform:rotateY(180deg)}
+.fzc>div{position:absolute;inset:0;backface-visibility:hidden;border-radius:22px;padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:0 8px 24px rgba(11,31,58,.12)}
+.fzf{background:linear-gradient(135deg,var(--c),#0b1f3a);color:#fff}.fzf b{font-size:24px;line-height:1.25}.fzf small{margin-top:14px;opacity:.85}
+.fzb{background:#fff;transform:rotateY(180deg);border:3px solid var(--c)}.fzb .eq{font-size:23px;font-weight:900;color:var(--ink);line-height:1.3}.fzb .ex{margin-top:12px;background:#f4f7fb;border-radius:12px;padding:8px 12px;font-size:15px;color:#33415c}
+.fzn{display:flex;gap:8px;justify-content:center;margin:14px 0;flex-wrap:wrap}.fzn .btn{min-width:110px}.fzp{text-align:center;color:var(--mute);font-weight:700}
 .foot{color:var(--mute);font-size:13px;padding:20px 0 40px}
 </style></head><body>
 <div class="rmtop"><div class="w"><a href="index.html">🚑 ratownikmedyczny.online</a><a href="materialy.html#obliczenia">← Materiały</a></div></div>
 <header class="hero"><div class="w"><h1>🧮 Leki i obliczenia</h1><p>Koło pediatryczne, kalkulator dawek ze wzorem krok po kroku i ćwiczenia, żeby liczenie weszło w krew.</p></div></header>
-<nav class="tabs"><div class="w" id="tabs"><button data-t="kolo" class="on">🎡 Koło pediatryczne</button><button data-t="kalk">🧮 Kalkulator</button><button data-t="wzory">📐 Wzory</button><button data-t="cw">✏️ Ćwiczenia</button></div></nav>
+<nav class="tabs"><div class="w" id="tabs"><button data-t="kolo" class="on">🎡 Koło pediatryczne</button><button data-t="kalk">🧮 Kalkulator</button><button data-t="wzory">📐 Wzory</button><button data-t="cw">✏️ Ćwiczenia</button><button data-t="scen">🚑 Scenariusze</button><button data-t="fisz">🃏 Fiszki</button></div></nav>
 <main class="w">
 
 <section class="tab on" id="kolo">
@@ -77,6 +91,12 @@ h2{font-size:22px;margin:4px 0 10px}.lead{color:var(--mute);margin:0 0 14px}
 <div class="score"><span>✅ <b id="sok">0</b></span><span>❌ <b id="sno">0</b></span><span>🔥 seria <b id="sst">0</b></span></div>
 <div id="cwq"></div>
 </section>
+<section class="tab" id="scen">
+<h2>🚑 Scenariusze pediatryczne</h2><p class="lead">Prawdziwe sytuacje z dyżuru. Podejmujesz decyzje jak ratownik medyczny, a przy każdej dawce widzisz, jak ją policzyć. Zła odpowiedź? Spróbuj jeszcze raz.</p>
+<div id="scbox"></div></section>
+<section class="tab" id="fisz">
+<h2>🃏 Fiszki z wzorów</h2><p class="lead">Przeczytaj pytanie, powiedz wzór na głos, dotknij karty i sprawdź. Karty, które już umiesz, odkładaj na bok.</p>
+<div id="fzbox"></div></section>
 </main>
 <div class="w foot">Materiał edukacyjny ratownikmedyczny.online. Masa ciała wg wzorów APLS, energia i leki w NZK wg ERC 2025 (Polska Rada Resuscytacji), pozostałe dawki wg kart leków na stronie. <a href="materialy.html#karty-lekow">Karty leków</a> · <a href="kurs.html">Kursy leków</a></div>
 <script>
@@ -167,6 +187,39 @@ function newQ(){const t=Math.random();if(t<0.2){const a=AGES[1+Math.floor(Math.r
 function check(){const v=parseFloat($('qa').value.replace(',','.'));if(isNaN(v))return;const ok=Math.abs(v-cur.ans)<=Math.max(0.05*cur.ans,cur.unit==='kg'?1:0.05);
  if(ok){S.ok++;S.st++}else{S.no++;S.st=0}$('sok').textContent=S.ok;$('sno').textContent=S.no;$('sst').textContent=S.st;
  $('qf').innerHTML='<div class="fb '+(ok?'ok':'no')+'">'+(ok?'✅ Dobrze! ':'❌ Prawidłowo: ')+F(cur.ans)+' '+cur.unit+'</div><div class="pf">'+cur.sol+'</div><button class="btn" id="qn">Następne zadanie →</button>';$('qn').onclick=newQ;$('qb').disabled=true}
+
+// --- scenariusze
+const SCC=['#9d4edd','#457b9d','#e63946','#c1121f','#f77f00','#264653'];
+let done={};try{done=JSON.parse(localStorage.getItem('rm_scen')||'{}')}catch(e){}
+function scList(){$('scbox').innerHTML='<div class="sl">'+SCEN.map(x=>`<button class="sc" style="--c:${x.c}" data-s="${x.id}"><i>${x.e}</i>${done[x.id]?'<span class="dn">✅ zaliczony</span>':''}<b>${x.t}</b><small>${x.wiek} · ${F(x.kg)} kg · ${x.steps.length} decyzje</small></button>`).join('')+'</div>';
+ document.querySelectorAll('.sc').forEach(b=>b.onclick=()=>scStart(b.dataset.s))}
+function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function scStart(id){const x=SCEN.find(z=>z.id===id);let k=0,err=0;
+ const head=`<button class="btn ghost" id="scb" type="button">← Wszystkie scenariusze</button><div class="case" style="--c:${x.c};margin-top:10px"><small>🚑 Scenariusz · ${x.wiek}</small><h3>${x.e} ${x.t}</h3><p>${x.story}</p></div><div class="vit">${x.vit.map(v=>`<div>${v[0]}<b>${v[1]}</b>${v[2]}</div>`).join('')}</div>`;
+ function step(){const S=x.steps[k];const ops=shuf(S.o);
+  $('scbox').innerHTML=head+`<div class="stp">Decyzja ${k+1} z ${x.steps.length}</div><div class="cq">${S.q}</div>`+ops.map((o,j)=>`<button class="op" data-j="${j}" type="button">${o[0]}</button>`).join('')+'<div id="scf"></div>';
+  $('scb').onclick=scList;
+  document.querySelectorAll('.op').forEach(b=>b.onclick=()=>{const o=ops[+b.dataset.j];
+   if(o[1]){b.classList.add('good');document.querySelectorAll('.op').forEach(z=>z.disabled=true);
+    let h='<div class="fb ok">✅ '+o[2]+'</div>';if(S.calc){const r=PEDI.P[S.calc[0]][S.calc[1]];h+='<div class="pf"><h4>🧮 Jak to policzyć dla '+F(x.kg)+' kg</h4><div class="pf-rule">'+PEDI.rule(r)+'</div>'+PEDI.steps(r,x.kg)+'</div>'}
+    h+='<button class="btn" id="scn" type="button">'+(k<x.steps.length-1?'Dalej →':'🏁 Podsumowanie')+'</button>';$('scf').innerHTML=h;
+    $('scn').onclick=()=>{k++;if(k<x.steps.length)step();else fin()};$('scn').scrollIntoView({behavior:'smooth',block:'nearest'})}
+   else{err++;b.classList.add('bad');b.disabled=true;$('scf').innerHTML='<div class="fb no">❌ '+o[2]+' Spróbuj jeszcze raz.</div>'}})}
+ function fin(){done[x.id]=1;try{localStorage.setItem('rm_scen',JSON.stringify(done))}catch(e){}
+  const nx=SCEN[(SCEN.indexOf(x)+1)%SCEN.length];
+  $('scbox').innerHTML=head+`<div class="endc">🏁 ${err?'Ukończone, błędne próby: '+err+'.':'Bezbłędnie! 🏆'}<br><br>📌 Zapamiętaj: ${x.end}</div><button class="btn" id="scnx" type="button">Następny: ${nx.e} ${nx.t} →</button>`;
+  $('scb').onclick=scList;$('scnx').onclick=()=>scStart(nx.id)}
+ step();window.scrollTo({top:$('scen').offsetTop-60,behavior:'smooth'})}
+scList();
+// --- fiszki
+let FZ=shuf(CARDS.map((c,i)=>i)),fi=0,known=new Set();
+function fzDraw(){const left=FZ.filter(i=>!known.has(i));if(!left.length){$('fzbox').innerHTML='<div class="endc">🏆 Umiesz wszystkie '+CARDS.length+' wzory! <br><br><button class="btn" id="fzr" type="button">🔁 Zacznij od nowa</button></div>';$('fzr').onclick=()=>{known.clear();FZ=shuf(FZ);fi=0;fzDraw()};return}
+ if(fi>=left.length)fi=0;const i=left[fi],c=CARDS[i],col=SCC[i%SCC.length];
+ $('fzbox').innerHTML=`<div class="fzp">Karta ${fi+1} z ${left.length} · umiesz: ${known.size}</div><div class="fz"><div class="fzc" id="fzc" style="--c:${col}"><div class="fzf"><b>${c[0]}</b><small>👆 dotknij, aby odwrócić</small></div><div class="fzb"><div class="eq">${c[1]}</div><div class="ex">📝 ${c[2]}</div></div></div></div>
+ <div class="fzn"><button class="btn ghost" id="fzp" type="button">← Poprzednia</button><button class="btn ghost" id="fzx" type="button">🔄 Odwróć</button><button class="btn" id="fzk" type="button" style="background:#2a9d8f">✅ Umiem</button><button class="btn" id="fzn" type="button">Następna →</button></div>`;
+ const card=$('fzc');card.onclick=()=>card.classList.toggle('flip');$('fzx').onclick=()=>card.classList.toggle('flip');
+ $('fzp').onclick=()=>{fi=(fi-1+left.length)%left.length;fzDraw()};$('fzn').onclick=()=>{fi++;fzDraw()};$('fzk').onclick=()=>{known.add(i);fzDraw()}}
+fzDraw();
 const h=location.hash.slice(1);if(h){const b=document.querySelector('#tabs button[data-t="'+h+'"]');if(b)b.click()}
 </script>
 </body></html>
