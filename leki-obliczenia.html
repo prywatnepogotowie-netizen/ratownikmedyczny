@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Leki i obliczenia – koło pediatryczne i kalkulator dawek | ratownikmedyczny.online</title>
+<meta name="description" content="Interaktywne koło pediatryczne dla ratownika medycznego: masa ciała, rurka, i-gel, energia defibrylacji i dawki leków u dzieci według wieku. Kalkulator dawek ze wzorem krok po kroku i ćwiczenia z liczenia.">
+<link rel="canonical" href="https://ratownikmedyczny.online/leki-obliczenia.html">
+<script src="pro.js"></script><script src="pedi.js"></script>
+<style>
+:root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#f4f7fb;--line:#dfe6ef}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.rmtop{background:var(--navy)}.rmtop .w{display:flex;justify-content:space-between;align-items:center;height:54px}.rmtop a{color:#fff;text-decoration:none;font-weight:700;font-size:15px}
+.w{max-width:980px;margin:0 auto;padding:0 14px}
+.hero{background:linear-gradient(120deg,#0b1f3a 10%,#e63946 120%);color:#fff;padding:26px 0 22px}.hero h1{margin:0 0 6px;font-size:clamp(26px,5vw,38px)}.hero p{margin:0;opacity:.92}
+.tabs{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(11,31,58,.06)}.tabs .w{display:flex;gap:6px;overflow-x:auto;padding:8px 14px}
+.tabs button{flex:0 0 auto;border:0;border-radius:999px;padding:9px 14px;font-weight:800;font-size:14px;background:#eef2f7;color:var(--ink);cursor:pointer}.tabs button.on{background:var(--red);color:#fff}
+section.tab{display:none;padding:16px 0 60px}section.tab.on{display:block}
+h2{font-size:22px;margin:4px 0 10px}.lead{color:var(--mute);margin:0 0 14px}
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin:0 0 14px}
+/* koło */
+.wheelwrap{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}@media(min-width:820px){.wheelwrap{grid-template-columns:420px minmax(0,1fr)}}
+.wheel{position:relative;max-width:400px;margin:0 auto;width:100%}.wheel svg{width:100%;height:auto;display:block}
+#ring{transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-origin:200px 200px}
+.seg{cursor:pointer}.seg path{stroke:#fff;stroke-width:2}.seg text{font-weight:800;font-size:13px;pointer-events:none}
+.ptr{position:absolute;left:50%;top:-4px;transform:translateX(-50%);font-size:30px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.kgin{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 0;font-weight:700}.kgin input{width:90px;font-size:18px;padding:8px 10px;border:2px solid var(--line);border-radius:10px}
+.kgin small{color:var(--mute);font-weight:600;flex-basis:100%}
+.res h3{margin:16px 0 8px;font-size:17px;display:flex;align-items:center;gap:8px}.res h3:first-child{margin-top:0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.t{background:#fff;border-radius:14px;padding:10px 12px;border-top:5px solid var(--c,#457b9d);box-shadow:0 3px 10px rgba(11,31,58,.06)}
+.t b{display:block;font-size:22px;line-height:1.15;color:var(--c,#457b9d)}.t span{display:block;font-weight:700;font-size:14px}.t small{display:block;color:var(--mute);font-size:12.5px;line-height:1.35;margin-top:3px}
+.t.wide{grid-column:1/-1}
+.disc{font-size:13px;color:var(--mute);background:#fff;border-radius:12px;padding:10px 12px;border:1px dashed var(--line)}
+/* kalkulator */
+.calc label{display:block;font-weight:700;margin:8px 0 4px}.calc select,.calc input{width:100%;font-size:17px;padding:11px 12px;border:2px solid var(--line);border-radius:12px;background:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* wzory */
+.fx{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.fc{background:#fff;border-radius:18px;padding:14px;border-left:8px solid var(--c);box-shadow:0 4px 14px rgba(11,31,58,.06)}.fc h3{margin:0 0 6px;font-size:17px}
+.fc .eq{font-size:19px;font-weight:800;background:color-mix(in srgb,var(--c) 12%,#fff);border-radius:12px;padding:10px 12px;margin:6px 0;color:var(--ink)}
+.fc p{margin:4px 0;font-size:14.5px;color:#33415c}.fc .ex{font-size:14px;background:#f4f7fb;border-radius:10px;padding:8px 10px;margin-top:6px}
+/* ćwiczenia */
+.q{font-size:18px;font-weight:700;background:#fff;border-radius:16px;padding:14px;border:2px solid #457b9d}
+.ans{display:flex;gap:8px;margin:10px 0}.ans input{flex:1;min-width:0;font-size:20px;padding:10px 12px;border:2px solid var(--line);border-radius:12px}.ans button,.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:16px;background:var(--red);color:#fff;cursor:pointer}
+.btn.ghost{background:#eef2f7;color:var(--ink)}
+.fb{border-radius:14px;padding:12px;margin:8px 0;font-weight:700}.fb.ok{background:#d8f8ea}.fb.no{background:#ffe3e3}
+.score{display:flex;gap:10px;margin:0 0 10px;font-weight:800}.score span{background:#fff;border-radius:999px;padding:6px 12px;border:1px solid var(--line)}
+.foot{color:var(--mute);font-size:13px;padding:20px 0 40px}
+</style></head><body>
+<div class="rmtop"><div class="w"><a href="index.html">🚑 ratownikmedyczny.online</a><a href="materialy.html#obliczenia">← Materiały</a></div></div>
+<header class="hero"><div class="w"><h1>🧮 Leki i obliczenia</h1><p>Koło pediatryczne, kalkulator dawek ze wzorem krok po kroku i ćwiczenia, żeby liczenie weszło w krew.</p></div></header>
+<nav class="tabs"><div class="w" id="tabs"><button data-t="kolo" class="on">🎡 Koło pediatryczne</button><button data-t="kalk">🧮 Kalkulator</button><button data-t="wzory">📐 Wzory</button><button data-t="cw">✏️ Ćwiczenia</button></div></nav>
+<main class="w">
+
+<section class="tab on" id="kolo">
+<h2>🎡 Koło pediatryczne</h2><p class="lead">Dotknij wieku na kole. Wszystko poniżej przeliczy się dla tego dziecka – a przy każdej wartości widzisz wzór, z którego wyszła.</p>
+<div class="wheelwrap">
+ <div><div class="wheel"><div class="ptr">🔻</div><svg viewBox="0 0 400 400" id="wsvg" aria-label="Koło pediatryczne – wybór wieku"></svg></div>
+ <div class="kgin box">⚖️ Masa: <input id="kg" type="number" min="1" max="100" step="0.5" inputmode="decimal"> kg <button class="btn ghost" id="kgr" type="button">↺ z wieku</button><small id="kgsrc"></small></div></div>
+ <div class="res" id="res"></div>
+</div>
+<p class="disc">Wartości orientacyjne do nauki: masa ciała i parametry wg APLS, leki i energia wg wytycznych ERC 2025 i kart leków na tej stronie. U prawdziwego pacjenta obowiązują procedury, ChPL i decyzja lekarza. Jeśli znasz rzeczywistą masę dziecka – wpisz ją.</p>
+</section>
+
+<section class="tab" id="kalk">
+<h2>🧮 Kalkulator dawki</h2><p class="lead">Wybierz lek i wskazanie, wpisz masę. Zobaczysz całe przeliczenie: mg/kg → mg → ml.</p>
+<div class="box calc"><label for="cl">Lek</label><select id="cl"></select><label for="cw">Wskazanie</label><select id="cw"></select>
+<div class="row2"><div><label for="ckg">Masa (kg)</label><input id="ckg" type="number" value="20" min="1" max="120" step="0.5" inputmode="decimal"></div><div><label>&nbsp;</label><button class="btn ghost" style="width:100%" id="cfromage" type="button">🎡 Masa z koła</button></div></div></div>
+<div id="cout"></div>
+</section>
+
+<section class="tab" id="wzory">
+<h2>📐 Wzory do zapamiętania</h2><p class="lead">Najważniejsze przeliczenia w karetce. Przeczytaj, zakryj palcem wzór i spróbuj powiedzieć go z pamięci.</p>
+<div class="fx" id="fx"></div>
+</section>
+
+<section class="tab" id="cw">
+<h2>✏️ Ćwiczenia z liczenia</h2><p class="lead">Losowe zadania jak na dyżurze. Policz w głowie albo na kartce i wpisz wynik w ml (lub w jednostce podanej w pytaniu).</p>
+<div class="score"><span>✅ <b id="sok">0</b></span><span>❌ <b id="sno">0</b></span><span>🔥 seria <b id="sst">0</b></span></div>
+<div id="cwq"></div>
+</section>
+</main>
+<div class="w foot">Materiał edukacyjny ratownikmedyczny.online. Masa ciała wg wzorów APLS, energia i leki w NZK wg ERC 2025 (Polska Rada Resuscytacji), pozostałe dawki wg kart leków na stronie. <a href="materialy.html#karty-lekow">Karty leków</a> · <a href="kurs.html">Kursy leków</a></div>
+<script>
+const $=id=>document.getElementById(id),F=PEDI.f;
+// --- tabs
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('section.tab').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));history.replaceState(null,'','#'+b.dataset.t);if(b.dataset.t==='cw'&&!$('cwq').innerHTML)newQ()};
+// --- wiek → masa (APLS)
+const AGES=[{l:'Noworodek',m:0,c:'#9aa5b1'},{l:'1 mies.',m:1,c:'#f4a6c8'},{l:'3 mies.',m:3,c:'#ff7aa2'},{l:'6 mies.',m:6,c:'#e63946'},{l:'9 mies.',m:9,c:'#c1121f'},{l:'1 rok',y:1,c:'#9d4edd'},{l:'2 lata',y:2,c:'#ffd166'},{l:'3 lata',y:3,c:'#f8f9fa',tx:'#14213d'},{l:'4 lata',y:4,c:'#4cc9f0'},{l:'5 lat',y:5,c:'#f77f00'},{l:'6 lat',y:6,c:'#2a9d8f'},{l:'8 lat',y:8,c:'#457b9d'},{l:'10 lat',y:10,c:'#264653'},{l:'12 lat',y:12,c:'#0b1f3a'}];
+function wAge(a){if(a.m===0)return {kg:3.5,f:'noworodek donoszony ≈ 3,5 kg'};if(a.m!=null)return {kg:0.5*a.m+4,f:'(0,5 × '+a.m+' mies.) + 4 = '+F(0.5*a.m+4,1)+' kg'};
+ if(a.y<=5)return {kg:2*a.y+8,f:'(2 × '+a.y+' lat) + 8 = '+(2*a.y+8)+' kg'};return {kg:3*a.y+7,f:'(3 × '+a.y+' lat) + 7 = '+(3*a.y+7)+' kg'}}
+// --- rysowanie koła
+const N=AGES.length,ST=360/N,CX=200,CY=200,R1=192,R0=92;
+function arc(i){const a0=(i*ST-90)*Math.PI/180,a1=((i+1)*ST-90)*Math.PI/180,p=(r,a)=>[CX+r*Math.cos(a),CY+r*Math.sin(a)];
+ const [x0,y0]=p(R1,a0),[x1,y1]=p(R1,a1),[x2,y2]=p(R0,a1),[x3,y3]=p(R0,a0);return `M${x0},${y0}A${R1},${R1} 0 0 1 ${x1},${y1}L${x2},${y2}A${R0},${R0} 0 0 0 ${x3},${y3}Z`}
+let svg='<g id="ring">';AGES.forEach((a,i)=>{const mid=i*ST+ST/2,rx=(R0+R1)/2;svg+=`<g class="seg" data-i="${i}"><path d="${arc(i)}" fill="${a.c}"/><text transform="rotate(${mid} ${CX} ${CY}) translate(${CX} ${CY-rx}) rotate(${mid>90&&mid<270?180:0})" text-anchor="middle" dominant-baseline="middle" fill="${a.tx||'#fff'}">${a.l}</text></g>`});
+svg+='</g><circle cx="200" cy="200" r="86" fill="#fff" stroke="#dfe6ef" stroke-width="3"/><text id="cAge" x="200" y="180" text-anchor="middle" font-size="22" font-weight="800" fill="#14213d"></text><text id="cKg" x="200" y="218" text-anchor="middle" font-size="34" font-weight="900" fill="#e63946"></text><text x="200" y="244" text-anchor="middle" font-size="12" fill="#5b6b82">dotknij wieku</text>';
+$('wsvg').innerHTML=svg;
+let sel=6,kg=12,kgManual=false;
+document.querySelectorAll('.seg').forEach(g=>g.onclick=()=>{sel=+g.dataset.i;kgManual=false;draw()});
+$('kg').oninput=()=>{const v=parseFloat($('kg').value.replace(',','.'));if(v>0){kg=v;kgManual=true;draw(true)}};
+$('kgr').onclick=()=>{kgManual=false;draw()};
+let rot=0;
+function yearsOf(a){return a.y!=null?a.y:a.m/12}
+function ett(a){const y=yearsOf(a);if(a.y==null){const id=a.m<6?3.5:4.0;return {un:id,cu:id-0.5,f:'< 1 roku: rurka wg wieku (noworodek 3,0–3,5)',d:3*id,df:'głębokość = 3 × średnica = 3 × '+F(id,1)}}
+ const r=x=>Math.floor(x*2)/2,un=r(y/4+4),cu=r(y/4+3.5);return {un,cu,f:'bez mankietu: '+y+'/4 + 4 · z mankietem: '+y+'/4 + 3,5',d:y/2+12,df:'głębokość (usta) = '+y+'/2 + 12'}}
+function igel(k){return k<5?['1','2–5 kg','różowy']:k<12?['1,5','5–12 kg','niebieski']:k<25?['2','10–25 kg','szary']:k<35?['2,5','25–35 kg','biały']:k<60?['3','30–60 kg','żółty']:['4','50–90 kg','zielony']}
+function vit(a){const y=yearsOf(a);if(y<1)return ['110–160','30–40','70–90'];if(y<2)return ['100–150','25–35','80–95'];if(y<5)return ['95–140','25–30','80–100'];if(y<=12)return ['80–120','20–25','90–110'];return ['60–100','15–20','100–120']}
+function T(c,big,lab,small,wide){return `<div class="t${wide?' wide':''}" style="--c:${c}"><b>${big}</b><span>${lab}</span>${small?'<small>'+small+'</small>':''}</div>`}
+function dose(id,i,c,lab){const r=PEDI.P[id][i],x=PEDI.calc(r,kg),U=r.u;const d=x.dLo,cap=x.capLo;
+ const big=(r.u==='ml'?F(x.ml)+' ml':F(d)+' '+U+(x.ml!=null?' = '+PEDI.fm(x.ml)+' ml':''));
+ return T(c,big,lab,F(PEDI.per(r,kg))+' '+U+'/kg × '+F(kg,1)+' kg'+(cap?' → maks. '+F(r.max)+' '+U:'')+(r.c&&r.u!=='ml'?'<br>'+r.c.txt:''))}
+function draw(keepKg){const a=AGES[sel],w=wAge(a);if(!kgManual){kg=w.kg;$('kg').value=F(kg,1).replace(',','.')}
+ $('kgsrc').textContent=kgManual?'Masa wpisana ręcznie – leki liczone na '+F(kg,1)+' kg':'Masa z wieku (APLS): '+w.f;
+ $('cAge').textContent=a.l;$('cKg').textContent=F(kg,1)+' kg';
+ const target=-(sel*ST+ST/2);let d=target-rot;d=((d+540)%360)-180;rot+=d;$('ring').style.transform=`rotate(${rot}deg)`;
+ const v=vit(a),e=ett(a),ig=igel(kg),y=yearsOf(a),sbp=y>=1&&y<=10?70+2*y:null,J=Math.round(4*kg),J8=Math.min(Math.round(8*kg),360),cv1=Math.round(kg),cv2=Math.round(2*kg);
+ let o='<h3>❤️ Parametry (norma)</h3><div class="tiles">'+T('#e63946',v[0],'tętno /min','')+T('#457b9d',v[1],'oddechy /min','')+T('#2a9d8f',v[2],'RR skurczowe','')+
+  (sbp?T('#f77f00','≥ '+sbp,'RR skurczowe min.','70 + 2 × '+y+' lat'):'')+'</div>';
+ o+='<h3>🫁 Drogi oddechowe</h3><div class="tiles">'+T('#264653',F(e.un,1),'rurka bez mankietu (mm)',e.f)+T('#264653',F(e.cu,1),'rurka z mankietem (mm)','')+T('#457b9d',F(e.d,0)+' cm','głębokość (usta)',e.df)+
+  T('#9d4edd','i-gel '+ig[0],'nadgłośniowe ('+ig[2]+')',ig[1])+'</div>';
+ o+='<h3>⚡ Energia</h3><div class="tiles">'+T('#c1121f',J+' J','defibrylacja','4 J/kg × '+F(kg,1)+' kg (ustaw najbliższą wartość w górę; nie więcej niż u dorosłego)')+
+  T('#c1121f','do '+J8+' J','VF oporne (od 5.)','do 8 J/kg, maks. 360 J')+T('#f77f00',cv1+' → '+cv2+' J','kardiowersja','1 J/kg, potem 2 J/kg')+'</div>';
+ o+='<h3>💉 Leki w NZK</h3><div class="tiles">'+dose('adrenalina',0,'#e63946','adrenalina iv/io')+dose('amiodaron',0,'#9d4edd','amiodaron po 3. wył.')+dose('amiodaron',1,'#9d4edd','amiodaron po 5. wył.')+'</div>';
+ o+='<h3>🧪 Płyny i glukoza</h3><div class="tiles">'+dose('pwe',0,'#2a9d8f','bolus płynu zbilansowanego')+dose('glukoza',0,'#f77f00','glukoza 10%')+'</div>';
+ o+='<h3>💊 Inne leki</h3><div class="tiles">'+dose('adenozyna',0,'#264653','adenozyna 1. dawka')+dose('adenozyna',1,'#264653','adenozyna 2. dawka')+dose('atropina',0,'#457b9d','atropina')+
+  dose('adrenalina',1,'#e63946','adrenalina im (anafilaksja)')+dose('midazolam',0,'#9d4edd','midazolam (drgawki)')+dose('paracetamol',0,'#2a9d8f','paracetamol iv')+dose('fentanyl',0,'#c1121f','fentanyl iv')+'</div>';
+ $('res').innerHTML=o;$('ckg').value=F(kg,1).replace(',','.');if(window._calc)_calc()}
+draw();
+// --- kalkulator
+const LN={};try{Object.keys(PEDI.P).forEach(k=>LN[k]=(window.LEKI&&LEKI[k]?LEKI[k].n:k.replace(/-/g,' ').replace(/^./,c=>c.toUpperCase())))}catch(e){}
+const NM={adrenalina:'Adrenalina',amiodaron:'Amiodaron',adenozyna:'Adenozyna',atropina:'Atropina',lidokaina:'Lidokaina',glukoza:'Glukoza',"sol-fizjologiczna-nacl-09":'NaCl 0,9%',pwe:'Płyn wieloelektrolitowy (PWE)',ringer:'Płyn Ringera',midazolam:'Midazolam',diazepam:'Diazepam',fentanyl:'Fentanyl',morfina:'Morfina',nalokson:'Nalokson',flumazenil:'Flumazenil',paracetamol:'Paracetamol',ibuprofen:'Ibuprofen',metamizol:'Metamizol',deksametazon:'Deksametazon',hydrokortyzon:'Hydrokortyzon',klemastyna:'Klemastyna',metoklopramid:'Metoklopramid','siarczan-magnezu':'Siarczan magnezu','wodoroweglan-sodu-84':'Wodorowęglan sodu 8,4%','kwas-traneksamowy':'Kwas traneksamowy',furosemid:'Furosemid',noradrenalina:'Noradrenalina',salbutamol:'Salbutamol',glukagon:'Glukagon',budezonid:'Budezonid',hydroksyzyna:'Hydroksyzyna',klonazepam:'Klonazepam',tlen:'Tlen'};
+const keys=Object.keys(PEDI.P).sort((a,b)=>NM[a].localeCompare(NM[b],'pl'));
+$('cl').innerHTML=keys.map(k=>`<option value="${k}">${NM[k]}</option>`).join('');
+function fillW(){const R=PEDI.P[$('cl').value];$('cw').innerHTML=R.map((r,i)=>`<option value="${i}">${r.w}</option>`).join('')}
+window._calc=function(){const id=$('cl').value,r=PEDI.P[id][+$('cw').value||0],k=parseFloat(String($('ckg').value).replace(',','.'))||0;
+ $('cout').innerHTML='<div class="pf"><h4>'+NM[id]+' – '+r.w+'</h4><div class="pf-rule">Wzór: '+PEDI.rule(r)+'</div>'+(k>0?PEDI.steps(r,k):'<p>Wpisz masę.</p>')+(r.n?'<p class="pf-n">'+r.n+'</p>':'')+'</div>'};
+PEDI.box('adrenalina');// wstrzyknięcie stylów
+$('cl').onchange=()=>{fillW();_calc()};$('cw').onchange=_calc;$('ckg').oninput=_calc;$('cfromage').onclick=()=>{$('ckg').value=F(kg,1).replace(',','.');_calc()};
+const q0=new URLSearchParams(location.search).get('lek');if(q0&&PEDI.P[q0])$('cl').value=q0;fillW();_calc();
+// --- wzory
+const FX=[
+ ['#e63946','⚖️ Masa dziecka (APLS)','0–12 mies.: (0,5 × mies.) + 4<br>1–5 lat: (2 × lata) + 8<br>6–12 lat: (3 × lata) + 7','Klasyczny wzór, który też spotkasz: (wiek + 4) × 2 dla 1–10 lat.','4 latka: 2 × 4 + 8 = 16 kg'],
+ ['#f77f00','🩸 Najniższe RR skurczowe','70 + 2 × wiek (lata)','Dotyczy dzieci 1–10 lat. Niżej = hipotensja – dziecko jest we wstrząsie niewyrównanym.','6 lat: 70 + 12 = 82 mmHg'],
+ ['#264653','🫁 Rurka intubacyjna','bez mankietu: wiek/4 + 4<br>z mankietem: wiek/4 + 3,5','Wynik w mm średnicy wewnętrznej, zaokrąglij do 0,5 w dół. Przygotuj też o 0,5 mniejszą i większą.','4 lata z mankietem: 1 + 3,5 = 4,5 mm'],
+ ['#457b9d','📏 Głębokość rurki','usta: wiek/2 + 12 cm<br>lub 3 × średnica rurki','Na wysokości kącika ust. Potwierdź kapnografią.','6 lat: 3 + 12 = 15 cm'],
+ ['#c1121f','⚡ Energia','defibrylacja 4 J/kg<br>VF oporne do 8 J/kg (maks. 360 J)<br>kardiowersja 1 J/kg → 2 J/kg','ERC 2025. Ustaw najbliższą wartość w górę, ale nie więcej niż u dorosłego.','15 kg: 4 × 15 = 60 J'],
+ ['#e63946','💉 Adrenalina w NZK','10 µg/kg = 0,1 ml/kg roztworu 1 mg w 10 ml','1 mg (1 ml) dopełnij NaCl do 10 ml → 100 µg w 1 ml. Maks. 1 mg.','20 kg: 200 µg = 2 ml'],
+ ['#9d4edd','💜 Amiodaron w NZK','5 mg/kg = 0,1 ml/kg (50 mg/ml)','Po 3. wyładowaniu maks. 300 mg, po 5. maks. 150 mg.','30 kg: 150 mg = 3 ml'],
+ ['#2a9d8f','💧 Płyny','10 ml/kg w bolusie','Po każdym bolusie ponowna ocena ABCDE. Płyn zbilansowany.','18 kg: 180 ml'],
+ ['#f77f00','🍬 Glukoza','0,2 g/kg = 2 ml/kg glukozy 10%','Glukoza 20%: 1 ml/kg. Potem kontrola glikemii.','12 kg: 2,4 g = 24 ml 10%'],
+ ['#0b1f3a','🧠 Najważniejszy wzór: ml z dawki','ml = dawka (mg) ÷ stężenie (mg/ml)','Najpierw policz dawkę (mg/kg × kg), potem zamień na ml. Zawsze sprawdź maksimum.','300 mg ÷ 50 mg/ml = 6 ml'],
+ ['#264653','🔁 Stężenie po rozcieńczeniu','stężenie = ilość leku ÷ całkowita objętość','Licz objętość całkowitą (lek + rozpuszczalnik), nie sam rozpuszczalnik.','4 mg w 50 ml = 0,08 mg/ml = 80 µg/ml'],
+ ['#457b9d','% i 1:1000','1% = 10 mg/ml<br>1:1000 = 1 mg/ml · 1:10 000 = 0,1 mg/ml','Lidokaina 2% = 20 mg/ml. Glukoza 10% = 100 mg/ml = 0,1 g/ml. MgSO₄ 20% = 200 mg/ml.','8,4% NaHCO₃ = 84 mg/ml = 1 mmol/ml'],
+ ['#c1121f','⏱️ Wlew z pompy','ml/h = µg/kg/min × kg × 60 ÷ µg w 1 ml','Mnożysz × 60, bo godzina ma 60 minut.','0,1 µg/kg/min, 20 kg, 80 µg/ml → 1,5 ml/h'],
+ ['#2a9d8f','💧 Krople na minutę','krople/min = ml × 20 ÷ minuty','Zwykły przyrząd: 20 kropli = 1 ml (mikrokroplówka: 60).','500 ml w 60 min → 167 kropli/min'],
+ ['#9aa5b1','🔢 Jednostki','1 g = 1000 mg · 1 mg = 1000 µg','Przy µg i mg najczęściej mylimy się o rząd wielkości – sprawdź dwa razy.','0,5 mg = 500 µg']];
+$('fx').innerHTML=FX.map(x=>`<div class="fc" style="--c:${x[0]}"><h3>${x[1]}</h3><div class="eq">${x[2]}</div><p>${x[3]}</p><div class="ex">📝 Przykład: ${x[4]}</div></div>`).join('');
+// --- ćwiczenia
+const QS=[['adrenalina',0],['amiodaron',0],['amiodaron',1],['adenozyna',0],['atropina',0],['glukoza',0],['pwe',0],['midazolam',0],['paracetamol',0],['fentanyl',0],['ibuprofen',0],['kwas-traneksamowy',0],['siarczan-magnezu',0],['adrenalina',1],['lidokaina',0],['flumazenil',0],['noradrenalina',0]];
+let cur=null,S={ok:0,no:0,st:0};
+function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+function newQ(){const t=Math.random();if(t<0.2){const a=AGES[1+Math.floor(Math.random()*(N-1))],w=wAge(a);cur={kind:'kg',ans:w.kg,unit:'kg',txt:'Oszacuj masę dziecka: <b>'+a.l+'</b>. Ile kg?',sol:'Wzór APLS: '+w.f}}
+ else if(t<0.32){const k=rnd([8,10,12,14,15,16,18,20,22,25,30,35,40]);cur={kind:'J',ans:Math.round(4*k),unit:'J',txt:'Dziecko <b>'+k+' kg</b>, VF. Jaka energia pierwszej defibrylacji?',sol:'4 J/kg × '+k+' kg = '+(4*k)+' J'}}
+ else{const [id,i]=rnd(QS),r=PEDI.P[id][i],k=rnd([6,8,10,12,14,15,16,18,20,22,24,25,28,30,35,40,45,50]),x=PEDI.calc(r,k);
+  const unit=r.inf?'ml/h':'ml',ans=r.inf?x.ml:x.ml;cur={kind:'ml',ans,unit,txt:'Dziecko <b>'+k+' kg</b>. '+NM[id]+' – '+r.w+'. Ile '+unit+' podasz'+(r.c?' (<i>'+r.c.txt+'</i>)':'')+'?',sol:'<div class="pf-rule">'+PEDI.rule(r)+'</div>'+PEDI.steps(r,k)}}
+ $('cwq').innerHTML='<div class="q">'+cur.txt+'</div><div class="ans"><input id="qa" inputmode="decimal" placeholder="wynik w '+cur.unit+'"><button id="qb">Sprawdź</button></div><div id="qf"></div>';
+ $('qb').onclick=check;$('qa').onkeydown=e=>{if(e.key==='Enter')check()};}
+function check(){const v=parseFloat($('qa').value.replace(',','.'));if(isNaN(v))return;const ok=Math.abs(v-cur.ans)<=Math.max(0.05*cur.ans,cur.unit==='kg'?1:0.05);
+ if(ok){S.ok++;S.st++}else{S.no++;S.st=0}$('sok').textContent=S.ok;$('sno').textContent=S.no;$('sst').textContent=S.st;
+ $('qf').innerHTML='<div class="fb '+(ok?'ok':'no')+'">'+(ok?'✅ Dobrze! ':'❌ Prawidłowo: ')+F(cur.ans)+' '+cur.unit+'</div><div class="pf">'+cur.sol+'</div><button class="btn" id="qn">Następne zadanie →</button>';$('qn').onclick=newQ;$('qb').disabled=true}
+const h=location.hash.slice(1);if(h){const b=document.querySelector('#tabs button[data-t="'+h+'"]');if(b)b.click()}
+</script>
+</body></html>
