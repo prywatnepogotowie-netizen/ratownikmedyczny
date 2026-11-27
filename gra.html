@@ -292,7 +292,7 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  const P=(ok,p,t,why)=>pts.push([!!ok,ok?p:0,t,why,p]);
  const N=(bad,p,t,why)=>{if(bad)pts.push([false,-p,t,why,0])};// kary
  const e12t=(G.log.find(l=>l[1].startsWith('EKG 12'))||[99])[0];
- P(F.e12&&e12t<=10,15,'EKG 12-odprowadzeniowe w ciągu 10 min od przyjazdu','W bólu w klatce piersiowej EKG wykonujesz jak najszybciej – rozpoznanie STEMI uruchamia całą ścieżkę.');
+ P(F.e12&&e12t<=10,15,'EKG 12-odprowadzeniowe w ciągu 10 min od przyjazdu'+(F.e12?' (Twój czas: '+e12t+' min)':''),'W bólu w klatce piersiowej EKG wykonujesz jak najszybciej – rozpoznanie STEMI uruchamia całą ścieżkę.');
  P(G.ekgRead==='inf',10,'Prawidłowa interpretacja: STEMI ściany dolnej',(G.ekgRead?'':'Nie wybrałeś interpretacji. ')+'Jak czytać: 1) znajdź linię izoelektryczną (odcinek PR), 2) sprawdź, czy odcinek ST zaraz za QRS jest powyżej niej – tu w II, III i aVF jest wyraźnie uniesiony („grzbiet”), 3) szukaj zmian lustrzanych – w I i aVL ST jest obniżony. II, III, aVF = ściana dolna (zwykle prawa tętnica wieńcowa) → zrób V4R.<div class="e12w" style="margin-top:6px"><div class="e12">'+E12+'</div></div>');
  P(!!F.v4r,10,'Odprowadzenia prawokomorowe (V4R)','Przy zawale ściany dolnej zawsze sprawdź prawą komorę: uniesienie ST w V4R = zawał RV → bez nitratów, płyny przy hipotensji.');
  P(!!F.consult,10,'Teletransmisja i konsultacja z pracownią','Pozwala przywieźć pacjenta prosto na stół hemodynamiki.');
@@ -301,14 +301,14 @@ function finish(){G.over=true;clearInterval(vfTimer);clearInterval(trTimer);cons
  if(F.consult)P(F.tik||F.klo,5,'Drugi lek przeciwpłytkowy zgodnie ze zleceniem pracowni','Tikagrelor 180 mg (lub klopidogrel 600 mg) podajesz po konsultacji – zlecił go kardiolog.');
  N((F.tikPre||F.kloPre),3,'Drugi lek przeciwpłytkowy przed konsultacją','O tikagrelorze/klopidogrelu decyduje ośrodek PCI – najpierw teletransmisja.');
  P(F.fen||F.morf,5,'Leczenie bólu','Fentanyl lub morfina – ból zwiększa zapotrzebowanie serca na tlen.');
- P(F.pads&&(G.log.find(l=>l[1].startsWith('Elektrody defibrylacyjne.'))||[99])[0]<=10,10,'Elektrody defibrylacyjne naklejone wcześnie (dobrze!)','U pacjenta ze świeżym zawałem elektrody naklejasz od razu – VF może pojawić się w każdej chwili, a wtedy wyładowanie jest w kilka sekund.');
+ {const pt=(G.log.find(l=>l[1].startsWith('Elektrody defibrylacyjne.'))||[null])[0],dt=(G.log.find(l=>/^Zniesienie|^Pacjent schodzi/.test(l[1]))||[99])[0];P(pt!=null&&pt<=dt,10,'Elektrody defibrylacyjne naklejone przed zniesieniem pacjenta'+(pt!=null?' (naklejone w '+pt+'. min)':' (nie naklejone)'),'Przy świeżym zawale elektrody naklejasz w trakcie badania C, najpóźniej przed przenoszeniem pacjenta – VF może pojawić się w każdej chwili, także na schodach.')}
  P(F.e12||F.mon4,0,'','');pts.pop();
  P(F.coc&&F.bp&&F.boc&&F.spo2&&F.avpu,5,'Pełne ABCDE (oddech, SpO₂, tętno, ciśnienie, świadomość)','Badanie ABCDE robisz w całości – parametry na monitorze są dopiero po ich zmierzeniu.');
  P(F.wyw||F.opqrst,5,'Wywiad (SAMPLE / OPQRST)','Pytanie o leki na potencję jest kluczowe przed nitratami.');
  P(!!F.pol,3,'Pozycja półsiedząca','Ułatwia oddychanie i zmniejsza obciążenie serca.');
  P(F.krz||F.nosz,5,'Pacjent zniesiony, nie schodził sam','Wysiłek w trakcie zawału zwiększa ryzyko arytmii.');
  P(G.dest==='pci',15,'Transport bezpośrednio do pracowni hemodynamiki','Omijając SOR, skracasz czas do udrożnienia tętnicy („czas to mięsień”).');
- P(G.trStart!=null&&G.trStart<=25,10,'Czas na miejscu ≤ 25 min','Nie zwlekaj – leczeniem zawału jest udrożnienie tętnicy w pracowni.');
+ P(G.trStart!=null&&G.trStart<=30,10,'Czas na miejscu ≤ 30 min'+(G.trStart!=null?' (Twój czas: '+G.trStart+' min)':''),'Na miejscu: badanie, EKG, teletransmisja, leki podstawowe. Resztę (np. leki przeciwbólowe, kolejne pomiary) możesz zrobić w karetce w drodze – czynności w czasie jazdy nie wydłużają pobytu na miejscu.');
  if(F.vfDone)P(F.vfSec!=null&&F.vfSec<=30,15,'Pierwsza defibrylacja w ciągu 30 s'+(F.vfSec!=null?' (Twój czas: '+F.vfSec+' s)':''),'Liczy się od utraty przytomności do pierwszego wyładowania. W VF każda minuta zwłoki zmniejsza szansę przeżycia o ok. 10%. Najpierw prąd, potem leki.');
  if(F.vfDone&&G.padsBefore)P(F.shock3,10,'3 wyładowania pod rząd w NZK monitorowanym','NZK przy zespole, pacjent monitorowany, elektrody naklejone: do 3 szybkich wyładowań pod rząd (krótka ocena rytmu między nimi), dopiero potem RKO. Cała seria liczy się w algorytmie jako JEDNO – pierwsze – wyładowanie (ERC).');
  P(G.hand==='ok',5,'Przekazanie MIST','Konkretnie: wiek, rozpoznanie, czas, zdarzenia, leki, parametry.');
