@@ -3,7 +3,7 @@
 <title>Gra EKG – rozpoznaj rytm i lecz pacjenta | ratownikmedyczny.online</title>
 <meta name="description" content="Gra EKG dla ratownika medycznego na prawdziwych zapisach: tryb nauki z podpowiedziami i tryb zaawansowany. Rozpoznajesz rytm i EKG 12-odprowadzeniowe, decydujesz – defibrylacja, kardiowersja, adenozyna, atropina, stymulacja. Złe decyzje mają następstwa.">
 <link rel="canonical" href="https://ratownikmedyczny.online/ekg-gra.html">
-<script src="pro.js"></script><script src="ekgdata.js?v=3"></script><script src="ekg.js?v=4"></script>
+<script src="pro.js"></script><script src="ekgdata.js?v=4"></script><script src="ekg.js?v=4"></script>
 <style>
 :root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#eef2f7;--line:#dfe6ef;--g:#2a9d8f}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
@@ -50,8 +50,9 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 <div class="w">
 <section class="scr on" id="s0">
  <div class="hero"><h1>🎮 Gra EKG</h1><p>Prawdziwe zapisy EKG pacjentów. Rozpoznaj rytm, oceń, czy pacjent jest stabilny, i zdecyduj, co robisz. Pacjent reaguje na każdą decyzję.</p></div>
- <div class="modes"><button class="mode" data-mode="learn" type="button" style="background:linear-gradient(135deg,#2a9d8f,#0b1f3a)"><b>🎓 Nauka</b><span>Podpowiedzi krok po kroku: miarowość, częstość, załamki P, QRS, PR. W EKG 12-odprowadzeniowym zaznaczone odprowadzenia, na które patrzeć. Błąd od razu wyjaśniony – możesz poprawić.</span></button>
- <button class="mode" data-mode="adv" type="button" style="background:linear-gradient(135deg,#e63946,#0b1f3a)"><b>🔥 Zaawansowany</b><span>Bez podpowiedzi, jak na dyżurze. Złe decyzje mają następstwa – pacjent może umrzeć. Omówienie po każdym pacjencie.</span></button></div>
+ <div class="modes"><button class="mode" data-mode="learn" type="button" style="background:linear-gradient(135deg,#2a9d8f,#0b1f3a)"><b>🎓 Nauka · podstawowy</b><span>Podpowiedzi krok po kroku: miarowość, częstość, załamki P, QRS, PR. W EKG 12-odprowadzeniowym zaznaczone odprowadzenia, na które patrzeć. Błąd od razu wyjaśniony – możesz poprawić.</span></button>
+ <button class="mode" data-mode="mid" type="button" style="background:linear-gradient(135deg,#f77f00,#0b1f3a)"><b>🧩 Trudniejsze EKG · średni</b><span>Mniej typowe zapisy: bloki AV, trzepotanie 2:1 i 4:1, pobudzenia przedwczesne, torsades. Różnicowanie podobnych rytmów. Bez podpowiedzi – wyjaśnienie po każdej odpowiedzi.</span></button>
+ <button class="mode" data-mode="adv" type="button" style="background:linear-gradient(135deg,#e63946,#0b1f3a)"><b>🚑 Dyżur ZRM · zaawansowany</b><span>Pacjent, monitor, parametry i decyzje. Leczenie zmienia stan pacjenta. Bez podpowiedzi – złe decyzje mają następstwa, pacjent może umrzeć. Omówienie po każdym pacjencie.</span></button></div>
  <div class="box"><b>Co Cię czeka</b><ul><li>10 pacjentów: 7 rytmów na monitorze (16 rodzajów) i 3 zapisy 12-odprowadzeniowe (STEMI, bloki odnóg, WPW, przerost i inne).</li><li>Wszystkie zapisy to prawdziwe EKG z otwartych baz medycznych.</li></ul></div>
  <p class="disc">Postępowanie wg wytycznych ERC 2025 i ESC. Gra edukacyjna – nie zastępuje szkolenia.<br>Zapisy EKG: PTB-XL, MIT-BIH Arrhythmia Database, CU Ventricular Tachyarrhythmia Database (PhysioNet, licencje CC BY 4.0 / ODC-By 1.0).</p>
 </section>
@@ -131,7 +132,7 @@ const STL={win:['✅ Wykonane – skuteczne','ok'],winp:['✅ Wykonane – skute
 const AQ=[['📏 Czy rytm jest miarowy?',['Miarowy','Niemiarowy','Brak powtarzalnego rytmu'],'Porównaj odstępy R–R (kartką lub palcami): równe = miarowy.'],
  ['💓 Jaka częstość komór?',['Poniżej 60/min','60–100/min','100–150/min','Powyżej 150/min','Nie da się policzyć'],'Policz zespoły QRS w 6 s i pomnóż × 10 albo 300 : liczba dużych kratek między R.'],
  ['〰️ Załamki P?',['Tak – przed każdym QRS','Są, ale nie każdy P ma swój QRS','Brak prawidłowych P'],'Szukaj w II zaokrąglonego, dodatniego załamka P przed każdym QRS.'],
- ['📐 QRS wąskie czy szerokie?',['Wąskie (< 120 ms)','Szerokie (≥ 120 ms)','Brak zespołów QRS'],'Wąski QRS = do 3 małych kratek (120 ms). Szerszy = pobudzenie z komór albo blok odnogi.'],
+ ['📐 QRS wąskie czy szerokie?',['Wąskie (< 120 ms)','Szerokie (≥ 120 ms)','Brak zespołów QRS'],'Wąski: poniżej 120 ms (mniej niż 3 małe kratki). Szeroki: 120 ms lub więcej (3 małe kratki i więcej) – pobudzenie z komór albo blok odnogi.'],
  ['↔️ Odstęp PR?',['Prawidłowy i stały','Wydłużony, ale stały','Wydłuża się, aż QRS wypada','P i QRS bez związku','Nie da się ocenić (brak P)'],'PR od początku P do początku QRS: prawidłowo 3–5 małych kratek (120–200 ms).']];
 const AC={nsr:[[0],[1],[0],[0],[0]],stach:[[0],[2],[0],[0],[0]],sbrad:[[0],[0],[0],[0],[0]],af:[[1],[2,3],[2],[0],[4]],afl:[[0],[2,3],[2],[0],[4]],svt:[[0],[3],[2],[0],[4]],
  vt:[[0],[2,3],[2],[1],[4]],vf:[[2],[4],[2],[2],[4]],asys:[[2],[0,4],[2],[2],[4]],av1:[[0],[1],[0],[0],[1]],mob1:[[1],[1],[1],[0],[2]],mob2:[[0],[0],[1],[0],[0,1]],
@@ -171,34 +172,73 @@ function quiz12(c){const st=S12[c.id]||[];C.a12=C.a12||[];let h=`<div class="hin
  return h+'</div>'}
 const DX={stemi_inf:'STEMI ściany dolnej',stemi_ant:'STEMI ściany przedniej (przednio-bocznej)',stemi_post:'STEMI dolno-boczny z zajęciem ściany tylnej',lbbb:'Blok lewej odnogi pęczka Hisa (LBBB)',rbbb:'Blok prawej odnogi pęczka Hisa (RBBB)',wpw:'Zespół WPW (preekscytacja)',lvh:'Przerost lewej komory',af:'Migotanie przedsionków',av3:'Blok AV III stopnia',afl:'Trzepotanie przedsionków',norm:'EKG prawidłowe',pe:'Zatorowość płucna (S1Q3T3)',nstemi:'NSTEMI – obniżenie ST'};
 const WALLS='<div class="walls"><b>🗺️ Mapa ścian serca</b><span style="--c:#e63946">II, III, aVF – ściana dolna</span><span style="--c:#2a9d8f">I, aVL, V5, V6 – ściana boczna</span><span style="--c:#4361ee">V1, V2 – przegroda</span><span style="--c:#9d4edd">V3, V4 – ściana przednia</span><span style="--c:#6c757d">obniżenie ST w V1–V3 – pomyśl o ścianie tylnej</span></div>';
+// ===================== poziom 2 – trudniejsze EKG (tylko rozpoznanie)
+const BRADY='Oceń objawy niepokojące (wstrząs, omdlenie, niedokrwienie mięśnia sercowego, niewydolność serca). Przy objawach: atropina 500 µg iv, można powtarzać do 3 mg; gdy nieskuteczna – elektrostymulacja przezskórna. Elektrody defibrylacyjne naklej od razu.';
+const MID={
+ av3:{t:'Mężczyzna 78 l., omdlenie w domu, zawroty głowy.',n:'Blok AV III stopnia (całkowity)',d:['Blok AV II stopnia 2:1','Bradykardia zatokowa','Blok AV I stopnia'],f:['Komory wolno, ok. 40/min, ale miarowo','Załamki P miarowe i szybsze od QRS','PR za każdym razem inny – P i QRS bez związku'],e:'Przedsionki i komory pracują niezależnie. Załamki P idą swoim stałym rytmem i „przechodzą” przez QRS i T, a zespoły QRS idą własnym, wolnym rytmem zastępczym.',do:BRADY+' Duże ryzyko asystolii.'},
+ av3b:{t:'Kobieta 81 l., osłabienie od rana, tętno ok. 40/min.',n:'Blok AV III stopnia (całkowity)',d:['Blok AV II stopnia 2:1','Bradykardia zatokowa','Blok AV II stopnia – Mobitz I (Wenckebach)'],f:['Komory miarowo ok. 40/min','Załamki P w stałym rytmie, częściej niż QRS','Brak stałego PR'],e:'Szukaj załamków P w całym zapisie, także ukrytych w załamku T. Jeśli P idą równo, a odstęp PR stale się zmienia bez wzoru – to blok całkowity.',do:BRADY+' Duże ryzyko asystolii.'},
+ mob2:{t:'Mężczyzna 70 l., duszność wysiłkowa, „serce bije wolno”.',n:'Blok AV II stopnia 2:1',d:['Blok AV III stopnia (całkowity)','Bradykardia zatokowa','Blok AV II stopnia – Mobitz I (Wenckebach)'],f:['Na każdy QRS przypadają 2 załamki P – co drugi P bez QRS','PR przewiedzionych pobudzeń stały','Komory ok. 35/min'],e:'Drugi załamek P jest zablokowany. PR przy przewiedzionych pobudzeniach jest stały, więc to nie blok całkowity. Przy przewodzeniu 2:1 z jednego zapisu nie da się pewnie odróżnić Mobitz I od Mobitz II – traktuj jak blok wysokiego ryzyka.',do:BRADY},
+ mob1:{t:'Kobieta 66 l., kołatanie i „przerwy” w biciu serca.',n:'Blok AV II stopnia – Mobitz I (Wenckebach)',d:['Blok AV I stopnia','Blok AV II stopnia 2:1','Migotanie przedsionków'],f:['PR wydłuża się z pobudzenia na pobudzenie','Potem jeden P bez QRS – dłuższa przerwa','Cykl się powtarza (grupy pobudzeń)'],e:'Pobudzenia układają się w grupy, a po każdej grupie jest dłuższa przerwa (tu ok. 1,1 s zamiast ok. 0,65 s). To nie migotanie przedsionków – przerwy są regularne i są załamki P.',do:'Zwykle łagodny (blok w węźle AV). Bez objawów – obserwacja i transport do oceny. Z objawami – postępowanie jak w bradykardii.'},
+ av1:{t:'Mężczyzna 59 l., kontrolne EKG, bez dolegliwości.',n:'Blok AV I stopnia',d:['Rytm zatokowy prawidłowy','Blok AV II stopnia – Mobitz I (Wenckebach)','Bradykardia zatokowa'],f:['Każdy załamek P ma swój QRS','PR stały, ale powyżej 200 ms (więcej niż 5 małych kratek)','Rytm miarowy'],e:'Jedyną nieprawidłowością jest długi, ale stały PR. Żaden QRS nie wypada.',do:'Zwykle nie wymaga leczenia na miejscu. Zwróć uwagę na leki zwalniające (beta-blokery, digoksyna, werapamil).'},
+ afl:{t:'Mężczyzna 64 l., kołatanie serca od 2 godzin, stabilny.',n:'Trzepotanie przedsionków z przewodzeniem 2:1',d:['Częstoskurcz nadkomorowy (SVT)','Tachykardia zatokowa','Migotanie przedsionków'],f:['Miarowo ok. 150/min','Wąskie QRS','Fale trzepotania ok. 300/min – co druga ukryta w QRS lub T'],e:'Miarowy częstoskurcz z wąskim QRS o częstości ok. 150/min – zawsze pomyśl o trzepotaniu 2:1. Częstoskurcz nadkomorowy jest zwykle szybszy (170–250/min), a tachykardia zatokowa ma wyraźny załamek P przed każdym QRS.',do:'Niestabilny → kardiowersja zsynchronizowana. Stabilny → monitorowanie i transport. Manewr vagalny lub adenozyna mogą na chwilę zwolnić komory i odsłonić fale trzepotania (to pomaga w rozpoznaniu, ale zwykle nie kończy arytmii).'},
+ afl4:{t:'Kobieta 73 l., zmęczenie, tętno 70/min.',n:'Trzepotanie przedsionków z przewodzeniem 4:1',d:['Rytm zatokowy prawidłowy','Migotanie przedsionków','Blok AV I stopnia'],f:['Linia podstawowa „piłokształtna” (fale trzepotania)','Ok. 4 fale na każdy QRS','Komory miarowo ok. 70/min'],e:'Między zespołami QRS zamiast płaskiej linii są regularne, ząbkowane fale (ok. 300/min). Komory są wolne, bo węzeł AV przepuszcza co czwartą falę.',do:'Częstość komór prawidłowa – bez pilnego leczenia antyarytmicznego. Ryzyko udaru (zatorowość) – transport do oceny.'},
+ af:{t:'Mężczyzna 77 l., nierówne bicie serca od kilku dni, stabilny.',n:'Migotanie przedsionków (z kontrolowaną częstością komór)',d:['Rytm zatokowy z pobudzeniami przedwczesnymi komorowymi','Trzepotanie przedsionków z przewodzeniem 4:1','Blok AV II stopnia – Mobitz I (Wenckebach)'],f:['Odstępy R–R zupełnie nieregularne','Brak załamków P, falista linia podstawowa','Komory ok. 90/min'],e:'Każdy odstęp R–R jest inny i nie ma powtarzalnego wzoru – to odróżnia migotanie od Wenckebacha (grupy pobudzeń) i od pojedynczych pobudzeń przedwczesnych.',do:'Stabilny, częstość poniżej 110/min – bez pilnego leczenia na miejscu. Ustal, od kiedy trwa (ryzyko udaru), i przekaż do dalszej oceny.'},
+ stach2:{t:'Kobieta 30 l., gorączka 39 °C od 2 dni.',n:'Tachykardia zatokowa',d:['Częstoskurcz nadkomorowy (SVT)','Trzepotanie przedsionków z przewodzeniem 2:1','Migotanie przedsionków'],f:['Przed każdym QRS załamek P','Miarowo ok. 110/min','Wąskie QRS'],e:'Załamki P przed każdym QRS i częstość poniżej 150/min przemawiają za rytmem zatokowym. Szukaj przyczyny: ból, gorączka, odwodnienie, krwawienie, niedotlenienie.',do:'Leczy się przyczynę, nie rytm. Nie podaje się leków antyarytmicznych.'},
+ svt:{t:'Kobieta 34 l., nagłe kołatanie serca, przytomna, ciśnienie 115/75 mmHg.',n:'Częstoskurcz nadkomorowy (SVT)',d:['Tachykardia zatokowa','Trzepotanie przedsionków z przewodzeniem 2:1','Częstoskurcz komorowy (VT)'],f:['Miarowo ok. 170/min','Wąskie QRS','Brak widocznych załamków P'],e:'Bardzo równe odstępy R–R, wąski QRS, załamki P niewidoczne (schowane w QRS). Częstość wyraźnie powyżej 150/min przemawia przeciw trzepotaniu 2:1.',do:'Stabilny: zmodyfikowany manewr Valsalvy, potem adenozyna 6 mg → 12 mg → 18 mg iv w szybkim bolusie. Niestabilny: kardiowersja zsynchronizowana.'},
+ pvc:{t:'Mężczyzna 55 l., uczucie „przeskakiwania” serca.',n:'Rytm zatokowy z pobudzeniami przedwczesnymi komorowymi',d:['Migotanie przedsionków','Częstoskurcz komorowy (VT)','Blok AV II stopnia – Mobitz I (Wenckebach)'],f:['Rytm podstawowy zatokowy, R–R równe','Pojedyncze szerokie, inne QRS pojawiają się za wcześnie','Po nich dłuższa przerwa'],e:'Nieregularność dotyczy tylko pojedynczych pobudzeń – reszta odstępów R–R jest równa. Pobudzenie komorowe jest szerokie, bez załamka P przed sobą.',do:'Pojedyncze pobudzenia zwykle bez leczenia. Szukaj przyczyny (niedokrwienie, zaburzenia elektrolitowe, leki). Niepokojące: salwy, ból w klatce, omdlenie.'},
+ tdp:{t:'Kobieta 68 l., leczona lekami wydłużającymi QT, nagle traci przytomność.',n:'Torsades de pointes',d:['Migotanie komór (VF)','Częstoskurcz komorowy (VT)','Trzepotanie przedsionków z przewodzeniem 2:1'],f:['Szerokie QRS, bardzo szybko','Amplituda rośnie i maleje – zapis „skręca się” wokół linii','Często po wydłużonym QT'],e:'Wielokształtny częstoskurcz komorowy z wrzecionowatą zmianą wysokości zespołów.',do:'Bez tętna → defibrylacja i algorytm zatrzymania krążenia. Z tętnem: magnez 2 g iv, odstaw leki wydłużające QT, wyrównaj potas.'}};
+const MIDK=Object.keys(MID);
+function midCase(id){const m=MID[id];C={m,id,opts:shuf([m.n,...m.d])};drawMid()}
+function drawMid(pick){const m=C.m,e=EKGD.s[C.id];
+ let h=`<div class="pt" style="--c:#f77f00"><b>🧩 Rozpoznaj rytm</b><br>${m.t}</div><div class="mon"><div class="hd"><span>📟 25 mm/s · 10 mm/mV</span><span>${e.hr?'częstość komór '+e.hr+'/min':''}</span></div><div class="strip"><div style="min-width:620px">${EKGL.strip(C.id,{secs:6})}</div></div><button class="zoom" type="button" data-z="${C.id}">🔍 Powiększ EKG</button></div>`;
+ if(pick==null)h+=`<div class="q">Co to za rytm?</div>`+C.opts.map((o,j)=>`<button class="op" data-mq="${j}" type="button">${o}</button>`).join('');
+ else{const ok=C.opts[pick]===m.n,p=ok?10:0;score+=p;res[qi]={ok,typ:ok?'win':'fail',p,name:m.n,idOk:ok,id:C.id,mid:C.opts[pick]};
+  h+=`<div class="deb"><div class="sumh"><span class="tag" style="background:${ok?'#2a9d8f':'#e63946'}">${ok?'✅ Dobrze':'❌ Błędne rozpoznanie'}</span><b>+${p} pkt</b></div>
+  <h3>1️⃣ Rozpoznanie</h3><p><b>${m.n}</b>${ok?'':`<br>Twoja odpowiedź: ${C.opts[pick]}`}</p>
+  <h3>2️⃣ Po czym poznać</h3><ul>${m.f.map(x=>`<li>${x}</li>`).join('')}</ul><p>${m.e}</p>
+  ${e.r.length>2?`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b><div class="e12w"><div style="min-width:620px">${EKGL.strip(C.id,{secs:6,rr:1})}</div></div></div>`:''}
+  <h3>3️⃣ Co robisz</h3><p>${m.do}</p>
+  <p class="disc">Zapis: ${e.src}, PhysioNet (prawdziwe EKG). Postępowanie wg ERC 2025. Stan na 28.11.2026.</p>
+  <button class="btn big n" id="nx" type="button">${qi<Q.length-1?'Następny zapis →':'🏁 Wynik końcowy'}</button></div>`}
+ $('cs').innerHTML=h;document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>zoom(b.dataset.z));
+ document.querySelectorAll('[data-mq]').forEach(b=>b.onclick=()=>drawMid(+b.dataset.mq));
+ if(pick==null)window.scrollTo(0,0);else{$('nx').onclick=()=>{qi++;next()};goEx2()}}
+function goEx2(){const d=document.querySelector('#cs .deb');d&&window.scrollTo({top:d.getBoundingClientRect().top+window.scrollY-12,behavior:'smooth'})}
+// pomocnicze: częstość z prawdziwego zapisu
+function hrOf(s){const e=EKGD.s[REAL[s.rh]];return(!s.nzk&&e&&e.hr)?String(e.hr):s.v[0]}
+function rateCat(h){h=+h;if(!(h>0))return null;if(h>=55&&h<=65)return[0,1];if(h>=95&&h<=105)return[1,2];if(h>=145&&h<=155)return[2,3];return h<60?[0]:h<=100?[1]:h<=150?[2]:[3]}
+function factsOf(k,s){const f=(FACT[k]||[]).slice();if(!f.length||!s||s.nzk)return FACT[k];const h=hrOf(s),e=EKGD.s[REAL[s.rh]];if(+h>0&&e){const n=e.r.filter(v=>v<6*125).length;f[1]=`ok. ${h}/min (tyle pokazuje monitor). Sprawdź sam: ${n} zespołów QRS w 6 s × 10 = ${n*10}/min`}return f}
+function acOf(k,s){const a=(AC[k]||[]).map(x=>x.slice());if(!a.length||!s||s.nzk)return AC[k];const c=rateCat(hrOf(s));if(c)a[1]=c;return a}
+const LBL={learn:'🎓 Nauka',mid:'🧩 Trudniejsze EKG',adv:'🚑 Dyżur ZRM'};
 // ===================== silnik
 let MODE='adv',Q=[],qi=0,res=[],score=0,C;
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{MODE=b.dataset.mode;start()});
-function start(){const r=shuf(START).slice(0,7).map(k=>({t:'r',k})),t=shuf(C12).slice(0,3).map(c=>({t:'12',c}));Q=shuf(r.concat(t));qi=0;res=[];score=0;
+function start(){const r=shuf(START).slice(0,7).map(k=>({t:'r',k})),t=shuf(C12).slice(0,3).map(c=>({t:'12',c}));Q=MODE==='mid'?shuf(shuf(MIDK).slice(0,7).map(k=>({t:'m',k})).concat(t)):shuf(r.concat(t));qi=0;res=[];score=0;
  document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id==='s1'));next()}
-function prog(){$('pg').innerHTML=Q.map((q,i)=>`<i class="${i<qi?(res[i]&&res[i].ok?'d':'x'):i===qi?'c':''}"></i>`).join('');$('scb').innerHTML=`<span>${MODE==='learn'?'🎓 Nauka':'🔥 Zaawansowany'}</span><span>Pacjent ${Math.min(qi+1,Q.length)}/${Q.length}</span><span>⭐ ${score} pkt</span>`}
-function next(){if(qi>=Q.length)return finish();const q=Q[qi];prog();if(q.t==='12')return case12(q.c);C={start:q.k,st:q.k,bad:0,steps:[],idAns:null,idTries:0,pts:0,done:false};render(true)}
+function prog(){$('pg').innerHTML=Q.map((q,i)=>`<i class="${i<qi?(res[i]&&res[i].ok?'d':'x'):i===qi?'c':''}"></i>`).join('');$('scb').innerHTML=`<span>${LBL[MODE]}</span><span>Pacjent ${Math.min(qi+1,Q.length)}/${Q.length}</span><span>⭐ ${score} pkt</span>`}
+function next(){if(qi>=Q.length)return finish();const q=Q[qi];prog();if(q.t==='12')return case12(q.c);if(q.t==='m')return midCase(q.k);C={start:q.k,st:q.k,bad:0,steps:[],idAns:null,idTries:0,pts:0,done:false};render(true)}
 function vit(v){const u=(x,un)=>x==='--'||x==='—'?'<b>--</b>':`<b>${x}</b><i>${un}</i>`;return `<div class="vit"><div class="v1"><small>Tętno (HR)</small>${u(v[0],'/min')}</div><div class="v3"><small>Ciśnienie tętnicze</small>${u(v[1],'mmHg')}</div><div class="v2"><small>SpO₂</small>${u(v[2],'%')}</div><div class="v4"><small>GCS</small>${u(v[3],'pkt')}</div></div>`}
 function mon(s){const k=REAL[s.rh];return `<div class="mon"><div class="hd"><span>📟 Odprowadzenie II · 25 mm/s · 10 mm/mV</span><span>${s.nzk?'🚨 brak tętna':'tętno wyczuwalne'}</span></div><div class="strip"><div style="min-width:620px">${EKGL.strip(k,{secs:6})}</div></div>
- <button class="zoom" type="button" data-z="${k}">🔍 Powiększ EKG</button>${vit(s.v)}</div>`}
+ <button class="zoom" type="button" data-z="${k}">🔍 Powiększ EKG</button>${vit([hrOf(s),...s.v.slice(1)])}</div>`}
 function zoom(k){const d=document.createElement('div');d.className='zm';d.innerHTML=`<div class="zmh"><b>📟 Odprowadzenie II · 25 mm/s · 10 mm/mV</b><button type="button" class="btn n" id="zx">✕ Zamknij</button></div><p class="e12h">👉 Przesuń zapis palcem w bok. Duża kratka = 0,2 s, mała = 0,04 s; 10 mm = 1 mV.</p><div class="zmw"><div style="min-width:1500px">${EKGL.strip(k,{secs:10,mm:6})}</div></div>`;document.body.appendChild(d);document.body.style.overflow='hidden';d.querySelector('#zx').onclick=()=>{d.remove();document.body.style.overflow=''}}
 function cor(){return ANS[C.start]||C.start}
-function anal(k){const f=FACT[k],ac=AC[k];C.an=C.an||[];let h=`<div class="hint"><b>🧭 Analiza krok po kroku – zaznacz odpowiedź</b>`;
+function anal(k){const f=factsOf(k,ST[C.st]),ac=acOf(k,ST[C.st]);C.an=C.an||[];let h=`<div class="hint"><b>🧭 Analiza krok po kroku – zaznacz odpowiedź</b>`;
  for(let i=0;i<5;i++){const q=AQ[i],a=C.an[i];
   if(a==null){h+=`<p class="aqq"><b>${i+1}/5 ${q[0]}</b></p>`+q[1].map((o,j)=>`<button class="op aq" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
   const ok=ac[i].includes(a);h+=`<div class="re ${ok?'ok':'bad'}" id="aqr${i}"><small class="stl">${i+1}/5 ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${ok?'✅':'❌'}<div class="ex">${ok?'Dobrze. ':'Prawidłowo: <b>'+ac[i].map(x=>q[1][x]).join(' / ')+'</b>. '}Tu: ${f[i]}. <br>💡 ${q[2]}</div></div>`
   if(i===0){const rk=REAL[ST[C.st].rh];if(i===0&&EKGD.s[rk].r.length>2)h+=`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b> – porównaj liczby: ${(()=>{const R=EKGD.s[rk].r.filter(v=>v<6*125),d=R.slice(1).map((v,j)=>(v-R[j])/125),mx=Math.max(...d),mn=Math.min(...d);return mx-mn>0.08?`różnica do <b>${(mx-mn).toFixed(2).replace('.',',')} s</b> = <b>niemiarowy</b>`:`prawie równe (różnica ${(mx-mn).toFixed(2).replace('.',',')} s) = <b>miarowy</b>`})()}<div class="e12w"><div style="min-width:620px">${EKGL.strip(rk,{secs:6,rr:1})}</div></div></div>`}}
  if(C.an.length>=5)h+=`<div class="ex">🎯 <b>Klucz:</b> ${f[5]}</div>`;
  return h+'</div>'}
-function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(AC[cor()][+b.dataset.q].includes(+b.dataset.j)?1:0);C.keep=1;render();C.keep=0;goEx('aqr'+b.dataset.q)})}
+function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(acOf(cor(),ST[C.st])[+b.dataset.q].includes(+b.dataset.j)?1:0);C.keep=1;render();C.keep=0;goEx('aqr'+b.dataset.q)})}
 function goEx(id){const e=document.getElementById(id);if(!e)return;const t=e.getBoundingClientRect().top+window.scrollY-12;window.scrollTo({top:t,behavior:'smooth'})}
 function stab(s){return s.nzk?'🚨 <b>Brak tętna</b> → algorytm zatrzymania krążenia (rytm do defibrylacji czy nie?).':s.unst?'⚠️ <b>Objawy niestabilności</b> (wstrząs, zaburzenia świadomości, ból wieńcowy, niewydolność serca, omdlenie) → leczenie prądem / pilne.':'✅ <b>Pacjent stabilny</b> → najpierw bezpieczne leczenie, bez pośpiechu z prądem.'}
 function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.nzk?'#e63946':s.unst?'#f77f00':'#2a9d8f';
  let h=mon(s)+`<div class="pt" style="--c:${col}"><b>Pacjent</b><br>${s.t}</div>`;
  h+=C.steps.map((x,i)=>`<div class="re ${x.typ==='win'||x.typ==='winp'?'ok':x.typ==='part'?'':'bad'}"><small class="stl">Decyzja ${i+1}: ${(STL[x.typ]||STL.bad)[0]}</small>${ACT[x.a]}<br><span style="font-weight:600">→ ${x.txt}</span>${x.ex?`<div class="ex">🎓 ${x.ex}</div>`:''}</div>`).join('');
  if(id){const c=cor(),opts=C.opts||(C.opts=shuf([c,...shuf(Object.keys(NAMES).filter(k=>k!==c)).slice(0,3)]));
-  if(L)h+=anal(c);
-  if(L&&(!C.an||C.an.length<5)&&AC[c]){$('cs').innerHTML=h;bindFq();document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>zoom(b.dataset.z));if(first)window.scrollTo(0,0);return}
+  if(L&&!s.nzk)h+=anal(c);
+  if(L&&s.nzk)h+=`<div class="critb">🚨 <b>Brak tętna = zatrzymanie krążenia.</b> Nie analizuj teraz długo zapisu. Liczy się: RKO 30:2, elektrody i jedna decyzja – <b>rytm do defibrylacji</b> (VF, VT bez tętna) czy <b>nie do defibrylacji</b> (asystolia, PEA). Pełną analizę rytmu zobaczysz w omówieniu.</div>`;
+  if(L&&!s.nzk&&(!C.an||C.an.length<5)&&AC[c]){$('cs').innerHTML=h;bindFq();document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>zoom(b.dataset.z));if(first)window.scrollTo(0,0);return}
   h+=`<div class="q">1️⃣ Co widzisz na monitorze?</div>`+(C.wrong?`<div class="re bad">❌ To nie jest: ${NAMES[C.wrong]}. ${FACT[C.wrong]?'Tam: '+FACT[C.wrong][5]:''} Spróbuj jeszcze raz.</div>`:'')+opts.map(k=>`<button class="op" data-r="${k}" type="button"${C.tried&&C.tried.includes(k)?' disabled':''}>${NAMES[k]}</button>`).join('');
  } else if(!C.done){
   if(L&&!C.steps.length)h+=`<div class="hint"><b>🧭 Najpierw oceń pacjenta</b><p>${stab(s)}</p></div>`;
@@ -226,21 +266,23 @@ function endCase(typ){C.done=true;C.typ=typ;document.querySelectorAll('#cs .op,#
  score+=p;const ok=typ==='win'||typ==='winp';res[qi]={ok,typ,p,name:NAMES[cor()],idOk,id:C.firstId,crit:(C.crit||[]).length};
  const best=Object.entries(s0.o).filter(e=>e[1][0]==='win').map(e=>e[0]);
  const tag={win:['#2a9d8f','✅ Pacjent ustabilizowany'],winp:['#2a9d8f','✅ Ustabilizowany – ale był lepszy wybór'],fail:['#f77f00','⚠️ Powikłanie'],die:['#3d0a0f','🕯️ Zgon']}[typ];
- const f=FACT[cor()],why=s0.why;const crit=[...new Set(C.crit||[])];
+ const f=factsOf(cor(),s0),why=s0.why;const crit=[...new Set(C.crit||[])];
  const dec=C.steps.filter((x,i)=>!(i>0&&x.a===C.steps[i-1].a&&(x.typ==='die'||x.typ==='fail'))).map(x=>{const st=STL[x.typ]||STL.bad,good=x.typ==='win'||x.typ==='winp';
   return `<div class="dc ${st[1]}"><b>${ACT[x.a]}</b><span>${st[0]}</span><small><b>Co się stało:</b> ${x.txt.replace(/<b>\(W trybie nauki[^)]*\)<\/b>/,'')}</small>${good?'':`<small><b>Dlaczego:</b> ${best.includes(x.a)?'':'W tej sytuacji właściwe było: '+best.map(k=>ACT[k]).join(' lub ')+'.'}</small>`}</div>`}).join('');
  const missed=ok?[]:best.filter(k=>!C.steps.some(x=>x.a===k));
  const tips=[f?f[5]:'',why.split('. ')[0]+'.',best.length?'Leczenie z wyboru: '+best.map(k=>ACT[k].replace(/^\S+\s/,'')).join(' lub ')+'.':''].filter(Boolean).slice(0,3);
  $('cs').insertAdjacentHTML('beforeend',`<div class="deb">
   <div class="sumh"><span class="tag" style="background:${tag[0]}">${tag[1]}</span><b>+${p} pkt</b></div>
-  ${crit.length?`<div class="critb">⛔ <b>Błąd krytyczny${crit.length>1?'y':''}:</b> ${crit.map(k=>ACT[k]).join('; ')} – ta decyzja zagroziła życiu pacjenta (niezależnie od punktów).</div>`:''}
-  <h3>🫀 Stan pacjenta</h3><div class="two1"><small>Na początku</small>${vit(s0.v)}</div>
-  <p><b>Na końcu:</b> ${typ==='die'?'zatrzymanie krążenia – zgon.':(C.steps[C.steps.length-1]||{}).txt||''}${C.start!==C.st?` <br><b>Po drodze rytm zmienił się na:</b> ${NAMES[ANS[C.st]||C.st]||C.st}.`:''}</p>
-  <h3>🔎 Rozpoznanie ${idOk?'✅':'❌'}</h3><p><b>${NAMES[cor()]}${C.start==='pvt'?' bez tętna':''}</b> · Twoja odpowiedź: ${idOk?'prawidłowa':(NAMES[C.firstId]||'')}</p>
+  <h3>1️⃣ Rozpoznanie rytmu ${idOk?'✅':'❌'}</h3><p><b>${NAMES[cor()]}${C.start==='pvt'?' bez tętna':''}</b> · Twoja odpowiedź: ${idOk?'prawidłowa':(NAMES[C.firstId]||'')}</p>
+  ${s0.nzk&&L?'<p class="e12h">📚 Analiza rytmu poniżej to moduł do nauki po akcji – w zatrzymaniu krążenia nie robi się jej przed RKO i defibrylacją.</p>':''}
   ${f?`<div class="facts">${FQ.map((q,i)=>`<div><span>${q}</span><b>${f[i]}</b></div>`).join('')}</div>`:''}
-  <h3>🩺 Twoje decyzje</h3>${dec}
+  <h3>2️⃣ Ocena stanu pacjenta</h3><p>${stab(s0)}</p><div class="two1"><small>Na początku</small>${vit([hrOf(s0),...s0.v.slice(1)])}</div>
+  <p><b>Na końcu:</b> ${typ==='die'?'zatrzymanie krążenia – zgon.':(C.steps[C.steps.length-1]||{}).txt||''}${C.start!==C.st?` <br><b>Po drodze rytm zmienił się na:</b> ${NAMES[ANS[C.st]||C.st]||C.st}.`:''}</p>
+  <h3>3️⃣ Poprawność decyzji</h3>${dec}
   ${missed.length?`<div class="dc pt"><b>Pominięte działanie</b><small>${missed.map(k=>ACT[k]).join(' lub ')} – to było leczenie z wyboru.</small></div>`:''}
-  ${EKGL.leki(LK[C.start],true)}<h3>⭐ Punkty</h3><div class="pts"><div><span>Rozpoznanie rytmu${idOk?' za 1. razem':L&&C.idAns===cor()?' po podpowiedzi':' – błędne'}</span><b>+${pId}</b></div><div><span>Leczenie${ok?(C.bad?` (skuteczne, ale ${C.bad} ${C.bad===1?'zbędna decyzja':'zbędne decyzje'}: −3 pkt każda)`:' – skuteczne bez zbędnych kroków'):' – nieskuteczne'}</span><b>+${pTr}</b></div><div class="sum"><span>Razem</span><b>+${p}</b></div></div>
+  ${EKGL.leki(LK[C.start],true)}
+  <h3>4️⃣ Błędy krytyczne</h3>${crit.length?`<div class="critb">⛔ <b>${crit.map(k=>ACT[k]).join('; ')}</b> – ta decyzja zagroziła życiu pacjenta (niezależnie od punktów).</div>`:'<p>✅ Brak błędów krytycznych.</p>'}
+  <h3>5️⃣ Wynik punktowy</h3><div class="pts"><div><span>Rozpoznanie rytmu${idOk?' za 1. razem':L&&C.idAns===cor()?' po podpowiedzi':' – błędne'}</span><b>+${pId}</b></div><div><span>Leczenie${ok?(C.bad?` (skuteczne, ale ${C.bad} ${C.bad===1?'zbędna decyzja':'zbędne decyzje'}: −3 pkt każda)`:' – skuteczne bez zbędnych kroków'):' – nieskuteczne'}</span><b>+${pTr}</b></div><div class="sum"><span>Razem</span><b>+${p}</b></div></div>
   <h3>📌 Do zapamiętania</h3><ul>${tips.map(t=>`<li>${t}</li>`).join('')}</ul>
   <details><summary>📖 Pełne omówienie</summary><p>${why}</p></details>
   <p class="disc">Źródło: wytyczne ERC 2025 (zaburzenia rytmu, zaawansowane zabiegi resuscytacyjne). Zapis: ${EKGD.s[REAL[s0.rh]].src}, PhysioNet. Stan na 28.11.2026.</p>
@@ -267,8 +309,8 @@ function draw12(done){const c=C.c,L=MODE==='learn',opts=C.opts||(C.opts=shuf([c.
 function bindQ12(){document.querySelectorAll('.aq2').forEach(b=>b.onclick=()=>{C.a12[+b.dataset.q]=+b.dataset.j;const y=window.scrollY;draw12();window.scrollTo(0,y);goEx('aq2r'+b.dataset.q)})}
 function finish(){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id==='s2'));const ok=res.filter(r=>r.ok).length,ids=res.filter(r=>r.idOk).length,dead=res.filter(r=>r.typ==='die').length;
  const kb='rm_ekggra_'+MODE,best=+localStorage.getItem(kb)||0;try{if(score>best)localStorage.setItem(kb,score)}catch(e){}
- $('fin').innerHTML=`<div class="end"><div style="font-size:54px">${dead?'🫀':'🏆'}</div><h2>Koniec dyżuru – ${MODE==='learn'?'🎓 nauka':'🔥 zaawansowany'}</h2><div class="big">${score} pkt</div><p>Dobrze: ${ok}/${Q.length} · rozpoznanie za 1. razem: ${ids}/${Q.length} · zgony: ${dead}<br>Rekord: ${Math.max(score,best)} pkt</p></div>
- <div class="box rl">${res.map(r=>`<div><span>${r.ok?'✅':r.typ==='die'?'🕯️':'⚠️'}</span><span>${r.name}${r.idOk?'':' <small style="color:#e63946">– rozpoznałeś: '+(r.dx?DX[r.id]:NAMES[r.id]||'')+'</small>'}</span><b>+${r.p}</b></div>`).join('')}</div>
+ $('fin').innerHTML=`<div class="end"><div style="font-size:54px">${dead?'🫀':'🏆'}</div><h2>Koniec – ${LBL[MODE]}</h2><div class="big">${score} pkt</div><p>Dobrze: ${ok}/${Q.length} · rozpoznanie za 1. razem: ${ids}/${Q.length} · zgony: ${dead}<br>Rekord: ${Math.max(score,best)} pkt</p></div>
+ <div class="box rl">${res.map(r=>`<div><span>${r.ok?'✅':r.typ==='die'?'🕯️':'⚠️'}</span><span>${r.name}${r.idOk?'':' <small style="color:#e63946">– rozpoznałeś: '+(r.mid?r.mid:r.dx?DX[r.id]:NAMES[r.id]||'')+'</small>'}</span><b>+${r.p}</b></div>`).join('')}</div>
  <div style="display:grid;gap:8px"><button class="btn big" onclick="location.reload()" type="button">🔁 Nowy dyżur</button><a class="btn big n" href="ekg.html#rytmy">📈 Powtórz rytmy w kursie EKG</a><a class="btn big g" href="wyjazdy.html">🚑 Scenariusze wyjazdowe</a></div>
  <p class="disc">${EKGL.SRC}</p>`;window.scrollTo(0,0)}
 </script>
