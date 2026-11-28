@@ -29,6 +29,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 .disc{font-size:12.5px;color:var(--mute);margin-top:12px}
 .modes{display:grid;gap:10px;margin:12px 0}.mode{display:block;width:100%;text-align:left;border:0;border-radius:18px;padding:16px;color:#fff;font:inherit;cursor:pointer}.mode b{font-size:20px;display:block}.mode span{opacity:.95}
 .hint{background:#eef6ff;border:2px solid #4cc9f0;border-radius:16px;padding:10px 12px;margin:10px 0}.hint p{margin:6px 0}
+.aqq{margin:10px 0 2px}.op.aq{padding:10px 12px;margin:5px 0}
 .fq{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:12px;padding:9px 11px;margin:6px 0;font:600 14.5px system-ui;color:var(--ink);cursor:pointer}.fq em{display:none;font-style:normal;color:#0b6e4f;font-weight:800;margin-top:3px}.fq.on em{display:block}.fq:not(.on)::after{content:" 👆";}
 .ex{background:#fff;border-radius:10px;padding:8px 10px;margin-top:8px;font-weight:600;color:#14213d;border-left:4px solid #4cc9f0}
 .facts{display:grid;gap:4px;margin:8px 0}.facts div{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;background:#f6f8fb;border-radius:10px;padding:6px 9px;font-size:14px}
@@ -119,12 +120,21 @@ const FACT={
  asys:['Linia prawie płaska','0','Brak (czasem pojedyncze P)','Brak','Brak','Linia prawie płaska = asystolia. Sprawdź elektrody, odprowadzenie i wzmocnienie.'],
  av1:['Miarowy','ok. 85/min','Tak – przed każdym QRS','Wąskie','Wydłużony > 200 ms, ale stały','Stały, wydłużony PR = blok AV I stopnia.'],
  mob1:['Niemiarowy, w grupach','ok. 90/min','Tak','Wąskie','Wydłuża się z każdym pobudzeniem, aż jeden QRS wypada','PR coraz dłuższy aż do wypadnięcia QRS = Wenckebach (Mobitz I).'],
- mob2:['Miarowy','ok. 35–40/min (komory)','Tak – ale co drugi P bez QRS','Wąskie lub szerokie','Stały w pobudzeniach przewiedzionych','Stały PR i wypadające QRS (tu 2:1) = Mobitz II – grozi blokiem całkowitym.'],
- av3:['Komory miarowo, ale wolno','ok. 40/min (komory), P szybciej','Tak – regularne, ale bez związku z QRS','Często szerokie (rytm zastępczy)','Zmienny – P „wędrują” przez QRS','P i QRS żyją osobno = blok AV III stopnia (całkowity).'],
+ mob2:['Miarowy','ok. 35–40/min (komory)','Tak – ale co drugi P bez QRS','Tu wąskie (w Mobitz II często bywają szerokie)','Stały w pobudzeniach przewiedzionych','Stały PR i wypadające QRS (tu 2:1) = Mobitz II – grozi blokiem całkowitym.'],
+ av3:['Komory miarowo, ale wolno','ok. 40/min (komory), P szybciej','Tak – regularne, ale bez związku z QRS','Tu nieco poszerzone – rytm zastępczy (może być wąski lub szeroki)','Zmienny – P „wędrują” przez QRS','P i QRS żyją osobno = blok AV III stopnia (całkowity).'],
  tdp:['Niemiarowy','ok. 200–250/min','Brak','Szerokie, zmienne – amplituda rośnie i maleje („skręca się”)','Brak','Polimorficzny VT o zmiennej amplitudzie przy długim QT = torsades de pointes.'],
  pea:['Miarowy','ok. 40/min','Tak','Wąskie','Prawidłowy','Rytm na monitorze wygląda „spokojnie” – rozpoznanie PEA stawiasz po braku tętna!']};
 const AGR=[['⚡ Prąd (defibrylator)','#e63946',['def','kard','stym']],['💉 Leki','#c1121f',['adr1','amioB','amioW','aden','atr','adrW','meto','mg','plyn']],['🫁 RKO i manewry','#2a9d8f',['rko','H4T','vag']],['👀 Pozostałe działania','#457b9d',['przyc','obs']]];
 const STL={win:['✅ Wykonane – skuteczne','ok'],winp:['✅ Wykonane – skuteczne, ale był lepszy wybór','ok'],part:['🟡 Wykonane – częściowa poprawa','pt'],bad:['❌ Wykonane – bez poprawy','bad'],worse:['⛔ Wykonane – pogorszenie stanu','bad'],fail:['⛔ Powikłanie','bad'],die:['🕯️ Zgon','bad']};
+// quiz analizy: opcje i prawidłowe odpowiedzi (indeksy) dla każdego rytmu
+const AQ=[['📏 Czy rytm jest miarowy?',['Miarowy','Niemiarowy','Brak powtarzalnego rytmu'],'Porównaj odstępy R–R (kartką lub palcami): równe = miarowy.'],
+ ['💓 Jaka częstość komór?',['Poniżej 60/min','60–100/min','100–150/min','Powyżej 150/min','Nie da się policzyć'],'Policz zespoły QRS w 6 s i pomnóż × 10 albo 300 : liczba dużych kratek między R.'],
+ ['〰️ Załamki P?',['Tak – przed każdym QRS','Są, ale nie każdy P ma swój QRS','Brak prawidłowych P'],'Szukaj w II zaokrąglonego, dodatniego załamka P przed każdym QRS.'],
+ ['📐 QRS wąskie czy szerokie?',['Wąskie (< 120 ms)','Szerokie (≥ 120 ms)','Brak zespołów QRS'],'Wąski QRS = do 3 małych kratek (120 ms). Szerszy = pobudzenie z komór albo blok odnogi.'],
+ ['↔️ Odstęp PR?',['Prawidłowy i stały','Wydłużony, ale stały','Wydłuża się, aż QRS wypada','P i QRS bez związku','Nie da się ocenić (brak P)'],'PR od początku P do początku QRS: prawidłowo 3–5 małych kratek (120–200 ms).']];
+const AC={nsr:[[0],[1],[0],[0],[0]],stach:[[0],[2],[0],[0],[0]],sbrad:[[0],[0],[0],[0],[0]],af:[[1],[2,3],[2],[0],[4]],afl:[[0],[2,3],[2],[0],[4]],svt:[[0],[3],[2],[0],[4]],
+ vt:[[0],[2,3],[2],[1],[4]],vf:[[2],[4],[2],[2],[4]],asys:[[2],[0,4],[2],[2],[4]],av1:[[0],[1],[0],[0],[1]],mob1:[[1],[1],[1],[0],[2]],mob2:[[0],[0],[1],[0],[0,1]],
+ av3:[[0],[0],[1],[0,1],[3]],tdp:[[1],[3],[2],[1],[4]],pea:[[0],[0],[0],[0],[0]]};
 const FQ=['📏 Czy rytm jest miarowy?','💓 Jaka częstość?','〰️ Czy są załamki P przed QRS?','📐 QRS wąskie czy szerokie?','↔️ Odstęp PR?','🎯 Klucz do rozpoznania'];
 // przypadki 12-odprowadzeniowe
 const R='#e63946',B='#4361ee',O='#f77f00';
@@ -154,14 +164,20 @@ function mon(s){const k=REAL[s.rh];return `<div class="mon"><div class="hd"><spa
  <button class="zoom" type="button" data-z="${k}">🔍 Powiększ EKG</button>${vit(s.v)}</div>`}
 function zoom(k){const d=document.createElement('div');d.className='zm';d.innerHTML=`<div class="zmh"><b>📟 Odprowadzenie II · 25 mm/s · 10 mm/mV</b><button type="button" class="btn n" id="zx">✕ Zamknij</button></div><p class="e12h">👉 Przesuń zapis palcem w bok. Duża kratka = 0,2 s, mała = 0,04 s; 10 mm = 1 mV.</p><div class="zmw"><div style="min-width:1500px">${EKGL.strip(k,{secs:10,mm:6})}</div></div>`;document.body.appendChild(d);document.body.style.overflow='hidden';d.querySelector('#zx').onclick=()=>{d.remove();document.body.style.overflow=''}}
 function cor(){return ANS[C.start]||C.start}
-function anal(k){const f=FACT[k];return `<div class="hint"><b>🧭 Analiza krok po kroku</b> <small>(dotknij, żeby sprawdzić)</small>${FQ.map((q,i)=>`<button class="fq" type="button" data-i="${i}"><span>${q}</span><em>${f[i]}</em></button>`).join('')}</div>`}
-function bindFq(){document.querySelectorAll('.fq').forEach(b=>b.onclick=()=>b.classList.add('on'))}
+function anal(k){const f=FACT[k],ac=AC[k];C.an=C.an||[];let h=`<div class="hint"><b>🧭 Analiza krok po kroku – zaznacz odpowiedź</b>`;
+ for(let i=0;i<5;i++){const q=AQ[i],a=C.an[i];
+  if(a==null){h+=`<p class="aqq"><b>${i+1}/5 ${q[0]}</b></p>`+q[1].map((o,j)=>`<button class="op aq" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
+  const ok=ac[i].includes(a);h+=`<div class="re ${ok?'ok':'bad'}"><small class="stl">${i+1}/5 ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${ok?'✅':'❌'}<div class="ex">${ok?'Dobrze. ':'Prawidłowo: <b>'+ac[i].map(x=>q[1][x]).join(' / ')+'</b>. '}Tu: ${f[i]}. <br>💡 ${q[2]}</div></div>`}
+ if(C.an.length>=5)h+=`<div class="ex">🎯 <b>Klucz:</b> ${f[5]}</div>`;
+ return h+'</div>'}
+function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(AC[cor()][+b.dataset.q].includes(+b.dataset.j)?1:0);render();const x=document.querySelectorAll('.hint .re');x.length&&x[x.length-1].scrollIntoView({behavior:'smooth',block:'center'})})}
 function stab(s){return s.nzk?'🚨 <b>Brak tętna</b> → algorytm zatrzymania krążenia (rytm do defibrylacji czy nie?).':s.unst?'⚠️ <b>Objawy niestabilności</b> (wstrząs, zaburzenia świadomości, ból wieńcowy, niewydolność serca, omdlenie) → leczenie prądem / pilne.':'✅ <b>Pacjent stabilny</b> → najpierw bezpieczne leczenie, bez pośpiechu z prądem.'}
 function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.nzk?'#e63946':s.unst?'#f77f00':'#2a9d8f';
  let h=mon(s)+`<div class="pt" style="--c:${col}"><b>Pacjent</b><br>${s.t}</div>`;
  h+=C.steps.map((x,i)=>`<div class="re ${x.typ==='win'||x.typ==='winp'?'ok':x.typ==='part'?'':'bad'}"><small class="stl">Decyzja ${i+1}: ${(STL[x.typ]||STL.bad)[0]}</small>${ACT[x.a]}<br><span style="font-weight:600">→ ${x.txt}</span>${x.ex?`<div class="ex">🎓 ${x.ex}</div>`:''}</div>`).join('');
  if(id){const c=cor(),opts=C.opts||(C.opts=shuf([c,...shuf(Object.keys(NAMES).filter(k=>k!==c)).slice(0,3)]));
   if(L)h+=anal(c);
+  if(L&&(!C.an||C.an.length<5)&&AC[c]){$('cs').innerHTML=h;bindFq();document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>zoom(b.dataset.z));if(first)window.scrollTo(0,0);return}
   h+=`<div class="q">1️⃣ Co widzisz na monitorze?</div>`+(C.wrong?`<div class="re bad">❌ To nie jest: ${NAMES[C.wrong]}. ${FACT[C.wrong]?'Tam: '+FACT[C.wrong][5]:''} Spróbuj jeszcze raz.</div>`:'')+opts.map(k=>`<button class="op" data-r="${k}" type="button"${C.tried&&C.tried.includes(k)?' disabled':''}>${NAMES[k]}</button>`).join('');
  } else if(!C.done){
   if(L&&!C.steps.length)h+=`<div class="hint"><b>🧭 Najpierw oceń pacjenta</b><p>${stab(s)}</p></div>`;

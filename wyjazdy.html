@@ -51,12 +51,15 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 .chk{background:#fff;border-radius:18px;padding:12px 14px;margin:12px 0}.chk div{display:grid;grid-template-columns:28px 1fr auto;gap:6px;padding:8px 0;border-bottom:1px solid #eef2f7;align-items:start}.chk div:last-child{border:0}.chk .p{font-weight:900}.chk small{display:block;color:var(--mute)}
 .tl{background:#fff;border-radius:18px;padding:12px 14px}.tl div{display:flex;gap:10px;padding:4px 0;font-size:14px}.tl b{min-width:52px;color:var(--red)}
 .disc{font-size:12.5px;color:var(--mute);margin-top:14px}
-.top .w{gap:10px}.top .brand{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .w{gap:10px}.top .brand{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.safe{background:#fff;border-radius:16px;padding:10px 12px;margin:10px 0}.safe b{font-size:15.5px}.q button.sel{border-color:#0b1f3a;background:#e8eef7}.q button.sel::before{content:"✔ "}
+.fq{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:12px;padding:11px 12px;margin:8px 0;font:700 15px system-ui;color:var(--ink);cursor:pointer;box-shadow:0 3px 10px rgba(11,31,58,.07)}.fq em{display:none;font-style:normal;color:#0b6e4f;font-weight:800;margin-top:4px}.fq.on em{display:block}.fq.on span{opacity:.7}
+.tabs .stp{flex:0 0 auto;border-radius:999px;padding:9px 11px;font:800 13px system-ui;background:#d8f8ea;color:#0b6e4f}.tabs button i{font-style:normal;display:inline-block;min-width:20px;height:20px;line-height:20px;border-radius:50%;background:#0b1f3a;color:#fff;font-size:12px;text-align:center;margin-right:2px}.tabs button.on i{background:#ffd166;color:#0b1f3a}.tabs button.dn{border-color:#2a9d8f}
+
 .case .lv{float:right;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px;color:#fff;background:var(--c)}
 .team{display:inline-block;background:#0b1f3a;color:#fff;border-radius:8px;padding:2px 8px;font-weight:800;font-family:system-ui}
 .ars{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.ars span{background:rgba(255,255,255,.12);border-radius:999px;padding:4px 10px;font-weight:800;font-size:13px}
 .arl{font-size:13.5px;margin:6px 0;max-height:130px;overflow:auto}.arl div{padding:2px 0;border-bottom:1px dashed rgba(255,255,255,.15)}
-.bad{color:#ff8fa3}.safe{background:#fff;border-radius:16px;padding:10px 12px;margin:10px 0}.safe b{font-size:15.5px}.q button.sel{border-color:#0b1f3a;background:#e8eef7}.q button.sel::before{content:"✔ "}
+.bad{color:#ff8fa3}.tabs .stp{flex:0 0 auto;border-radius:999px;padding:9px 11px;font:800 13px system-ui;background:#d8f8ea;color:#0b6e4f}.tabs button i{font-style:normal;display:inline-block;min-width:20px;height:20px;line-height:20px;border-radius:50%;background:#0b1f3a;color:#fff;font-size:12px;text-align:center;margin-right:2px}.tabs button.on i{background:#ffd166;color:#0b1f3a}.tabs button.dn{border-color:#2a9d8f}.safe{background:#fff;border-radius:16px;padding:10px 12px;margin:10px 0}.safe b{font-size:15.5px}.q button.sel{border-color:#0b1f3a;background:#e8eef7}.q button.sel::before{content:"✔ "}
 .fq{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:12px;padding:11px 12px;margin:8px 0;font:700 15px system-ui;color:var(--ink);cursor:pointer;box-shadow:0 3px 10px rgba(11,31,58,.07)}.fq em{display:none;font-style:normal;color:#0b6e4f;font-weight:800;margin-top:4px}.fq.on em{display:block}.fq.on span{opacity:.7}
 .e12w{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;background:#fff}.e12w svg{display:block;width:100%;height:auto}.e12h{font-size:12.5px;color:var(--mute);margin:4px 0}
 .walls{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;font-size:13px}.walls span{border-left:5px solid var(--c);background:#f6f8fb;border-radius:8px;padding:5px 8px;font-weight:700}.okc{color:#8ef0b5}
@@ -66,7 +69,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 <section class="scr on" id="s-start">
  <div class="hero"><div class="amb">🚑</div><h1>🚨 Scenariusze wyjazdowe</h1><p>Wybierz wezwanie. Badasz schematem ABCDE, podajesz leki, decydujesz o transporcie i szpitalu. Każdy pacjent reaguje na Twoje decyzje.</p></div>
  <div id="cases"></div>
- <div class="how"><b>Zasady</b><ul><li>Każde działanie na miejscu zabiera czas – zegar pokazuje minuty od przyjazdu. Część rzeczy możesz dokończyć w karetce.</li><li>Parametry widzisz na monitorze dopiero, gdy je zmierzysz.</li><li>Bez podpowiedzi. Błąd krytyczny kończy grę. Omówienie dostaniesz na końcu.</li><li>Transport jedzie sam – po drodze coś może się wydarzyć, zależnie od Twoich decyzji.</li></ul></div>
+ <div class="how"><b>Zasady</b><ul><li>Kolejność: 1. pięć zasad bezpieczeństwa → 2. SOS z podejścia → 3–7. A, B, C, D, E → 8. wywiad → 9. leki → 10. transport.</li><li>Każde działanie na miejscu zabiera czas – zegar pokazuje minuty od przyjazdu. Część rzeczy możesz dokończyć w karetce.</li><li>Parametry widzisz na monitorze dopiero, gdy je zmierzysz.</li><li>Bez podpowiedzi. Błąd krytyczny kończy grę. Omówienie dostaniesz na końcu.</li><li>Transport jedzie sam – po drodze coś może się wydarzyć, zależnie od Twoich decyzji.</li></ul></div>
  <p class="disc">Gra edukacyjna. Postępowanie oparte na wytycznych ERC 2025, ESC i AHA/ASA oraz rozporządzeniu MZ w sprawie czynności ratownika medycznego. Nie zastępuje zajęć symulacyjnych ani procedur Twojej jednostki.</p>
 </section>
 <section class="scr" id="s-zl">
@@ -77,9 +80,9 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 </section>
 <section class="scr" id="s-drive"><div class="road"><div class="bl"></div><div class="ln"></div><div class="car">🚑</div></div><p style="text-align:center;font-weight:800;font-size:18px">Sygnały włączone… dojazd</p><p style="text-align:center;color:var(--mute)">Pomyśl, co może dolegać pacjentowi i od czego zaczniesz.</p></section>
 <section class="scr" id="s-scene">
- <div id="sc5w"><div class="zl" style="font-family:system-ui"><h2>🦺 Na miejscu – 5 zasad bezpieczeństwa</h2><div>Zanim dotkniesz pacjenta, wybierz, co robisz w każdym punkcie.</div></div><div id="sc5"></div>
- <button class="btn big n" id="toSos" type="button" disabled>➡️ Dalej: SOS z podejścia</button></div>
- <div id="sosb" style="display:none"><div class="zl" style="font-family:system-ui"><h2>👀 SOS – pierwsze wrażenie z podejścia</h2><div><b>S</b>wiadomość · <b>O</b>ddech · <b>S</b>kóra – patrzysz, jak podchodzisz, zanim zaczniesz badać.</div></div>
+ <div id="sc5w"><div class="zl" style="font-family:system-ui"><h2>🦺 1. Na miejscu – 5 zasad bezpieczeństwa</h2><div>Zanim dotkniesz pacjenta, wybierz, co robisz w każdym punkcie.</div></div><div id="sc5"></div>
+ <button class="btn big n" id="toSos" type="button" disabled>➡️ Dalej: 2. SOS z podejścia</button></div>
+ <div id="sosb" style="display:none"><div class="zl" style="font-family:system-ui"><h2>👀 2. SOS – pierwsze wrażenie z podejścia</h2><div><b>S</b>wiadomość · <b>O</b>ddech · <b>S</b>kóra – patrzysz, jak podchodzisz, zanim zaczniesz badać.</div></div>
  <div id="sosr"></div><p style="font-weight:800;margin:14px 0 6px">Pierwsze wrażenie – jak pilny jest pacjent?</p><div class="q" id="sosq"></div></div>
 </section>
 <section class="scr" id="s-game">
@@ -100,9 +103,11 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 const $=id=>document.getElementById(id);
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0)}
 function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-const ORDER=['wyw','a','b','c','d','e','lek','tr'];
-const TNAME={wyw:'🗣️ Wywiad',a:'A – drogi oddechowe',b:'B – oddychanie',c:'C – krążenie',d:'D – stan neurologiczny',e:'E – ekspozycja',lek:'💊 Leki',tr:'🚑 Transport'};
+const ORDER=['a','b','c','d','e','wyw','lek','tr'];
+const NUM={a:3,b:4,c:5,d:6,e:7,wyw:8,lek:9,tr:10};
+const TNAME={wyw:'🗣️ Wywiad SAMPLE',a:'A – drogi oddechowe',b:'B – oddychanie',c:'C – krążenie',d:'D – stan neurologiczny',e:'E – ekspozycja',lek:'💊 Leki',tr:'🚑 Transport'};
 const TSHORT={wyw:'🗣️ Wywiad',a:'A',b:'B',c:'C',d:'D',e:'E',lek:'💊 Leki',tr:'🚑 Transport'};
+const TAB_OF=id=>{const a=LA.find(x=>x[0]===id);return a?a[1]:(LD.find(x=>x[0]===id)?'lek':null)};
 const COL={wyw:'#457b9d',a:'#2a9d8f',b:'#4cc9f0',c:'#e63946',d:'#9d4edd',e:'#f77f00',lek:'#c1121f',tr:'#0b1f3a'};
 // [id, zakładka, ikona, nazwa, minuty, sprzęt]
 const LA=[
@@ -419,10 +424,10 @@ function sos(){const S5=SCN.sos;G.sosSeen=0;
  const o=shuf([['🔴 Stan zagrożenia życia – działam natychmiast','r'],['🟡 Pacjent pilny – badam ABCDE','y'],['🟢 Stan stabilny – spokojnie zbieram wywiad','g']]);
  $('sosq').innerHTML=o.map(x=>`<button type="button" data-p="${x[1]}">${x[0]}</button>`).join('');
  document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{G.sosAns=b.dataset.p;G.sosOk=G.sosAns===S5[3]||(S5[3]==='y'&&G.sosAns==='r');G.safeOk=G.safe.filter(x=>x[0]).length;
-  G.t=1;show('s-game');L('Ocena bezpieczeństwa (5 zasad) i SOS z podejścia: '+b.textContent.replace(/^\S+\s/,'')+'.');tab='wyw';draw();if(SCN.onArrive)SCN.onArrive(G)})}
+  G.t=1;show('s-game');L('Ocena bezpieczeństwa (5 zasad) i SOS z podejścia: '+b.textContent.replace(/^\S+\s/,'')+'.');tab='a';draw();if(SCN.onArrive)SCN.onArrive(G)})}
 Object.keys(SC).forEach(k=>SC[k].id=k);
 // ======================================================================= SILNIK
-let SCN=null,G=null,tab='wyw',trTimer=null,arTimer=null,conf=null;
+let SCN=null,G=null,tab='a',trTimer=null,arTimer=null,conf=null;
 function L(txt){G.log.push([G.t,txt]);$('lg').innerHTML=G.log.slice().reverse().map(l=>`<div><b>${l[0]}′</b> ${l[1]}</div>`).join('')}
 function fx(v){return typeof v==='function'?v(G):v}
 function lbl(a){return SCN.dl&&SCN.dl[a[0]]||a[2]}
@@ -431,7 +436,7 @@ $('cases').innerHTML=Object.entries(SC).map(([k,s])=>`<button class="case" data-
 document.querySelectorAll('#cases [data-c]').forEach(b=>b.onclick=()=>pickCase(b.dataset.c));
 let qx=0;$('qx').onclick=e=>{e.preventDefault();if(!G||!G.started||G.over||qx){location.href=G&&G.started?'wyjazdy.html':'index.html';return}qx=1;$('qx').textContent='✕ Na pewno? Dotknij jeszcze raz'};
 function pickCase(k){SCN=SC[k];const v=SCN.v;
- G={id:k,started:false,over:false,t:0,ph:'scene',...v,rh:'sin',mon:false,pads:false,iv:false,o2:false,f:{},ft:{},lt:{},seq:[],log:[],eq:{},err:[],dg:[],nn:[],evlog:[],arS:{},minSp:v.sp,trT:null,mv:null,dest:null};
+ G={id:k,started:false,over:false,t:0,ph:'scene',...v,rh:'sin',mon:false,pads:false,iv:false,o2:false,f:{},ft:{},lt:{},seq:[],ord:[],tabDone:{},log:[],eq:{},err:[],dg:[],nn:[],evlog:[],arS:{},minSp:v.sp,trT:null,mv:null,dest:null};
  G.rh=SCN.rh==='vf'?'sin':SCN.rh;if(SCN.init)SCN.init(G);
  $('zl').innerHTML=`<h2>📟 Zlecenie wyjazdu</h2><div><span class="k">KOD 1</span> · ZRM P (podstawowy)${G.team?` · <span class="team">zespół: ${G.team} ratowników medycznych</span>`:''}</div><div>📍 ${SCN.zl.adr}</div><div>👤 ${SCN.zl.kto}</div><div>📞 ${SCN.zl.msg}</div><div>🕐 Przyjęcie zgłoszenia: ${SCN.zl.godz}</div>`;
  $('eq').innerHTML=EQ.map(e=>`<button class="ac" data-e="${e[0]}" type="button" style="--c:#457b9d"><i>${e[1]}</i>${e[2]}</button>`).join('');
@@ -440,7 +445,7 @@ function pickCase(k){SCN=SC[k];const v=SCN.v;
 // kolejność działań losowana w każdej grze
 let ACTS={};
 $('b-jedz').onclick=()=>{ACTS={};ORDER.forEach(t=>ACTS[t]=t==='lek'?null:shuf(LA.filter(a=>a[1]===t&&a[0]!=='jedz')));ACTS.tr.push(LA.find(a=>a[0]==='jedz'));G.LD=shuf(LD);
- $('pn').textContent=SCN.pn;$('gt').innerHTML=ORDER.map(t=>`<button data-g="${t}" type="button"${t==='wyw'?' class="on"':''}>${TSHORT[t]}</button>`).join('');
+ $('pn').textContent=SCN.pn;drawTabs();
  document.querySelectorAll('#gt button').forEach(b=>b.onclick=()=>setTab(b.dataset.g));
  show('s-drive');setTimeout(()=>{G.started=true;L('Przyjazd na miejsce.');scene()},3300)};
 // ---------- monitor – prawdziwe zapisy EKG (PhysioNet)
@@ -454,7 +459,9 @@ function draw(){if(!G)return;$('h-t').textContent=G.t;const m=G.mon,ok=alive();
  $('v-bp').textContent=ok&&G.f.bp?Math.round(G.sbp)+'/'+Math.round(G.dbp):'--/--';$('v-rr').textContent=ok&&G.f.boc?G.rr:'--';
  $('hud').classList.toggle('alarm',!ok||(G.f.bp&&G.sbp<85)||(G.f.spo2&&G.sp<90));
  $('pav').textContent=ok?SCN.av(G):'😵';$('pst').textContent=ok?SCN.st(G):'Nie reaguje, nie oddycha prawidłowo!';renderActs();trBar()}
-function setTab(t){tab=t;document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x.dataset.g===t));const b=document.querySelector('#gt button[data-g="'+t+'"]');b&&b.scrollIntoView({inline:'center',block:'nearest'});renderActs()}
+function drawTabs(){$('gt').innerHTML=`<span class="stp ok">1 🦺 ✓</span><span class="stp ok">2 SOS ✓</span>`+ORDER.map(t=>`<button data-g="${t}" type="button" class="${t===tab?'on':''}${G&&G.tabDone&&G.tabDone[t]?' dn':''}"><i>${NUM[t]}</i> ${TSHORT[t]}${G&&G.tabDone&&G.tabDone[t]?' ✓':''}</button>`).join('');
+ document.querySelectorAll('#gt button').forEach(b=>b.onclick=()=>setTab(b.dataset.g))}
+function setTab(t){tab=t;drawTabs();document.querySelectorAll('#gt button').forEach(x=>x.classList.toggle('on',x.dataset.g===t));const b=document.querySelector('#gt button[data-g="'+t+'"]');b&&b.scrollIntoView({inline:'center',block:'nearest'});renderActs()}
 function btnH(id,ic,name,min,c){return `<button class="ac${G.f[id]&&id!=='jedz'?' dn':''}" data-a="${id}" type="button" style="--c:${c}"><i>${ic}</i>${name}<small>${G.ph==='scene'&&min?'⏱ '+min+' min':''}</small></button>`}
 function renderActs(){if(!G||G.over||!alive()||G.md){$('ga').innerHTML='';return}
  if(tab==='lek')$('ga').innerHTML=Object.keys(LG).map(g=>{const ds=G.LD.filter(d=>d[3]===g);return ds.length?`<div class="lgr" style="--c:${LG[g][1]}">${LG[g][0]}</div>`+ds.map(d=>btnH(d[0],d[1],lbl(d),1,LG[g][1])).join(''):''}).join('');
@@ -464,7 +471,7 @@ function renderActs(){if(!G||G.over||!alive()||G.md){$('ga').innerHTML='';return
 function out(h,body,c){$('go').innerHTML=`<div class="out" style="--c:${c||'#457b9d'}"><h3>${h}</h3>${body||''}</div>`;$('go').scrollIntoView({behavior:'smooth',block:'nearest'})}
 const EQN={mon:'monitor-defibrylator',o2:'tlen',ssak:'ssak',kol:'kołnierz',krz:'krzesełko',nos:'nosze podbierakowe',deska:'deska ortopedyczna',tor:'torba ratownicza',szyna:'szyny'};
 function needEq(e){if(!e||G.ph!=='scene'||G.eq[e]||G.f['eq_'+e])return;G.f['eq_'+e]=1;G.t+=2;G.eqMiss=(G.eqMiss||[]).concat(EQN[e]);L(`Ktoś wraca do karetki po: ${EQN[e]} (+2 min).`)}
-function mark(id){G.f[id]=(G.f[id]||0)+1;if(G.ft[id]==null)G.ft[id]=G.t;G.lt[id]=G.t;G.seq.push(id)}
+function mark(id){const tb=TAB_OF(id);if(tb&&'abcde'.includes(tb)&&!G.tabDone[tb]){G.ord.push(tb)}if(tb&&!G.tabDone[tb]){G.tabDone[tb]=1;setTimeout(drawTabs,0)}G.f[id]=(G.f[id]||0)+1;if(G.ft[id]==null)G.ft[id]=G.t;G.lt[id]=G.t;G.seq.push(id)}
 function act(id){if(G.over||!alive()||G.md)return;
  const d=LD.find(x=>x[0]===id);
  if(d){if(G.f[id]&&!REP.includes(id)){out('Już podane');return}
@@ -574,7 +581,8 @@ function die(cause){G.over=true;G.death=cause;clearInterval(trTimer);$('md').inn
 function fail(cause){G.over=true;G.failC=cause;clearInterval(trTimer);$('md').innerHTML='';draw();out('⚠️ Błąd krytyczny',`<p>${cause}</p>`,'#f77f00');setTimeout(()=>finish('fail'),1800)}
 function finish(how){G.over=true;clearInterval(trTimer);if(G.trT==null)G.trT=G.t;
  const bad5=(G.safe||[]).map((x,i)=>x&&!x[0]?SAFE[i][0].replace(/^\S+\s/,''):null).filter(Boolean);
- const ch=[P((G.safeOk||0)===5,10,'5 zasad bezpieczeństwa',bad5.length?'Do poprawy: '+bad5.join(', ')+'. Najpierw bezpieczeństwo własne, zespołu, miejsca, poszkodowanego i świadków.':'Wszystkie zasady zachowane.'),P(G.sosOk&&G.sosSeen===3,5,'SOS z podejścia','Świadomość, oddech, skóra – pierwsze wrażenie, zanim zaczniesz badać: '+SCN.sos.slice(0,3).join(' · ')+'.')].concat(SCN.chk(G)),max=ch.reduce((s,x)=>s+x[1],0);let got=ch.reduce((s,x)=>s+(x[0]?x[1]:0),0);
+ const ordS=G.ord.map(x=>x.toUpperCase()).join(' → ')||'brak',ordOk=G.ord.join('')==='abcde';
+ const ch=[...(SCN.id==='nzk'?[]:[P(ordOk,10,'Kolejność: 1. bezpieczeństwo → 2. SOS → 3–7. A → B → C → D → E',`Twoja kolejność badania: ${ordS}. ${ordOk?'Prawidłowo.':'Badaj po kolei: najpierw drogi oddechowe, potem oddychanie, krążenie, stan neurologiczny i ekspozycja – zagrożenia życia wykrywasz w kolejności, w jakiej najszybciej zabijają.'}`)]),P((G.safeOk||0)===5,10,'5 zasad bezpieczeństwa',bad5.length?'Do poprawy: '+bad5.join(', ')+'. Najpierw bezpieczeństwo własne, zespołu, miejsca, poszkodowanego i świadków.':'Wszystkie zasady zachowane.'),P(G.sosOk&&G.sosSeen===3,5,'SOS z podejścia','Świadomość, oddech, skóra – pierwsze wrażenie, zanim zaczniesz badać: '+SCN.sos.slice(0,3).join(' · ')+'.')].concat(SCN.chk(G)),max=ch.reduce((s,x)=>s+x[1],0);let got=ch.reduce((s,x)=>s+(x[0]?x[1]:0),0);
  const pen=G.err.reduce((s,e)=>s+e[0],0)+G.nn.length*3;let sc=Math.max(0,got-pen);if(how==='die'||how==='fail')sc=Math.min(sc,Math.round(max*0.3));
  const pc=Math.round(sc/max*100),best=+(localStorage.getItem('rm_wy_'+G.id)||0);try{if(pc>best)localStorage.setItem('rm_wy_'+G.id,pc)}catch(e){}
  const head=how==='die'?['🕯️','Pacjent zmarł','linear-gradient(135deg,#3d0a0f,#0b1f3a)',G.death]:how==='fail'?['⚠️','Błąd krytyczny','linear-gradient(135deg,#f77f00,#0b1f3a)',G.failC]:how==='home'?['🏠','Pacjent pozostał na miejscu',pc>=70?'linear-gradient(135deg,#2a9d8f,#0b1f3a)':'linear-gradient(135deg,#f77f00,#0b1f3a)',SCN.dest.find(d=>d[0]===G.dest)[2]?'':'Ten pacjent wymagał transportu do szpitala.']:['🏥',pc>=80?'Świetna robota!':pc>=55?'Pacjent dowieziony':'Pacjent dowieziony – ale z błędami',pc>=80?'linear-gradient(135deg,#2a9d8f,#0b1f3a)':'linear-gradient(135deg,#457b9d,#0b1f3a)',''];
