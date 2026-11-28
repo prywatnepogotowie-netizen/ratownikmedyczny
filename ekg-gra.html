@@ -3,7 +3,7 @@
 <title>Gra EKG – rozpoznaj rytm i lecz pacjenta | ratownikmedyczny.online</title>
 <meta name="description" content="Gra EKG dla ratownika medycznego na prawdziwych zapisach: tryb nauki z podpowiedziami i tryb zaawansowany. Rozpoznajesz rytm i EKG 12-odprowadzeniowe, decydujesz – defibrylacja, kardiowersja, adenozyna, atropina, stymulacja. Złe decyzje mają następstwa.">
 <link rel="canonical" href="https://ratownikmedyczny.online/ekg-gra.html">
-<script src="pro.js"></script><script src="ekgdata.js?v=4"></script><script src="ekg.js?v=4"></script>
+<script src="pro.js"></script><script src="ekgdata.js?v=4"></script><script src="ekg.js?v=5"></script>
 <style>
 :root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#eef2f7;--line:#dfe6ef;--g:#2a9d8f}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
@@ -224,8 +224,9 @@ function zoom(k){const d=document.createElement('div');d.className='zm';d.innerH
 function cor(){return ANS[C.start]||C.start}
 function anal(k){const f=factsOf(k,ST[C.st]),ac=acOf(k,ST[C.st]);C.an=C.an||[];let h=`<div class="hint"><b>🧭 Analiza krok po kroku – zaznacz odpowiedź</b>`;
  for(let i=0;i<5;i++){const q=AQ[i],a=C.an[i];
-  if(a==null){h+=`<p class="aqq"><b>${i+1}/5 ${q[0]}</b></p>`+q[1].map((o,j)=>`<button class="op aq" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
+  if(a==null){h+=`<p class="aqq"><b>${i+1}/5 ${q[0]}</b></p>`+EKGL.teach(i,true)+q[1].map((o,j)=>`<button class="op aq" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
   const ok=ac[i].includes(a);h+=`<div class="re ${ok?'ok':'bad'}" id="aqr${i}"><small class="stl">${i+1}/5 ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${ok?'✅':'❌'}<div class="ex">${ok?'Dobrze. ':'Prawidłowo: <b>'+ac[i].map(x=>q[1][x]).join(' / ')+'</b>. '}Tu: ${f[i]}. <br>💡 ${q[2]}</div></div>`
+  if(i===1){const rk=REAL[ST[C.st].rh];if(EKGD.s[rk].r.length>1)h+=`<div class="rrw"><b>💓 Policzone na tym zapisie</b> – czerwone kółka to zespoły QRS w 6 s:<div class="e12w"><div>${EKGL.strip(rk,{secs:6,cnt:1})}</div></div></div>`}
   if(i===0){const rk=REAL[ST[C.st].rh];if(i===0&&EKGD.s[rk].r.length>2)h+=`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b> – porównaj liczby: ${(()=>{const R=EKGD.s[rk].r.filter(v=>v<6*125),d=R.slice(1).map((v,j)=>(v-R[j])/125),mx=Math.max(...d),mn=Math.min(...d);return mx-mn>0.08?`różnica do <b>${(mx-mn).toFixed(2).replace('.',',')} s</b> = <b>niemiarowy</b>`:`prawie równe (różnica ${(mx-mn).toFixed(2).replace('.',',')} s) = <b>miarowy</b>`})()}<div class="e12w"><div style="min-width:620px">${EKGL.strip(rk,{secs:6,rr:1})}</div></div></div>`}}
  return h+'</div>'}
 function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(acOf(cor(),ST[C.st])[+b.dataset.q].includes(+b.dataset.j)?1:0);C.keep=1;render();C.keep=0;goEx('aqr'+b.dataset.q)})}
