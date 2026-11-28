@@ -148,7 +148,14 @@ body.playing .rm-acc{display:none}
       const a = document.createElement('a'); a.href = 'konto.html'; a.className = 'rm-acc';
       const logged = get('rm_token') || get('rm_code');
       a.innerHTML = logged ? ('👤 ' + (RM.proUntil() > Date.now() ? 'Moje konto <b>PRO</b>' : 'Moje konto')) : '👤 Zaloguj';
-      document.body.appendChild(a);
+      const slot = document.getElementById('rm-acc-slot');
+      if (slot) { a.className = 'rm-acc-in'; a.style.cssText = 'color:#fff;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap'; slot.appendChild(a); }
+      else {
+        document.body.appendChild(a);
+        // przycisk nie może zasłaniać treści: chowa się podczas przewijania
+        let tm = null; window.addEventListener('scroll', () => { a.style.opacity = '0'; a.style.pointerEvents = 'none'; clearTimeout(tm); tm = setTimeout(() => { a.style.opacity = ''; a.style.pointerEvents = ''; }, 1500); }, { passive: true });
+        a.style.transition = 'opacity .2s';
+      }
     }
     RM.gate();
     // tabele na telefonie: każdy wiersz jako karta z podpisami kolumn
