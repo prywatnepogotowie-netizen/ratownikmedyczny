@@ -3,7 +3,7 @@
 <title>Gra EKG – rozpoznaj rytm i lecz pacjenta | ratownikmedyczny.online</title>
 <meta name="description" content="Gra EKG dla ratownika medycznego na prawdziwych zapisach: tryb nauki z podpowiedziami i tryb zaawansowany. Rozpoznajesz rytm i EKG 12-odprowadzeniowe, decydujesz – defibrylacja, kardiowersja, adenozyna, atropina, stymulacja. Złe decyzje mają następstwa.">
 <link rel="canonical" href="https://ratownikmedyczny.online/ekg-gra.html">
-<script src="pro.js"></script><script src="ekgdata.js?v=4"></script><script src="ekg.js?v=5"></script>
+<script src="pro.js"></script><script src="ekgdata.js?v=4"></script><script src="ekg.js?v=6"></script>
 <style>
 :root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#eef2f7;--line:#dfe6ef;--g:#2a9d8f}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
@@ -120,7 +120,7 @@ const FACT={
  vf:['Chaotyczny – brak powtarzalnych zespołów','Nie da się policzyć','Brak','Brak zespołów QRS','Brak','Chaos bez QRS = migotanie komór → defibrylacja.'],
  asys:['Linia prawie płaska','0','Brak (czasem pojedyncze P)','Brak','Brak','Linia prawie płaska = asystolia. Sprawdź elektrody, odprowadzenie i wzmocnienie.'],
  av1:['Miarowy','ok. 85/min','Tak – przed każdym QRS','Wąskie','Wydłużony > 200 ms, ale stały','Stały, wydłużony PR = blok AV I stopnia.'],
- mob1:['Niemiarowy, w grupach','ok. 90/min','Tak','Wąskie','Wydłuża się z każdym pobudzeniem, aż jeden QRS wypada','PR coraz dłuższy aż do wypadnięcia QRS = Wenckebach (Mobitz I).'],
+ mob1:['Niemiarowy – kilka równych odstępów, potem jedna dłuższa przerwa (wypadł QRS) i znowu od początku. Tak wygląda Wenckebach: niemiarowość „w grupach”','ok. 90/min','Tak','Wąskie','Wydłuża się z każdym pobudzeniem, aż jeden QRS wypada','PR coraz dłuższy aż do wypadnięcia QRS = Wenckebach (Mobitz I).'],
  mob2:['Miarowy','ok. 35–40/min (komory)','Tak – ale co drugi P bez QRS','Tu wąskie','Stały w pobudzeniach przewiedzionych','Co drugi P bez QRS przy stałym PR = blok AV II stopnia 2:1. Wysokie ryzyko – postępuj jak w Mobitz II (grozi blokiem całkowitym i asystolią).'],
  av3:['Komory miarowo, ale wolno','ok. 40/min (komory), P szybciej','Tak – regularne, ale bez związku z QRS','Tu nieco poszerzone – rytm zastępczy (może być wąski lub szeroki)','Zmienny – P „wędrują” przez QRS','P i QRS żyją osobno = blok AV III stopnia (całkowity).'],
  tdp:['Niemiarowy','ok. 200–250/min','Brak','Szerokie, zmienne – amplituda rośnie i maleje („skręca się”)','Brak','Polimorficzny VT o zmiennej amplitudzie przy długim QT = torsades de pointes.'],
@@ -190,7 +190,7 @@ const MID={
 const MIDK=Object.keys(MID);
 function midCase(id){const m=MID[id];C={m,id,opts:shuf([m.n,...m.d])};drawMid()}
 function drawMid(pick){const m=C.m,e=EKGD.s[C.id];
- let h=`<div class="pt" style="--c:#f77f00"><b>🧩 Rozpoznaj rytm</b><br>${m.t}</div><div class="mon"><div class="hd"><span>📟 25 mm/s · 10 mm/mV</span><span>${e.hr?'częstość komór '+e.hr+'/min':''}</span></div><div class="strip"><div style="min-width:620px">${EKGL.strip(C.id,{secs:6})}</div></div><button class="zoom" type="button" data-z="${C.id}">🔍 Powiększ EKG</button></div>`;
+ let h=`<div class="pt" style="--c:#f77f00"><b>🧩 Rozpoznaj rytm</b><br>${m.t}</div><div class="mon"><div class="hd"><span>📟 25 mm/s · 10 mm/mV</span><span>${e.hr?'częstość komór '+e.hr+'/min':''}</span></div><div class="strip"><div>${EKGL.strip(C.id,{secs:6})}</div></div><button class="zoom" type="button" data-z="${C.id}">🔍 Powiększ EKG</button></div>`;
  if(pick==null)h+=`<div class="q">Co to za rytm?</div>`+C.opts.map((o,j)=>`<button class="op" data-mq="${j}" type="button">${o}</button>`).join('');
  else{const ok=C.opts[pick]===m.n,p=ok?10:0;score+=p;res[qi]={ok,typ:ok?'win':'fail',p,name:m.n,idOk:ok,id:C.id,mid:C.opts[pick]};
   h+=`<div class="deb"><div class="sumh"><span class="tag" style="background:${ok?'#2a9d8f':'#e63946'}">${ok?'✅ Dobrze':'❌ Błędne rozpoznanie'}</span><b>+${p} pkt</b></div>
@@ -218,7 +218,7 @@ function start(){const r=shuf(START).slice(0,7).map(k=>({t:'r',k})),t=shuf(C12).
 function prog(){$('pg').innerHTML=Q.map((q,i)=>`<i class="${i<qi?(res[i]&&res[i].ok?'d':'x'):i===qi?'c':''}"></i>`).join('');$('scb').innerHTML=`<span>${LBL[MODE]}</span><span>Pacjent ${Math.min(qi+1,Q.length)}/${Q.length}</span><span>⭐ ${score} pkt</span>`}
 function next(){if(qi>=Q.length)return finish();const q=Q[qi];prog();if(q.t==='12')return case12(q.c);if(q.t==='m')return midCase(q.k);C={start:q.k,st:q.k,bad:0,steps:[],idAns:null,idTries:0,pts:0,done:false};render(true)}
 function vit(v){const u=(x,un)=>x==='--'||x==='—'?'<b>--</b>':`<b>${x}</b><i>${un}</i>`;return `<div class="vit"><div class="v1"><small>Tętno (HR)</small>${u(v[0],'/min')}</div><div class="v3"><small>Ciśnienie tętnicze</small>${u(v[1],'mmHg')}</div><div class="v2"><small>SpO₂</small>${u(v[2],'%')}</div><div class="v4"><small>GCS</small>${u(v[3],'pkt')}</div></div>`}
-function mon(s){const k=REAL[s.rh];return `<div class="mon"><div class="hd"><span>📟 Odprowadzenie II · 25 mm/s · 10 mm/mV</span><span>${s.nzk?'🚨 brak tętna':'tętno wyczuwalne'}</span></div><div class="strip"><div style="min-width:620px">${EKGL.strip(k,{secs:6})}</div></div>
+function mon(s){const k=REAL[s.rh];return `<div class="mon"><div class="hd"><span>📟 Odprowadzenie II · 25 mm/s · 10 mm/mV</span><span>${s.nzk?'🚨 brak tętna':'tętno wyczuwalne'}</span></div><div class="strip"><div>${EKGL.strip(k,{secs:6})}</div></div>
  <button class="zoom" type="button" data-z="${k}">🔍 Powiększ EKG</button>${vit([hrOf(s),...s.v.slice(1)])}</div>`}
 function zoom(k){const d=document.createElement('div');d.className='zm';d.innerHTML=`<div class="zmh"><b>📟 Odprowadzenie II · 25 mm/s · 10 mm/mV</b><button type="button" class="btn n" id="zx">✕ Zamknij</button></div><p class="e12h">👉 Przesuń zapis palcem w bok. Duża kratka = 0,2 s, mała = 0,04 s; 10 mm = 1 mV.</p><div class="zmw"><div style="min-width:1500px">${EKGL.strip(k,{secs:10,mm:6})}</div></div>`;document.body.appendChild(d);document.body.style.overflow='hidden';d.querySelector('#zx').onclick=()=>{d.remove();document.body.style.overflow=''}}
 function cor(){return ANS[C.start]||C.start}
@@ -227,10 +227,11 @@ function anal(k){const f=factsOf(k,ST[C.st]),ac=acOf(k,ST[C.st]);C.an=C.an||[];l
   if(a==null){h+=`<p class="aqq"><b>${i+1}/5 ${q[0]}</b></p>`+EKGL.teach(i,true)+q[1].map((o,j)=>`<button class="op aq" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
   const ok=ac[i].includes(a);h+=`<div class="re ${ok?'ok':'bad'}" id="aqr${i}"><small class="stl">${i+1}/5 ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${ok?'✅':'❌'}<div class="ex">${ok?'Dobrze. ':'Prawidłowo: <b>'+ac[i].map(x=>q[1][x]).join(' / ')+'</b>. '}Tu: ${f[i]}. <br>💡 ${q[2]}</div></div>`
   if(i===1){const rk=REAL[ST[C.st].rh];if(EKGD.s[rk].r.length>1)h+=`<div class="rrw"><b>💓 Policzone na tym zapisie</b> – czerwone kółka to zespoły QRS w 6 s:<div class="e12w"><div>${EKGL.strip(rk,{secs:6,cnt:1})}</div></div></div>`}
-  if(i===0){const rk=REAL[ST[C.st].rh];if(i===0&&EKGD.s[rk].r.length>2)h+=`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b> – porównaj liczby: ${(()=>{const R=EKGD.s[rk].r.filter(v=>v<6*125),d=R.slice(1).map((v,j)=>(v-R[j])/125),mx=Math.max(...d),mn=Math.min(...d);return mx-mn>0.08?`różnica do <b>${(mx-mn).toFixed(2).replace('.',',')} s</b> = <b>niemiarowy</b>`:`prawie równe (różnica ${(mx-mn).toFixed(2).replace('.',',')} s) = <b>miarowy</b>`})()}<div class="e12w"><div style="min-width:620px">${EKGL.strip(rk,{secs:6,rr:1})}</div></div></div>`}}
+  if(i===0){const rk=REAL[ST[C.st].rh];if(i===0&&EKGD.s[rk].r.length>2)h+=`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b> – porównaj liczby: ${(()=>{const R=EKGD.s[rk].r.filter(v=>v<6*125),d=R.slice(1).map((v,j)=>(v-R[j])/125),mx=Math.max(...d),mn=Math.min(...d);return mx-mn>0.08?`najkrótszy <b>${mn.toFixed(2).replace('.',',')} s</b>, najdłuższy <b style="color:#e63946">${mx.toFixed(2).replace('.',',')} s</b> (na czerwono) – różnica ${(mx-mn).toFixed(2).replace('.',',')} s = <b>niemiarowy</b>. Wystarczy jedna dłuższa przerwa, żeby rytm był niemiarowy`:`prawie równe (różnica ${(mx-mn).toFixed(2).replace('.',',')} s) = <b>miarowy</b>`})()}<div class="e12w"><div style="min-width:620px">${EKGL.strip(rk,{secs:6,rr:1})}</div></div></div>`}}
  return h+'</div>'}
 function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(acOf(cor(),ST[C.st])[+b.dataset.q].includes(+b.dataset.j)?1:0);C.keep=1;render();C.keep=0;goEx('aqr'+b.dataset.q)})}
-function goEx(id){const e=document.getElementById(id);if(!e)return;const t=e.getBoundingClientRect().top+window.scrollY-12;window.scrollTo({top:t,behavior:'smooth'})}
+function rrFocus(){document.querySelectorAll('.rrw .e12w').forEach(w=>{const r=w.querySelector('rect[fill="#e63946"]');if(r){const sv=w.querySelector('svg'),k=sv.clientWidth/sv.viewBox.baseVal.width;w.scrollLeft=Math.max(0,(+r.getAttribute('x'))*k-60)}})}
+function goEx(id){rrFocus();const e=document.getElementById(id);if(!e)return;const t=e.getBoundingClientRect().top+window.scrollY-12;window.scrollTo({top:t,behavior:'smooth'})}
 function stab(s){return s.nzk?'🚨 <b>Brak tętna</b> → algorytm zatrzymania krążenia (rytm do defibrylacji czy nie?).':s.unst?'⚠️ <b>Objawy niestabilności</b> (wstrząs, zaburzenia świadomości, ból wieńcowy, niewydolność serca, omdlenie) → leczenie prądem / pilne.':'✅ <b>Pacjent stabilny</b> → najpierw bezpieczne leczenie, bez pośpiechu z prądem.'}
 function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.nzk?'#e63946':s.unst?'#f77f00':'#2a9d8f';
  let h=mon(s)+`<div class="pt" style="--c:${col}"><b>Pacjent</b><br>${s.t}</div>`;
