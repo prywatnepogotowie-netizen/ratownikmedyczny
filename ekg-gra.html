@@ -115,7 +115,7 @@ const FACT={
  sbrad:['Miarowy','ok. 45/min','Tak – przed każdym QRS','Wąskie','Prawidłowy','Rytm zatokowy poniżej 60/min.'],
  af:['Niemiarowo niemiarowy – odstępy RR za każdym razem inne','ok. 140/min','Brak – linia izoelektryczna „falująca”','Wąskie','Nie da się zmierzyć','Niemiarowe RR + brak załamków P = migotanie przedsionków.'],
  afl:['Miarowy','ok. 150/min','Brak prawidłowych P. Zamiast nich fale trzepotania ok. 300/min – po 2 na każdy QRS. Przy przewodzeniu 2:1 jedna fala chowa się w QRS lub w załamku T, dlatego „zębów piły” często prawie nie widać. Podejrzane jest już samo miarowe ok. 150/min. Najlepiej szukać ich w II, III, aVF i V1 (przycisk „12 odprowadzeń”)','Wąskie','Nie dotyczy','Miarowo ok. 150/min z wąskim QRS = zawsze pomyśl o trzepotaniu przedsionków 2:1, nawet gdy „zębów piły” nie widać.'],
- svt:['Miarowy','ok. 170/min','Niewidoczne – schowane w QRS lub tuż za nim','Wąskie','Nie da się zmierzyć','Wąskie, miarowe, szybkie, bez widocznych P = SVT.'],
+ svt:['Miarowy','ok. 170/min','Niewidoczne – schowane w QRS lub tuż za nim. Zaokrąglona fala tuż przed każdym QRS to <b>załamek T poprzedniego pobudzenia</b>: zaczyna się zaraz po QRS (odcinek ST). Przy 170/min T kończy się tuż przed następnym QRS i nie ma między nimi miejsca na osobny załamek P','Wąskie','Nie da się zmierzyć','Wąskie, miarowe, szybkie, bez widocznych P = SVT.'],
  vt:['Miarowy','ok. 150/min','Niewidoczne','Szerokie (> 120 ms), jednakowe','Brak','Szerokie, jednakowe, szybkie QRS = częstoskurcz komorowy. Zawsze sprawdź tętno!'],
  vf:['Chaotyczny – brak powtarzalnych zespołów','Nie da się policzyć','Brak','Brak zespołów QRS','Brak','Chaos bez QRS = migotanie komór → defibrylacja.'],
  asys:['Linia prawie płaska','0','Brak (czasem pojedyncze P)','Brak','Brak','Linia prawie płaska = asystolia. Sprawdź elektrody, odprowadzenie i wzmocnienie.'],
@@ -165,7 +165,7 @@ const STL={ok:['✅ Dobrze – właściwy krok, działasz dalej','ok'],win:['✅
 // quiz analizy: opcje i prawidłowe odpowiedzi (indeksy) dla każdego rytmu
 const AQ=[['📏 Czy rytm jest miarowy?',['Miarowy','Niemiarowy','Brak powtarzalnego rytmu'],'Porównaj odstępy R–R (kartką lub palcami): równe = miarowy.'],
  ['💓 Jaka częstość komór?',['Poniżej 60/min','60–100/min','100–150/min','Powyżej 150/min','Nie da się policzyć'],'Policz zespoły QRS w 6 s i pomnóż × 10 albo 300 : liczba dużych kratek między R.'],
- ['〰️ Załamki P?',['Tak – przed każdym QRS','Są, ale nie każdy P ma swój QRS','Brak prawidłowych P'],'Szukaj w II zaokrąglonego, dodatniego załamka P przed każdym QRS.'],
+ ['〰️ Załamki P?',['Tak – przed każdym QRS','Są, ale nie każdy P ma swój QRS','Brak prawidłowych P'],'Szukaj w II zaokrąglonego, dodatniego załamka P przed każdym QRS. Uwaga przy szybkim rytmie: nie pomyl P z załamkiem T – T idzie zawsze zaraz po QRS, a P przed QRS, z płaską linią między T a P.'],
  ['📐 QRS wąskie czy szerokie?',['Wąskie (< 120 ms)','Szerokie (≥ 120 ms)','Brak zespołów QRS'],'Wąski: poniżej 120 ms (mniej niż 3 małe kratki). Szeroki: 120 ms lub więcej (3 małe kratki i więcej) – pobudzenie z komór albo blok odnogi.'],
  ['↔️ Odstęp PR?',['Prawidłowy i stały','Wydłużony, ale stały','Wydłuża się, aż QRS wypada','P i QRS bez związku','Nie da się ocenić (brak P)'],'PR od początku P do początku QRS: prawidłowo 3–5 małych kratek (120–200 ms).']];
 const AC={nsr:[[0],[1],[0],[0],[0]],stach:[[0],[2],[0],[0],[0]],sbrad:[[0],[0],[0],[0],[0]],af:[[1],[2,3],[2],[0],[4]],afl:[[0],[2,3],[2],[0],[4]],svt:[[0],[3],[2],[0],[4]],
@@ -229,7 +229,7 @@ function drawMid(pick){const m=C.m,e=EKGD.s[C.id];
  else{const ok=C.opts[pick]===m.n,p=ok?10:0;score+=p;res[qi]={ok,typ:ok?'win':'fail',p,name:m.n,idOk:ok,id:C.id,mid:C.opts[pick]};
   h+=`<div class="deb"><div class="sumh"><span class="tag" style="background:${ok?'#2a9d8f':'#e63946'}">${ok?'✅ Dobrze':'❌ Błędne rozpoznanie'}</span><b>+${p} pkt</b></div>
   <h3>1️⃣ Rozpoznanie</h3><p><b>${m.n}</b>${ok?'':`<br>Twoja odpowiedź: ${C.opts[pick]}`}</p>
-  <h3>2️⃣ Po czym poznać</h3><ul>${m.f.map(x=>`<li>${x}</li>`).join('')}</ul><p>${m.e}</p>
+  ${opis(C.id)}<h3>2️⃣ Po czym poznać</h3><ul>${m.f.map(x=>`<li>${x}</li>`).join('')}</ul><p>${m.e}</p>
   ${e.r.length>2?`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b><div class="e12w"><div style="min-width:620px">${EKGL.strip(C.id,{secs:6,rr:1})}</div></div></div>`:''}
   <h3>3️⃣ Co robisz</h3><p>${m.do}</p>
   <p class="disc">Zapis: ${e.src}, PhysioNet (prawdziwe EKG). Postępowanie wg ERC 2025. Stan na 28.11.2026.</p>
@@ -251,6 +251,8 @@ function btn12(k){const i=id12(k);return i?`<button class="zoom" type="button" d
 function open12(i){const d=document.createElement('div');d.className='zm';d.innerHTML=`<div class="zmh"><b>📈 EKG 12-odprowadzeniowe · 25 mm/s · 10 mm/mV</b><button type="button" class="btn n" id="zx">✕ Zamknij</button></div><p class="e12h">👉 Przesuń zapis palcem w bok. Ten sam pacjent co na monitorze – prawdziwe EKG (PTB-XL ${String(i).padStart(5,'0')}).</p><div class="zmw"><div style="min-width:1100px" id="z12">⏳ Wczytuję…</div></div>`;document.body.appendChild(d);document.body.style.overflow='hidden';d.querySelector('#zx').onclick=()=>{d.remove();document.body.style.overflow=''};EKGL.load12(i).then(r=>{d.querySelector('#z12').innerHTML=EKGL.lead12(r,{})}).catch(()=>{d.querySelector('#z12').textContent='Nie udało się wczytać zapisu.'})}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-l12]');if(b)open12(+b.dataset.l12)});
 const COMP={afl:['afl4','👀 Tak wyglądają „zęby piły”, gdy komory biją wolniej (przewodzenie 4:1) – tu fale trzepotania widać wyraźnie. Prawdziwe EKG, PTB-XL 16401.']};
+const OPIS={218:'Rytm zatokowy, blok AV I stopnia.',611:'Bradykardia zatokowa, niespecyficzne zaburzenie przewodzenia śródkomorowego.',959:'Rytm zatokowy 98/min z całkowitym blokiem serca i komorowym rytmem zastępczym 40/min. Niezupełny blok prawej odnogi. Z powodu omdlenia rozważyć stałą stymulację.',1166:'Bradykardia zatokowa, poza tym EKG prawidłowe.',1919:'Szybki, miarowy częstoskurcz nadkomorowy <b>bez widocznych załamków P</b>. Niespecyficzne zmiany ST-T.',3267:'Szybki, miarowy częstoskurcz nadkomorowy. Nie znaleziono załamków P.',2739:'Trzepotanie przedsionków z przewodzeniem 2:1. Nieprawidłowa repolaryzacja.',2910:'Rytm zatokowy, pobudzenia przedwczesne komorowe.',2993:'Rytm zatokowy. Ostry zawał dolno-boczny z zajęciem ściany tylnej.',3076:'Rytm zatokowy. Uniesienie ST w V2–V3, ujemne T w I, aVL, V2–V6, zespoły QS w V3–V4 – zawał ściany przedniej o nieznanym czasie.',3435:'Tachykardia zatokowa, poza tym EKG prawidłowe.',3487:'Tachykardia zatokowa, poza tym EKG prawidłowe.',4785:'Migotanie przedsionków.',8075:'Rytm zatokowy. Uniesienie ST w II, III, aVF i obniżenie w I, aVL – wczesny zawał ściany dolnej.',8911:'Całkowita dysocjacja przedsionkowo-komorowa (blok całkowity): przedsionki 82/min, komory 38/min.',10196:'Szybkie migotanie/trzepotanie przedsionków.',14009:'Blok AV II stopnia typu I (Wenckebach).',16401:'Trzepotanie przedsionków z blokiem 4:1.',20117:'Rytm zatokowy, EKG prawidłowe.'};
+function opis(k){const m=((EKGD.s[k]||{}).src||'').match(/PTB-XL (\d+)/);const t=m&&OPIS[+m[1]];return t?`<div class="dc pt"><b>📋 Opis lekarza w bazie PTB-XL (zapis ${m[1].padStart(5,'0')})</b><small>${t} Z tego opisu (i z pomiarów na zapisie) biorę cechy w analizie.</small></div>`:''}
 // ===================== silnik
 let MODE='adv',Q=[],qi=0,res=[],score=0,C;
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{MODE=b.dataset.mode;start()});
@@ -325,6 +327,7 @@ function endCase(typ){C.done=true;C.typ=typ;document.querySelectorAll('#cs .op,#
   <h3>1️⃣ Rozpoznanie rytmu ${idOk?'✅':'❌'}</h3><p><b>${NAMES[cor()]}${C.start==='pvt'?' bez tętna':''}</b> · Twoja odpowiedź: ${idOk?'prawidłowa':(NAMES[C.firstId]||'')}</p>
   ${s0.nzk&&L?'<p class="e12h">📚 Analiza rytmu poniżej to moduł do nauki po akcji – w zatrzymaniu krążenia nie robi się jej przed RKO i defibrylacją.</p>':''}
   ${f?`<div class="facts">${FQ.map((q,i)=>`<div><span>${q}</span><b>${f[i]}</b></div>`).join('')}</div>`:''}
+  ${opis(REAL[s0.rh])}
   <h3>2️⃣ Ocena stanu pacjenta</h3><p>${stab(s0)}</p><div class="two1"><small>Na początku</small>${vit([hrOf(s0),...s0.v.slice(1)])}</div>
   <p><b>Na końcu:</b> ${typ==='die'?'zatrzymanie krążenia – zgon.':(C.steps[C.steps.length-1]||{}).txt||''}${ST[C.start].rh!==ST[C.st].rh?` <br><b>Po drodze rytm zmienił się na:</b> ${NAMES[ANS[C.st]||C.st]||C.st}.`:''}</p>
   <h3>3️⃣ Jak powinno być</h3>${howTo(s0)}
