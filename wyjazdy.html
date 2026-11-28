@@ -89,10 +89,10 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
  <div class="hud" id="hud"><div class="tt"><span id="h-ph">📍 Miejsce wezwania</span><span>Odpr. II · 25 mm/s</span><span>⏱ <b id="h-t">0</b> min</span></div><canvas id="ecg" width="800" height="150"></canvas>
   <div class="vit"><div class="v1"><small>Tętno /min</small><b id="v-hr">--</b></div><div class="v2"><small>SpO₂ %</small><b id="v-sp">--</b></div><div class="v3"><small>Ciśnienie mmHg</small><b id="v-bp" style="font-size:18px">--/--</b></div><div class="v4"><small>Oddechy /min</small><b id="v-rr">--</b></div></div></div>
  <div class="pt"><div class="av" id="pav">😐</div><div><b id="pn"></b><small id="pst"></small></div></div>
- <div class="tabs" id="gt"></div>
- <div class="acts" id="ga"></div>
  <div id="pend"></div>
  <div id="go"></div>
+ <div class="tabs" id="gt"></div>
+ <div class="acts" id="ga"></div>
  <div id="trc"></div>
  <div id="md"></div>
  <div class="log" id="lg"></div>
@@ -468,7 +468,8 @@ function renderActs(){if(!G||G.over||!alive()||G.md){$('ga').innerHTML='';return
  else $('ga').innerHTML=ACTS[tab].map(a=>btnH(a[0],a[2],a[3],a[4],COL[tab])).join('');
  document.querySelectorAll('#ga .ac').forEach(b=>b.onclick=()=>act(b.dataset.a));
  const nx=ORDER[ORDER.indexOf(tab)+1];if(nx){$('ga').insertAdjacentHTML('beforeend',`<button class="btn big n" id="nxt" type="button" style="grid-column:1/-1;margin-top:4px">➡️ Dalej: ${TNAME[nx]}</button>`);$('nxt').onclick=()=>{setTab(nx);window.scrollTo({top:$('gt').offsetTop-230,behavior:'smooth'})}}}
-function out(h,body,c){$('go').innerHTML=`<div class="out" style="--c:${c||'#457b9d'}"><h3>${h}</h3>${body||''}</div>`;$('go').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function out(h,body,c){$('go').innerHTML=`<div class="out" style="--c:${c||'#457b9d'}"><h3>${h}</h3>${body||''}</div>`;upTo($('go'))}
+function upTo(el){if(!el)return;const hd=document.querySelector('.hud'),off=(hd?hd.offsetHeight:0)+8;window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.scrollY-off),behavior:'smooth'})}
 const EQN={mon:'monitor-defibrylator',o2:'tlen',ssak:'ssak',kol:'kołnierz',krz:'krzesełko',nos:'nosze podbierakowe',deska:'deska ortopedyczna',tor:'torba ratownicza',szyna:'szyny'};
 function needEq(e){if(!e||G.ph!=='scene'||G.eq[e]||G.f['eq_'+e])return;G.f['eq_'+e]=1;G.t+=2;G.eqMiss=(G.eqMiss||[]).concat(EQN[e]);L(`Ktoś wraca do karetki po: ${EQN[e]} (+2 min).`)}
 function mark(id){const tb=TAB_OF(id);if(tb&&'abcde'.includes(tb)&&!G.tabDone[tb]){G.ord.push(tb)}if(tb&&!G.tabDone[tb]){G.tabDone[tb]=1;setTimeout(drawTabs,0)}G.f[id]=(G.f[id]||0)+1;if(G.ft[id]==null)G.ft[id]=G.t;G.lt[id]=G.t;G.seq.push(id)}

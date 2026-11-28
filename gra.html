@@ -86,10 +86,10 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
  <div class="hud" id="hud"><div class="tt"><span id="h-ph">📍 Mieszkanie pacjenta</span><span>⏱ <b id="h-t">0</b> min</span></div><canvas id="ecg" width="800" height="150"></canvas>
   <div class="vit"><div class="v1"><small>Tętno /min</small><b id="v-hr">--</b></div><div class="v2"><small>SpO₂ %</small><b id="v-sp">--</b></div><div class="v3"><small>Ciśnienie mmHg</small><b id="v-bp" style="font-size:18px">--/--</b></div><div class="v4"><small>Oddechy /min</small><b id="v-rr">--</b></div></div></div>
  <div class="pt"><div class="av" id="pav">😰</div><div><b>Pan Andrzej, 58 lat</b><small id="pst">Siedzi na kanapie, trzyma się za klatkę piersiową, spocony, blady.</small></div></div>
- <div class="tabs" id="gt"></div>
- <div class="acts" id="ga"></div>
  <div id="pend"></div>
  <div id="go"></div>
+ <div class="tabs" id="gt"></div>
+ <div class="acts" id="ga"></div>
  <div id="trc"></div>
  <div class="log" id="lg"></div>
 </section>
@@ -176,7 +176,8 @@ function renderActs(){if(G.over||G.rh!=='sin'||G.avb){$('ga').innerHTML='';retur
  else $('ga').innerHTML=A[tab].map(a=>`<button class="ac${G.f[a[0]]&&a[0]!=='jedz'?' dn':''}" data-a="${a[0]}" type="button" style="--c:${COL[tab]}"><i>${a[1]}</i>${a[2]}<small>${G.ph==='scene'&&a[3]?'⏱ '+a[3]+' min':''}</small></button>`).join('');
  document.querySelectorAll('#ga .ac').forEach(b=>b.onclick=()=>act(b.dataset.a));
  const nx=ORDER[ORDER.indexOf(tab)+1];if(nx&&(G.ph==='scene'||nx!=='tr')){$('ga').insertAdjacentHTML('beforeend',`<button class="btn big n" id="nxt" type="button" style="grid-column:1/-1;margin-top:4px">➡️ Dalej: ${TNAME[nx]}</button>`);$('nxt').onclick=()=>{setTab(nx);window.scrollTo({top:$('gt').offsetTop-230,behavior:'smooth'})}}}
-function out(h,body){$('go').innerHTML=`<div class="out" style="--c:#457b9d"><h3>${h}</h3>${body||''}</div>`;$('go').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function out(h,body){$('go').innerHTML=`<div class="out" style="--c:#457b9d"><h3>${h}</h3>${body||''}</div>`;upTo($('go'))}
+function upTo(el){if(!el)return;const hd=document.querySelector('.hud'),off=(hd?hd.offsetHeight:0)+8;window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.scrollY-off),behavior:'smooth'})}
 function cost(id){for(const k in A)for(const a of A[k])if(a[0]===id)return a[3];return 1}
 const REPEAT=['nacl','fen','morf','bp','jedz','o2','usp','boc','coc','avpu'];
 let conf=null;

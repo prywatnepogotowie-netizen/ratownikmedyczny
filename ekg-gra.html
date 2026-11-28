@@ -234,7 +234,7 @@ function goEx(id){const e=document.getElementById(id);if(!e)return;const t=e.get
 function stab(s){return s.nzk?'🚨 <b>Brak tętna</b> → algorytm zatrzymania krążenia (rytm do defibrylacji czy nie?).':s.unst?'⚠️ <b>Objawy niestabilności</b> (wstrząs, zaburzenia świadomości, ból wieńcowy, niewydolność serca, omdlenie) → leczenie prądem / pilne.':'✅ <b>Pacjent stabilny</b> → najpierw bezpieczne leczenie, bez pośpiechu z prądem.'}
 function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.nzk?'#e63946':s.unst?'#f77f00':'#2a9d8f';
  let h=mon(s)+`<div class="pt" style="--c:${col}"><b>Pacjent</b><br>${s.t}</div>`;
- h+=C.steps.map((x,i)=>`<div class="re ${x.typ==='win'||x.typ==='winp'?'ok':x.typ==='part'?'':'bad'}"><small class="stl">Decyzja ${i+1}: ${(STL[x.typ]||STL.bad)[0]}</small>${ACT[x.a]}<br><span style="font-weight:600">→ ${x.txt}</span>${x.ex?`<div class="ex">🎓 ${x.ex}</div>`:''}</div>`).join('');
+ h+=C.steps.map((x,i)=>`<div id="dec${i}" class="re ${x.typ==='win'||x.typ==='winp'?'ok':x.typ==='part'?'':'bad'}"><small class="stl">Decyzja ${i+1}: ${(STL[x.typ]||STL.bad)[0]}</small>${ACT[x.a]}<br><span style="font-weight:600">→ ${x.txt}</span>${x.ex?`<div class="ex">🎓 ${x.ex}</div>`:''}</div>`).join('');
  if(id){const c=cor(),opts=C.opts||(C.opts=shuf([c,...shuf(Object.keys(NAMES).filter(k=>k!==c)).slice(0,3)]));
   if(L&&!s.nzk)h+=anal(c);
   if(L&&s.nzk)h+=`<div class="critb">🚨 <b>Brak tętna = zatrzymanie krążenia.</b> Nie analizuj teraz długo zapisu. Liczy się: RKO 30:2, elektrody i jedna decyzja – <b>rytm do defibrylacji</b> (VF, VT bez tętna) czy <b>nie do defibrylacji</b> (asystolia, PEA). Pełną analizę rytmu zobaczysz w omówieniu.</div>`;
@@ -247,7 +247,7 @@ function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.
  $('cs').innerHTML=h;bindFq();
  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>pickR(b.dataset.r));
  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a));document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>zoom(b.dataset.z));
- if(!first&&C.steps.length&&!C.keep)window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});else if(first)window.scrollTo(0,0)}
+ if(!first&&C.steps.length&&!C.keep)goEx('dec'+(C.steps.length-1));else if(first)window.scrollTo(0,0)}
 function pickR(k){C.idTries++;if(C.firstId==null)C.firstId=k;
  if(MODE==='learn'&&k!==cor()){C.wrong=k;(C.tried=C.tried||[]).push(k);return render()}
  C.idAns=k;C.wrong=null;render()}
@@ -288,7 +288,7 @@ function endCase(typ){C.done=true;C.typ=typ;document.querySelectorAll('#cs .op,#
   <p class="disc">Źródło: wytyczne ERC 2025 (zaburzenia rytmu, zaawansowane zabiegi resuscytacyjne). Zapis: ${EKGD.s[REAL[s0.rh]].src}, PhysioNet. Stan na 28.11.2026.</p>
   <div class="bt2"><button class="btn big gh" id="again" type="button">🔁 Spróbuj ponownie</button><button class="btn big n" id="nx" type="button">${qi<Q.length-1?'Następny pacjent →':'🏁 Wynik końcowy'}</button></div></div>`);
  $('again').onclick=()=>{score-=p;res[qi]=null;next()};
- $('nx').onclick=()=>{qi++;next()};setTimeout(()=>$('nx')&&$('nx').scrollIntoView({behavior:'smooth',block:'center'}),100)}
+ $('nx').onclick=()=>{qi++;next()};setTimeout(goEx2,100)}
 // ---------- przypadek 12-odprowadzeniowy
 function case12(c){C={c,tries:0,first:null};$('cs').innerHTML='<p style="text-align:center;padding:30px">⏳ Wczytuję zapis…</p>';
  EKGL.load12(c.id).then(rec=>{C.rec=rec;draw12()}).catch(()=>{$('cs').innerHTML='<p>Nie udało się wczytać zapisu.</p><button class="btn big n" id="nx" type="button">Dalej →</button>';$('nx').onclick=()=>{qi++;next()}})}
