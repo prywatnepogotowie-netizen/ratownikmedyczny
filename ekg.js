@@ -8,7 +8,9 @@ function grid(W,H,mm,id){return `<defs><pattern id="${id}" width="${5*mm}" heigh
 function poly(y,fs,x0,y0,mm,from,to,gain){let p='';for(let i=from;i<to&&i<y.length;i++)p+=`${(x0+(i-from)/fs*25*mm).toFixed(1)},${(y0-y[i]*10*mm*(gain||1)).toFixed(1)} `;return p}
 // pasek rytmu: 25 mm/s, 10 mm/mV
 function strip(key,o){o=o||{};const fs=D().fs,y=o.y||sig(key),secs=o.secs||Math.min(10,y.length/fs),mm=o.mm||4,h=o.hmm||26,W=secs*25*mm,H=h*mm,id='eg'+(uid++);
- return `<svg class="ecg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="${o.label||'Zapis EKG'}">${grid(W,H,mm,id)}<polyline points="${poly(y,fs,0,H*(o.base||0.58),mm,0,Math.round(secs*fs),o.gain||GAIN[key]||1)}" class="tr"/></svg>`}
+ let rr='';if(o.rr&&D().s[key]&&D().s[key].r){const R=D().s[key].r.filter(v=>v<secs*fs);for(let i=1;i<R.length;i++){const x0=R[i-1]/fs*25*mm,x1=R[i]/fs*25*mm,ms=(R[i]-R[i-1])/fs,yy=12;
+  rr+=`<line x1="${x0}" y1="${yy+6}" x2="${x1}" y2="${yy+6}" stroke="#4361ee" stroke-width="2"/><line x1="${x0}" y1="${yy}" x2="${x0}" y2="${yy+12}" stroke="#4361ee" stroke-width="2"/><line x1="${x1}" y1="${yy}" x2="${x1}" y2="${yy+12}" stroke="#4361ee" stroke-width="2"/><rect x="${(x0+x1)/2-23}" y="${yy+9}" width="46" height="18" rx="5" fill="#fff" stroke="#4361ee"/><text x="${(x0+x1)/2}" y="${yy+23}" font-size="13" font-weight="800" fill="#4361ee" text-anchor="middle">${ms.toFixed(2).replace('.',',')} s</text>`}}
+ return `<svg class="ecg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="${o.label||'Zapis EKG'}">${grid(W,H,mm,id)}<polyline points="${poly(y,fs,0,H*(o.base||0.58),mm,0,Math.round(secs*fs),o.gain||GAIN[key]||1)}" class="tr"/>${rr}</svg>`}
 const LAY=[['I','aVR','V1','V4'],['II','aVL','V2','V5'],['III','aVF','V3','V6']];
 // EKG 12-odprowadzeniowe (4 kolumny po 2,5 s + rytm II); o.hl = {odprowadzenie: kolor}
 function lead12(rec,o){o=o||{};const fs=rec.fs,mm=o.mm||4,rowH=28*mm,W=10*25*mm+6*mm,H=rowH*4,id='eg'+(uid++),S=rec.S,ix=n=>rec.names.indexOf(n);

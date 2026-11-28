@@ -3,7 +3,7 @@
 <title>Gra EKG – rozpoznaj rytm i lecz pacjenta | ratownikmedyczny.online</title>
 <meta name="description" content="Gra EKG dla ratownika medycznego na prawdziwych zapisach: tryb nauki z podpowiedziami i tryb zaawansowany. Rozpoznajesz rytm i EKG 12-odprowadzeniowe, decydujesz – defibrylacja, kardiowersja, adenozyna, atropina, stymulacja. Złe decyzje mają następstwa.">
 <link rel="canonical" href="https://ratownikmedyczny.online/ekg-gra.html">
-<script src="pro.js"></script><script src="ekgdata.js?v=3"></script><script src="ekg.js?v=3"></script>
+<script src="pro.js"></script><script src="ekgdata.js?v=3"></script><script src="ekg.js?v=4"></script>
 <style>
 :root{--navy:#0b1f3a;--red:#e63946;--ink:#14213d;--mute:#5b6b82;--bg:#eef2f7;--line:#dfe6ef;--g:#2a9d8f}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
@@ -29,7 +29,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 .disc{font-size:12.5px;color:var(--mute);margin-top:12px}
 .modes{display:grid;gap:10px;margin:12px 0}.mode{display:block;width:100%;text-align:left;border:0;border-radius:18px;padding:16px;color:#fff;font:inherit;cursor:pointer}.mode b{font-size:20px;display:block}.mode span{opacity:.95}
 .hint{background:#eef6ff;border:2px solid #4cc9f0;border-radius:16px;padding:10px 12px;margin:10px 0}.hint p{margin:6px 0}
-.aqq{margin:10px 0 2px}.op.aq{padding:10px 12px;margin:5px 0}
+.aqq{margin:10px 0 2px}.rrw{background:#fff;border-radius:12px;padding:8px 10px;margin:6px 0;font-size:14px}.op.aq{padding:10px 12px;margin:5px 0}
 .fq{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:12px;padding:9px 11px;margin:6px 0;font:600 14.5px system-ui;color:var(--ink);cursor:pointer}.fq em{display:none;font-style:normal;color:#0b6e4f;font-weight:800;margin-top:3px}.fq.on em{display:block}.fq:not(.on)::after{content:" 👆";}
 .ex{background:#fff;border-radius:10px;padding:8px 10px;margin-top:8px;font-weight:600;color:#14213d;border-left:4px solid #4cc9f0}
 .facts{display:grid;gap:4px;margin:8px 0}.facts div{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;background:#f6f8fb;border-radius:10px;padding:6px 9px;font-size:14px}
@@ -167,7 +167,7 @@ function zoom12(c){const r=C.rec,ls=ZL[c.id]||[];return `<div class="hint"><b>�
 function quiz12(c){const st=S12[c.id]||[];C.a12=C.a12||[];let h=`<div class="hint"><b>🧭 Krok po kroku – zaznacz odpowiedź</b>`;
  for(let i=0;i<st.length;i++){const [k,ok]=st[i],q=Q12[k],a=C.a12[i];
   if(a==null){h+=`<p class="aqq"><b>${i+1}/${st.length} ${q[0]}</b></p>`+q[1].map((o,j)=>`<button class="op aq2" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
-  const g=ok.includes(a);h+=`<div class="re ${g?'ok':'bad'}"><small class="stl">${i+1}/${st.length} ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${g?'✅':'❌'}<div class="ex">${g?'Dobrze.':'Prawidłowo: <b>'+ok.map(x=>q[1][x]).join(' / ')+'</b>.'} 💡 ${q[2]}</div></div>`}
+  const g=ok.includes(a);h+=`<div class="re ${g?'ok':'bad'}" id="aq2r${i}"><small class="stl">${i+1}/${st.length} ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${g?'✅':'❌'}<div class="ex">${g?'Dobrze.':'Prawidłowo: <b>'+ok.map(x=>q[1][x]).join(' / ')+'</b>.'} 💡 ${q[2]}</div></div>`}
  return h+'</div>'}
 const DX={stemi_inf:'STEMI ściany dolnej',stemi_ant:'STEMI ściany przedniej (przednio-bocznej)',stemi_post:'STEMI dolno-boczny z zajęciem ściany tylnej',lbbb:'Blok lewej odnogi pęczka Hisa (LBBB)',rbbb:'Blok prawej odnogi pęczka Hisa (RBBB)',wpw:'Zespół WPW (preekscytacja)',lvh:'Przerost lewej komory',af:'Migotanie przedsionków',av3:'Blok AV III stopnia',afl:'Trzepotanie przedsionków',norm:'EKG prawidłowe',pe:'Zatorowość płucna (S1Q3T3)',nstemi:'NSTEMI – obniżenie ST'};
 const WALLS='<div class="walls"><b>🗺️ Mapa ścian serca</b><span style="--c:#e63946">II, III, aVF – ściana dolna</span><span style="--c:#2a9d8f">I, aVL, V5, V6 – ściana boczna</span><span style="--c:#4361ee">V1, V2 – przegroda</span><span style="--c:#9d4edd">V3, V4 – ściana przednia</span><span style="--c:#6c757d">obniżenie ST w V1–V3 – pomyśl o ścianie tylnej</span></div>';
@@ -186,10 +186,12 @@ function cor(){return ANS[C.start]||C.start}
 function anal(k){const f=FACT[k],ac=AC[k];C.an=C.an||[];let h=`<div class="hint"><b>🧭 Analiza krok po kroku – zaznacz odpowiedź</b>`;
  for(let i=0;i<5;i++){const q=AQ[i],a=C.an[i];
   if(a==null){h+=`<p class="aqq"><b>${i+1}/5 ${q[0]}</b></p>`+q[1].map((o,j)=>`<button class="op aq" type="button" data-q="${i}" data-j="${j}">${o}</button>`).join('');break}
-  const ok=ac[i].includes(a);h+=`<div class="re ${ok?'ok':'bad'}"><small class="stl">${i+1}/5 ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${ok?'✅':'❌'}<div class="ex">${ok?'Dobrze. ':'Prawidłowo: <b>'+ac[i].map(x=>q[1][x]).join(' / ')+'</b>. '}Tu: ${f[i]}. <br>💡 ${q[2]}</div></div>`}
+  const ok=ac[i].includes(a);h+=`<div class="re ${ok?'ok':'bad'}" id="aqr${i}"><small class="stl">${i+1}/5 ${q[0]}</small>Twoja odpowiedź: ${q[1][a]} ${ok?'✅':'❌'}<div class="ex">${ok?'Dobrze. ':'Prawidłowo: <b>'+ac[i].map(x=>q[1][x]).join(' / ')+'</b>. '}Tu: ${f[i]}. <br>💡 ${q[2]}</div></div>`
+  if(i===0){const rk=REAL[ST[C.st].rh];if(i===0&&EKGD.s[rk].r.length>2)h+=`<div class="rrw"><b>📏 Zmierzone odstępy R–R</b> – porównaj liczby: ${(()=>{const R=EKGD.s[rk].r.filter(v=>v<6*125),d=R.slice(1).map((v,j)=>(v-R[j])/125),mx=Math.max(...d),mn=Math.min(...d);return mx-mn>0.08?`różnica do <b>${(mx-mn).toFixed(2).replace('.',',')} s</b> = <b>niemiarowy</b>`:`prawie równe (różnica ${(mx-mn).toFixed(2).replace('.',',')} s) = <b>miarowy</b>`})()}<div class="e12w"><div style="min-width:620px">${EKGL.strip(rk,{secs:6,rr:1})}</div></div></div>`}}
  if(C.an.length>=5)h+=`<div class="ex">🎯 <b>Klucz:</b> ${f[5]}</div>`;
  return h+'</div>'}
-function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(AC[cor()][+b.dataset.q].includes(+b.dataset.j)?1:0);render();const x=document.querySelectorAll('.hint .re');x.length&&x[x.length-1].scrollIntoView({behavior:'smooth',block:'center'})})}
+function bindFq(){document.querySelectorAll('.aq').forEach(b=>b.onclick=()=>{C.an[+b.dataset.q]=+b.dataset.j;C.anOk=(C.anOk||0)+(AC[cor()][+b.dataset.q].includes(+b.dataset.j)?1:0);C.keep=1;render();C.keep=0;goEx('aqr'+b.dataset.q)})}
+function goEx(id){const e=document.getElementById(id);if(!e)return;const t=e.getBoundingClientRect().top+window.scrollY-12;window.scrollTo({top:t,behavior:'smooth'})}
 function stab(s){return s.nzk?'🚨 <b>Brak tętna</b> → algorytm zatrzymania krążenia (rytm do defibrylacji czy nie?).':s.unst?'⚠️ <b>Objawy niestabilności</b> (wstrząs, zaburzenia świadomości, ból wieńcowy, niewydolność serca, omdlenie) → leczenie prądem / pilne.':'✅ <b>Pacjent stabilny</b> → najpierw bezpieczne leczenie, bez pośpiechu z prądem.'}
 function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.nzk?'#e63946':s.unst?'#f77f00':'#2a9d8f';
  let h=mon(s)+`<div class="pt" style="--c:${col}"><b>Pacjent</b><br>${s.t}</div>`;
@@ -205,7 +207,7 @@ function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.
  $('cs').innerHTML=h;bindFq();
  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>pickR(b.dataset.r));
  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a));document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>zoom(b.dataset.z));
- if(!first&&C.steps.length)window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});else if(first)window.scrollTo(0,0)}
+ if(!first&&C.steps.length&&!C.keep)window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});else if(first)window.scrollTo(0,0)}
 function pickR(k){C.idTries++;if(C.firstId==null)C.firstId=k;
  if(MODE==='learn'&&k!==cor()){C.wrong=k;(C.tried=C.tried||[]).push(k);return render()}
  C.idAns=k;C.wrong=null;render()}
@@ -262,7 +264,7 @@ function draw12(done){const c=C.c,L=MODE==='learn',opts=C.opts||(C.opts=shuf([c.
    <h3 style="margin-top:10px">📋 ${DX[c.dx]}</h3>${ok?'':`<p>Twoja odpowiedź: ${DX[C.first]}</p>`}<p>${c.tip}</p>${zoom12(c)}<p><b>Co robisz:</b> ${c.do}</p>${WALLS}<p class="disc">Zapis: ${C.rec.src} (prawdziwe EKG pacjenta).</p>
    <button class="btn big n" id="nx" type="button">${qi<Q.length-1?'Następny pacjent →':'🏁 Wynik końcowy'}</button></div>`);
   $('nx').onclick=()=>{qi++;next()};setTimeout(()=>$('nx')&&$('nx').scrollIntoView({behavior:'smooth',block:'center'}),100)})}
-function bindQ12(){document.querySelectorAll('.aq2').forEach(b=>b.onclick=()=>{C.a12[+b.dataset.q]=+b.dataset.j;const y=window.scrollY;draw12();window.scrollTo(0,y);const x=document.querySelectorAll('.hint .re');x.length&&x[x.length-1].scrollIntoView({behavior:'smooth',block:'center'})})}
+function bindQ12(){document.querySelectorAll('.aq2').forEach(b=>b.onclick=()=>{C.a12[+b.dataset.q]=+b.dataset.j;const y=window.scrollY;draw12();window.scrollTo(0,y);goEx('aq2r'+b.dataset.q)})}
 function finish(){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id==='s2'));const ok=res.filter(r=>r.ok).length,ids=res.filter(r=>r.idOk).length,dead=res.filter(r=>r.typ==='die').length;
  const kb='rm_ekggra_'+MODE,best=+localStorage.getItem(kb)||0;try{if(score>best)localStorage.setItem(kb,score)}catch(e){}
  $('fin').innerHTML=`<div class="end"><div style="font-size:54px">${dead?'🫀':'🏆'}</div><h2>Koniec dyżuru – ${MODE==='learn'?'🎓 nauka':'🔥 zaawansowany'}</h2><div class="big">${score} pkt</div><p>Dobrze: ${ok}/${Q.length} · rozpoznanie za 1. razem: ${ids}/${Q.length} · zgony: ${dead}<br>Rekord: ${Math.max(score,best)} pkt</p></div>
