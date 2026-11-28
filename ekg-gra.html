@@ -45,7 +45,7 @@ svg.ecg .g1{stroke:#f6c7c7;stroke-width:.5;fill:none}svg.ecg .g5{stroke:#ea9a9a;
 .pts div{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #eef2f7}.pts .sum{font-weight:900;border:0}
 .bt2{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:12px}.btn.gh{background:#fff;color:var(--ink);border:2px solid var(--line)}details{margin:8px 0}summary{font-weight:800;cursor:pointer}
 .walls{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;font-size:13px}.walls b{width:100%}.walls span{border-left:5px solid var(--c);background:#fff;border-radius:8px;padding:5px 8px;font-weight:700}
-.top .w{gap:10px}.top .brand{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}</style></head><body data-nobar="1">
+.top .w{gap:10px}.top .brand{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.how{margin:6px 0 4px;padding-left:22px}.how li{margin:6px 0;line-height:1.45}.how small{color:#555}</style></head><body data-nobar="1">
 <div class="top"><div class="w"><a href="index.html" class="brand">🚑 ratownikmedyczny.online</a><span id="rm-acc-slot"></span><a href="ekg.html">📈 Kurs EKG</a></div></div>
 <div class="w">
 <section class="scr on" id="s0">
@@ -270,6 +270,10 @@ function act(a){const s=ST[C.st];let [typ,txt,to]=s.o[a]||s.d;const L=MODE==='le
  if(typ==='worse'){C.bad++;C.steps[C.steps.length-1].typ='worse';C.crit=(C.crit||[]).concat(a);C.st=to;return render()}
  if(typ==='win'||typ==='winp'||typ==='fail'||typ==='die')return endCase(typ);
  render()}
+
+function howTo(s){const o=s.o,nm=k=>ACT[k],W=Object.keys(o).filter(k=>o[k][0]==='win'),P=Object.keys(o).filter(k=>o[k][0]==='winp'),X=Object.keys(o).filter(k=>['die','worse','fail'].includes(o[k][0]));
+ const st=s.nzk?'🚨 <b>Brak tętna – zatrzymanie krążenia.</b> RKO 30:2, elektrody, oceń rytm: do defibrylacji czy nie.':s.unst?'🟠 <b>Pacjent niestabilny</b> (wstrząs, omdlenie, ból w klatce, niewydolność serca lub zaburzenia świadomości) – leczysz od razu.':'🟢 <b>Pacjent stabilny</b> – masz czas: monitor, dostęp iv, EKG 12-odprowadzeniowe, potem decyzja.';
+ return `<ol class="how"><li>${st}</li><li>✅ <b>Leczenie z wyboru:</b> ${W.map(nm).join(' <i>lub</i> ')}</li>${P.length?`<li>🟡 <b>Też dopuszczalne, ale nie najlepsze:</b> ${P.map(k=>nm(k)+' – <small>'+o[k][1]+'</small>').join('<br>')}</li>`:''}${X.length?`<li>⛔ <b>Nie rób:</b> ${X.map(k=>nm(k)+' – <small>'+o[k][1]+'</small>').join('<br>')}</li>`:''}</ol><p class="e12h">💡 ${s.why}</p>`}
 function endCase(typ){C.done=true;C.typ=typ;document.querySelectorAll('#cs .op,#cs .q,#cs .hint,#cs .ag').forEach(e=>e.remove());const s0=ST[C.start],sE=ST[C.st],idOk=C.firstId===cor(),L=MODE==='learn';
  const pId=idOk?5:(L&&C.idAns===cor()?2:0),pTr=typ==='win'?Math.max(2,10-3*C.bad):typ==='winp'?Math.max(1,6-3*C.bad):0,p=pId+pTr;
  score+=p;const ok=typ==='win'||typ==='winp';res[qi]={ok,typ,p,name:NAMES[cor()],idOk,id:C.firstId,crit:(C.crit||[]).length};
@@ -287,11 +291,12 @@ function endCase(typ){C.done=true;C.typ=typ;document.querySelectorAll('#cs .op,#
   ${f?`<div class="facts">${FQ.map((q,i)=>`<div><span>${q}</span><b>${f[i]}</b></div>`).join('')}</div>`:''}
   <h3>2️⃣ Ocena stanu pacjenta</h3><p>${stab(s0)}</p><div class="two1"><small>Na początku</small>${vit([hrOf(s0),...s0.v.slice(1)])}</div>
   <p><b>Na końcu:</b> ${typ==='die'?'zatrzymanie krążenia – zgon.':(C.steps[C.steps.length-1]||{}).txt||''}${C.start!==C.st?` <br><b>Po drodze rytm zmienił się na:</b> ${NAMES[ANS[C.st]||C.st]||C.st}.`:''}</p>
-  <h3>3️⃣ Poprawność decyzji</h3>${dec}
+  <h3>3️⃣ Jak powinno być</h3>${howTo(s0)}
+  <h3>4️⃣ Twoje decyzje</h3>${dec}
   ${missed.length?`<div class="dc pt"><b>Pominięte działanie</b><small>${missed.map(k=>ACT[k]).join(' lub ')} – to było leczenie z wyboru.</small></div>`:''}
   ${EKGL.leki(LK[C.start],true)}
-  <h3>4️⃣ Błędy krytyczne</h3>${crit.length?`<div class="critb">⛔ <b>${crit.map(k=>ACT[k]).join('; ')}</b> – ta decyzja zagroziła życiu pacjenta (niezależnie od punktów).</div>`:'<p>✅ Brak błędów krytycznych.</p>'}
-  <h3>5️⃣ Wynik punktowy</h3><div class="pts"><div><span>Rozpoznanie rytmu${idOk?' za 1. razem':L&&C.idAns===cor()?' po podpowiedzi':' – błędne'}</span><b>+${pId}</b></div><div><span>Leczenie${ok?(C.bad?` (skuteczne, ale ${C.bad} ${C.bad===1?'zbędna decyzja':'zbędne decyzje'}: −3 pkt każda)`:' – skuteczne bez zbędnych kroków'):' – nieskuteczne'}</span><b>+${pTr}</b></div><div class="sum"><span>Razem</span><b>+${p}</b></div></div>
+  <h3>5️⃣ Błędy krytyczne</h3>${crit.length?`<div class="critb">⛔ <b>${crit.map(k=>ACT[k]).join('; ')}</b> – ta decyzja zagroziła życiu pacjenta (niezależnie od punktów).</div>`:'<p>✅ Brak błędów krytycznych.</p>'}
+  <h3>6️⃣ Wynik punktowy</h3><div class="pts"><div><span>Rozpoznanie rytmu${idOk?' za 1. razem':L&&C.idAns===cor()?' po podpowiedzi':' – błędne'}</span><b>+${pId}</b></div><div><span>Leczenie${ok?(C.bad?` (skuteczne, ale ${C.bad} ${C.bad===1?'zbędna decyzja':'zbędne decyzje'}: −3 pkt każda)`:' – skuteczne bez zbędnych kroków'):' – nieskuteczne'}</span><b>+${pTr}</b></div><div class="sum"><span>Razem</span><b>+${p}</b></div></div>
   <h3>📌 Do zapamiętania</h3><ul>${tips.map(t=>`<li>${t}</li>`).join('')}</ul>
   <details><summary>📖 Pełne omówienie</summary><p>${why}</p></details>
   <p class="disc">Źródło: wytyczne ERC 2025 (zaburzenia rytmu, zaawansowane zabiegi resuscytacyjne). Zapis: ${EKGD.s[REAL[s0.rh]].src}, PhysioNet. Stan na 28.11.2026.</p>
