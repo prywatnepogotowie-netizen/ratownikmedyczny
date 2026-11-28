@@ -124,6 +124,7 @@ const FACT={
  av3:['Komory miarowo, ale wolno','ok. 40/min (komory), P szybciej','Tak – regularne, ale bez związku z QRS','Tu nieco poszerzone – rytm zastępczy (może być wąski lub szeroki)','Zmienny – P „wędrują” przez QRS','P i QRS żyją osobno = blok AV III stopnia (całkowity).'],
  tdp:['Niemiarowy','ok. 200–250/min','Brak','Szerokie, zmienne – amplituda rośnie i maleje („skręca się”)','Brak','Polimorficzny VT o zmiennej amplitudzie przy długim QT = torsades de pointes.'],
  pea:['Miarowy','ok. 40/min','Tak','Wąskie','Prawidłowy','Rytm na monitorze wygląda „spokojnie” – rozpoznanie PEA stawiasz po braku tętna!']};
+const LK={vf:'vf',pvt:'vf',asys:'nsh',pea:'nsh',vtu:'unst',svtu:'unst',afu:'unst',vts:'vts',svts:'svt',afs:'af',afl:'afl',sbr:'none',av3:'brad',mob2:'brad',mob1:'none',av1:'none',tdp:'tdp',sta:'stach',nsr:'none'};
 const AGR=[['⚡ Prąd (defibrylator)','#e63946',['def','kard','stym']],['💉 Leki','#c1121f',['adr1','amioB','amioW','aden','atr','adrW','meto','mg','plyn']],['🫁 RKO i manewry','#2a9d8f',['rko','H4T','vag']],['👀 Pozostałe działania','#457b9d',['przyc','obs']]];
 const STL={win:['✅ Wykonane – skuteczne','ok'],winp:['✅ Wykonane – skuteczne, ale był lepszy wybór','ok'],part:['🟡 Wykonane – częściowa poprawa','pt'],bad:['❌ Wykonane – bez poprawy','bad'],worse:['⛔ Wykonane – pogorszenie stanu','bad'],fail:['⛔ Powikłanie','bad'],die:['🕯️ Zgon','bad']};
 // quiz analizy: opcje i prawidłowe odpowiedzi (indeksy) dla każdego rytmu
@@ -199,6 +200,7 @@ function render(first){const s=ST[C.st],id=C.idAns==null,L=MODE==='learn',col=s.
   h+=`<div class="q">1️⃣ Co widzisz na monitorze?</div>`+(C.wrong?`<div class="re bad">❌ To nie jest: ${NAMES[C.wrong]}. ${FACT[C.wrong]?'Tam: '+FACT[C.wrong][5]:''} Spróbuj jeszcze raz.</div>`:'')+opts.map(k=>`<button class="op" data-r="${k}" type="button"${C.tried&&C.tried.includes(k)?' disabled':''}>${NAMES[k]}</button>`).join('');
  } else if(!C.done){
   if(L&&!C.steps.length)h+=`<div class="hint"><b>🧭 Najpierw oceń pacjenta</b><p>${stab(s)}</p></div>`;
+  if(L)h+=EKGL.leki(LK[C.st]||LK[C.start],!C.steps.length);
   h+=`<div class="q">${C.steps.length?'Co dalej?':'2️⃣ Co robisz?'}</div>`+AGR.map(g=>`<div class="ag" style="--c:${g[1]}">${g[0]}</div>`+shuf(g[2]).map(k=>`<button class="op" data-a="${k}" type="button" style="border-left:6px solid ${g[1]}">${ACT[k]}${C.steps.some(x=>x.a===k)?' <small class="was">· już wybrane</small>':''}</button>`).join('')).join('');}
  $('cs').innerHTML=h;bindFq();
  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>pickR(b.dataset.r));
@@ -236,7 +238,7 @@ function endCase(typ){C.done=true;C.typ=typ;document.querySelectorAll('#cs .op,#
   ${f?`<div class="facts">${FQ.map((q,i)=>`<div><span>${q}</span><b>${f[i]}</b></div>`).join('')}</div>`:''}
   <h3>🩺 Twoje decyzje</h3>${dec}
   ${missed.length?`<div class="dc pt"><b>Pominięte działanie</b><small>${missed.map(k=>ACT[k]).join(' lub ')} – to było leczenie z wyboru.</small></div>`:''}
-  <h3>⭐ Punkty</h3><div class="pts"><div><span>Rozpoznanie rytmu${idOk?' za 1. razem':L&&C.idAns===cor()?' po podpowiedzi':' – błędne'}</span><b>+${pId}</b></div><div><span>Leczenie${ok?(C.bad?` (skuteczne, ale ${C.bad} ${C.bad===1?'zbędna decyzja':'zbędne decyzje'}: −3 pkt każda)`:' – skuteczne bez zbędnych kroków'):' – nieskuteczne'}</span><b>+${pTr}</b></div><div class="sum"><span>Razem</span><b>+${p}</b></div></div>
+  ${EKGL.leki(LK[C.start],true)}<h3>⭐ Punkty</h3><div class="pts"><div><span>Rozpoznanie rytmu${idOk?' za 1. razem':L&&C.idAns===cor()?' po podpowiedzi':' – błędne'}</span><b>+${pId}</b></div><div><span>Leczenie${ok?(C.bad?` (skuteczne, ale ${C.bad} ${C.bad===1?'zbędna decyzja':'zbędne decyzje'}: −3 pkt każda)`:' – skuteczne bez zbędnych kroków'):' – nieskuteczne'}</span><b>+${pTr}</b></div><div class="sum"><span>Razem</span><b>+${p}</b></div></div>
   <h3>📌 Do zapamiętania</h3><ul>${tips.map(t=>`<li>${t}</li>`).join('')}</ul>
   <details><summary>📖 Pełne omówienie</summary><p>${why}</p></details>
   <p class="disc">Źródło: wytyczne ERC 2025 (zaburzenia rytmu, zaawansowane zabiegi resuscytacyjne). Zapis: ${EKGD.s[REAL[s0.rh]].src}, PhysioNet. Stan na 28.11.2026.</p>
